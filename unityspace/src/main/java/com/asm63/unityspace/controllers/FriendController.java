@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @RestController
@@ -22,18 +23,34 @@ public class FriendController {
     @GetMapping("/users")
     public ResponseEntity<Object> users(@RequestParam(name = "id") String id,
                                                  @RequestParam(name = "friendId") String friendId) throws Exception{
-        Student friendSId = studentService.findByFriendId(friendId);
-        System.out.println("Friend id " + friendSId.getSid());
-            if (friendSId.getSid().length()==0) {
-                throw new Exception("Student doesn't Exist");
+        ArrayList<HashMap> friends = studentService.getFriends(id);
+        System.out.println("friends "+friends + "friendId " +friendId);
+        boolean isFriend = false;
+        if(friends!=null){
+            for(HashMap h : friends) {
+                System.out.println("h.get(\"sid\").equals(friendId)" +h.get("sid").equals(friendId));
+                if(h.get("sid").equals(friendId))
+                {
+                    isFriend = true;
+                }
+            }
+            if (isFriend) {
+                System.out.println("after calling  delete service "+ friendId);
+                studentService.deleteFriend(id, friendId);
             } else{
                 System.out.println("before calling  addFriend service ");
-                studentService.addFriend(studentService.findByFriendId(id).getSid(), friendSId.getSid());
-                HashMap<Object, Object> map = new HashMap<>();
-                map.put("friend",studentService.getFriends(id));
-                System.out.println("after calling  addFriend service "+ map.get("friend"));
-                return new ResponseEntity<Object>(map, HttpStatus.OK);
+                studentService.addFriend(studentService.findByFriendId(id).getSid(), friendId);
+//                    HashMap<Object, Object> map = new HashMap<>();
+//                    map.put("friend",studentService.getFriends(id));
+//                    System.out.println("after calling  addFriend service "+ map.get("friend"));
+//                    return new ResponseEntity<Object>(map, HttpStatus.OK);
             }
+        }
+
+        HashMap<Object, Object> map = new HashMap<>();
+        map.put("friend",studentService.getFriends(id));
+        return new ResponseEntity<Object>(map, HttpStatus.OK);
+
     }
 
     @GetMapping("/users/friends")

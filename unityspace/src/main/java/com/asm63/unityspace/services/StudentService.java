@@ -75,4 +75,8 @@ public class StudentService {
         student.setFriends(studMapper.getFriends(id));
         return student;
     }
+
+    public void deleteFriend(String id, String friendId) {
+        studMapper.deleteFriend(id,friendId);
+    }
 }

@@ -71,6 +71,10 @@
                  INNER JOIN student ON friend_list.friend_id = student.sid WHERE friend_list.student_id =#{userId}
     </select>
 
+    <delete id="deleteFriend" parameterType="String"  >
+        delete from friend_list where  student_id = #{id} and friend_id = #{friendId}
+    </delete>
+
     <select id="findById" parameterType="String"
             resultType="Student">
         SELECT * from student where sid = #{id}
