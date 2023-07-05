@@ -1,0 +1,133 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asm63.unityspace.mappers.StudentMapper">
+
+    <resultMap id="StudentResultMap" type="Student">
+        <id column="id" property="id" />
+        <result column="sid" property="sid" />
+        <result column="fname" property="fname" />
+        <result column="lname" property="lname" />
+        <result column="email" property="email" />
+        <result column="password" property="password" />
+        <result column="loc" property="loc" />
+        <result column="course" property="course" />
+        <result column="role" property="role" />
+
+    </resultMap>
+
+    <resultMap id="FriendResultMap" type="Friend">
+        <id column="id" property="id" />
+        <result column="student_id" property="studentId" />
+        <result column="friend_id" property="friendId" />
+    </resultMap>
+
+    <resultMap id="PostResultMap" type="Post">
+        <id column="id" property="id" />
+        <result column="description" property="description" />
+        <result column="firstname" property="firstname" />
+        <result column="lastname" property="lastname" />
+        <result column="location" property="location" />
+        <result column="picture_path" property="picturePath" />
+        <result column="post_user_id" property="postUserId" />
+        <result column="user_picture_path" property="userPicturePath" />
+        <result column="likes" property="likes" />
+    </resultMap>
+
+    <select id="findByEmail" parameterType="String"
+            resultMap="StudentResultMap">
+        select * from student where email =#{email}
+    </select>
+
+    <select id="findByFriendId" parameterType="String"
+            resultType="Student">
+        select * from student where sid =#{friendId}
+    </select>
+
+    <insert id="register" parameterType="Student">
+        INSERT INTO
+        student
+        (id,sid,email,fname,lname,password,loc,course,role)
+        VALUES(#{id},#{sid},#{fname},#{lname},
+        #{email},#{password},#{loc},#{course},#{role})
+    </insert>
+
+    <insert id="addFriend" parameterType="Friend" >
+        <selectKey keyProperty="id" resultType="Long" order="BEFORE">
+        select
+            nextval('FRIEND_SEQ')
+    </selectKey>
+        INSERT INTO
+            friend_list
+            (id,friend_id,student_id)
+        VALUES(#{id},#{friendId},#{studentId})
+    </insert>
+
+    <select id="getFriends"
+            resultType="HashMap" parameterType="String">
+        SELECT friend_list.id, student.course, student.fname, student.lname,student.sid
+        FROM friend_list
+                 INNER JOIN student ON friend_list.friend_id = student.sid WHERE friend_list.student_id =#{userId}
+    </select>
+
+    <select id="findById" parameterType="String"
+            resultType="Student">
+        SELECT * from student where sid = #{id}
+    </select>
+
+    <select id="findPostById" parameterType="Long"
+            resultType="Post">
+        SELECT id,post_user_id AS "postUserId",description,location,picture_path,user_picture_path,likes,comments,firstname,lastname  from post where id = #{id}
+    </select>
+
+    <select id="getPosts"
+            resultType="HashMap">
+        SELECT id,post_user_id AS "postUserId",description,location,picture_path,user_picture_path,likes,comments,firstname,lastname from post
+    </select>
+
+    <select id="getUserPosts" parameterType="String"
+            resultType="HashMap">
+        SELECT id,post_user_id as "postUserId",description,location,picture_path,user_picture_path,likes,comments,firstname,lastname  from post where post_user_id = #{userId}
+    </select>
+
+    <select id="getLikes" parameterType="Long" resultType="String"
+            >
+        SELECT likes from post where id = #{postId}
+    </select>
+
+    <update id="updatePost">
+        UPDATE
+            post SET
+        <if test="likes != null and likes != ''">
+            LIKES = #{likes}
+        </if>
+        WHERE id=#{id}
+    </update>
+
+    <insert id="createPost" parameterType="Post">
+        <selectKey keyProperty="id" resultType="Long" order="BEFORE">
+            select
+            nextval('POST_SEQ')
+        </selectKey>
+        INSERT INTO
+            post
+            (id,post_user_id,description,location,picture_path,user_picture_path,likes,comments,firstname,lastname)
+        VALUES(#{id},#{postUserId},#{description},
+               #{location},#{picturePath},#{userPicturePath},
+        <if test="likes != null">
+            likes =#{likes},
+        </if>
+        <if test="likes == null">
+            NULL,
+        </if>
+        <if test="comments != null and comments != ''">
+            #{comments}),
+        </if>
+        <if test="comments == null">
+            NULL,
+        </if>
+        #{firstname},#{lastname})
+    </insert>
+
+</mapper>
