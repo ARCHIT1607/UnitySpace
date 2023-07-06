@@ -4,7 +4,11 @@ import com.asm63.unityspace.mappers.StudentMapper;
 import com.asm63.unityspace.models.PostDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -45,8 +49,14 @@ public class PostService {
 
     }
 
-    public void createPost(PostDTO post) {
-
+    public void createPost(PostDTO post, MultipartFile file) throws IOException {
+        System.out.println("file!=null" +file!=null + " file.isEmpty() "+file.isEmpty());
+        if (file!=null && !file.isEmpty()){
+            String fileName = file.getOriginalFilename();
+            byte[] data = file.getBytes();
+            post.setPicture(data);
+            post.setPicturePath(fileName);
+        }
         studentMapper.createPost(post);
     }
 
@@ -61,5 +71,13 @@ public class PostService {
 
     public ArrayList<PostDTO> getUserPosts(String userId) {
         return studentMapper.getUserPosts(userId);
+    }
+
+    public InputStream getResource(String picturePath) {
+        return new ByteArrayInputStream(studentMapper.getResource(picturePath).getPicture());
+    }
+
+    public void deletePost(String postId) {
+        studentMapper.deletePost(Long.parseLong(postId));
     }
 }

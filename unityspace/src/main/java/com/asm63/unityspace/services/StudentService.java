@@ -28,7 +28,7 @@ public class StudentService {
 
     public Map<String, String> authenticate(Student request) throws Exception {
         Student user = studMapper.findByEmail(request.getEmail());
-//        user.setFriends(studMapper.getFriends());
+        user.setFriends(studMapper.getFriends(user.getSid()));
         if(user==null) {
             throw new Exception("user not found");
         }

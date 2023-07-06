@@ -25,9 +25,11 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
 import  Axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const MyPostWidget = ({ picturePath }) => {
+const MyPostWidget = ({ picturePath , fromProfile}) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [isImage, setIsImage] = useState(false);
   const [image, setImage] = useState(null);
   const [description, setDescription] = useState("");
@@ -40,26 +42,21 @@ const MyPostWidget = ({ picturePath }) => {
 
   const handlePost = async () => {
     const formData = new FormData();
-    // formData.append("userId", id);
-    // formData.append("description", post);
     if (image) {
-      // formData.append("picture", image);
-      // formData.append("picturePath", image.name);
+      formData.append("picture", image);
+      formData.append("picturePath", image.name);
     }
-
-    // const response = await fetch(`http://localhost:9000/posts`, {
-    //   method: "POST",
-    //   headers: { Authorization: "Bearer " + token.token,"Content-Type":"application/json"},
-    //   body: JSON.stringify(postData)
-    // });
-
-    const response = await Axios.post("http://localhost:9000/posts", null, {
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
+    const response = await Axios.post("http://localhost:9000/posts", formData, {
       params: {
         description: description,
         userId:sid
       },
       headers: {
         Authorization: "Bearer " + token.token,
+        "Content-Type": "multipart/form-data"
       },
     });
     const posts = await response.data;
@@ -68,7 +65,24 @@ const MyPostWidget = ({ picturePath }) => {
     setImage(null);
     // setPost("");
     setDescription("");
+    console.log("fromProfile ",fromProfile)
+    if(fromProfile){
+      getUserPosts();
+    }
   };
+  
+  const getUserPosts = async () => {
+    const response = await Axios.get(
+      `http://localhost:9000/posts/${sid}/posts`,
+      {
+        headers: { Authorization: "Bearer " + token.token},
+      }
+    );
+    const data = await response.data;
+    dispatch(setPosts({ posts: data }));
+  };
+
+
   return (
     <WidgetWrapper>
       <FlexBetween gap="1.5rem">
@@ -92,10 +106,10 @@ const MyPostWidget = ({ picturePath }) => {
           mt="1rem"
           p="1rem"
         >
-          {/* <Dropzone
+          { <Dropzone
             acceptedFiles=".jpg,.jpeg,.png"
             multiple={false}
-            onDrop={(acceptedFiles) => setImage(acceptedFiles[0])}
+            onDrop={(acceptedFiles) => {console.log("acceptedFiles[0])",acceptedFiles[0]); setImage(acceptedFiles[0])}}
           >
             {({ getRootProps, getInputProps }) => (
               <FlexBetween>
@@ -126,7 +140,7 @@ const MyPostWidget = ({ picturePath }) => {
                 )}
               </FlexBetween>
             )}
-          </Dropzone> */}
+          </Dropzone> }
         </Box>
       )}
 

@@ -3,13 +3,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setFriends } from "state";
+import { setFriends, setPosts } from "state";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
 import  Axios from "axios";
 import { useEffect } from "react";
 
-const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
+const Post = ({ friendId, name, subtitle, userPicturePath,postId,fromProfile }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { sid } = useSelector((state) => state.user);
@@ -27,7 +27,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
   const isFriend = friends.find(({ sid }) => friendId === sid);
 
  console.log("isfriend ",friends.find(({ sid }) => console.log(friendId === sid)));
-
+ console.log("fromProfile data ",fromProfile);
   const patchFriend = async () => {
     console.log("calling patchFriend")
     const response = await Axios.get("http://localhost:9000/users", {
@@ -44,29 +44,59 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
     dispatch(setFriends({ friends: data }));
   };
 
-  const getFriends = async () => {
-    console.log("token ",token)
-    const response = await Axios.get("http://localhost:9000/users/friends", {
+  const deletePost = async () => {
+    console.log("calling deletePost")
+    const response = await Axios.get("http://localhost:9000/delete/post", {
       params:{
-        id:sid,
+        postId:postId
       },
       headers: {
         Authorization: "Bearer " + token.token,
       },
     });
-    console.log("resoinsedata ",response.data);
+    console.log("deletePost data ",response);
     const data = await response.data;
-    dispatch(setFriends({ friends: data }));
-    console.log("in getAllBills");
-    
-   
+    dispatch(setPosts({ posts: data }));
+    console.log("fromProfile data ",fromProfile);
+    if(fromProfile){
+      getUserPosts();
+    }
   };
 
-  useEffect(() => {
-    console.log("calling")
-    getFriends();
-    console.log("friends ",friends)
-  }, []); 
+  const getUserPosts = async () => {
+    const response = await Axios.get(
+      `http://localhost:9000/posts/${sid}/posts`,
+      {
+        headers: { Authorization: "Bearer " + token.token},
+      }
+    );
+    const data = await response.data;
+    dispatch(setPosts({ posts: data }));
+  };
+
+//   const getFriends = async () => {
+//     console.log("token ",token)
+//     const response = await Axios.get("http://localhost:9000/users/friends", {
+//       params:{
+//         id:sid,
+//       },
+//       headers: {
+//         Authorization: "Bearer " + token.token,
+//       },
+//     });
+//     console.log("resoinsedata ",response.data);
+//     const data = await response.data;
+//     dispatch(setFriends({ friends: data }));
+//     console.log("in getAllBills");
+    
+   
+//   };
+
+//   useEffect(() => {
+//     console.log("calling")
+//     getFriends();
+//     console.log("friends ",friends)
+//   }, []); 
 
   return (
     <FlexBetween>
@@ -97,21 +127,26 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
         </Box>
       </FlexBetween>
       <FlexBetween>
-
+        
+      <IconButton
+        onClick={() => deletePost()}
+        sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
+      ><DeleteIcon /></IconButton>
+      {friendId !==sid ? 
       <IconButton
         onClick={() => patchFriend()}
         sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
       >
-        {friendId !==sid ? 
-        isFriend ? (
+         {isFriend ? (
           <PersonRemoveOutlined sx={{ color: primaryDark }} />
         ) : (
           <PersonAddOutlined sx={{ color: primaryDark }} />
-        ):""}
+        )}
       </IconButton>
+      :""}
       </FlexBetween>
     </FlexBetween>
   );
 };
 
-export default Friend;
+export default Post;

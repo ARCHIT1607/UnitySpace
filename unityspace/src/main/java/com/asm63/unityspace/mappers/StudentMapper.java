@@ -32,4 +32,8 @@ public interface StudentMapper {
     ArrayList<String> getLikes(Long postId);
 
     void deleteFriend(String id, String friendId);
+
+    PostDTO getResource(String picturePath);
+
+    void deletePost(Long postId);
 }

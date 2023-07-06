@@ -87,12 +87,16 @@
 
     <select id="getPosts"
             resultType="HashMap">
-        SELECT id,post_user_id AS "postUserId",description,location,picture_path,user_picture_path,likes,comments,firstname,lastname from post
+        SELECT id,post_user_id AS "postUserId",description,location,picture_path as "picturePath",user_picture_path as "userPicturePath" ,likes,comments,firstname,lastname from post
+    </select>
+
+    <select id="getResource" parameterType="String" resultType="Post">
+        SELECT picture from post where picture_path =#{picturePath}
     </select>
 
     <select id="getUserPosts" parameterType="String"
             resultType="HashMap">
-        SELECT id,post_user_id as "postUserId",description,location,picture_path,user_picture_path,likes,comments,firstname,lastname  from post where post_user_id = #{userId}
+        SELECT id,post_user_id as "postUserId",description,location,picture_path as "picturePath",user_picture_path as "userPicturePath",likes,comments,firstname,lastname  from post where post_user_id = #{userId}
     </select>
 
     <select id="getLikes" parameterType="Long" resultType="String"
@@ -116,7 +120,7 @@
         </selectKey>
         INSERT INTO
             post
-            (id,post_user_id,description,location,picture_path,user_picture_path,likes,comments,firstname,lastname)
+            (id,post_user_id,description,location,picture_path,user_picture_path,likes,comments,firstname,lastname, picture)
         VALUES(#{id},#{postUserId},#{description},
                #{location},#{picturePath},#{userPicturePath},
         <if test="likes != null">
@@ -131,7 +135,11 @@
         <if test="comments == null">
             NULL,
         </if>
-        #{firstname},#{lastname})
+        #{firstname},#{lastname},#{picture})
     </insert>
+
+    <delete id="deletePost" parameterType="Long">
+        delete from post where id = #{postId}
+    </delete>
 
 </mapper>

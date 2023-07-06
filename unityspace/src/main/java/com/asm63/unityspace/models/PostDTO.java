@@ -21,6 +21,8 @@ public class PostDTO {
     private String lastname;
     private String description;
     private String location;
+
+    private byte[] picture;
     private String picturePath;
     private String userPicturePath;
     private String likes;

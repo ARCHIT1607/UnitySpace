@@ -8,6 +8,7 @@ import { Box, Divider, IconButton, Typography, useTheme } from "@mui/material";
 import  Axios from "axios";
 import FlexBetween from "components/FlexBetween";
 import Friend from "components/Friend";
+import Post from "components/Post";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,10 +21,12 @@ const PostWidget = ({
   name,
   description,
   location,
+  picture,
   picturePath,
   userPicturePath,
   likes,
   comments,
+  fromProfile
 }) => {
   const [isComments, setIsComments] = useState(false);
   const dispatch = useDispatch();
@@ -54,24 +57,34 @@ const PostWidget = ({
   console.log("postUserId in postwidget ",userId, name)
   return (
     <WidgetWrapper m="2rem 0">
-      <Friend
+      <Post
         friendId={userId}
         name={name}
         subtitle={location}
         userPicturePath={userPicturePath}
+        postId={postId}
+        fromProfile={fromProfile}
       />
       <Typography color={main} sx={{ mt: "1rem" }}>
         {description}
       </Typography>
-      {/* {picturePath && (
+      {picturePath && picturePath.includes(".mp4") ? (
+        <video
+          width="100%"
+          height="auto"
+          alt="post"
+          style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
+          controls
+          src={`http://localhost:9000/post/image/${picturePath}`}
+        />
+      ):(
         <img
           width="100%"
           height="auto"
           alt="post"
           style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
-          src={`http://localhost:3001/assets/${picturePath}`}
-        />
-      )} */}
+          src={`http://localhost:9000/post/image/${picturePath}`}
+        />)} 
       <FlexBetween mt="0.25rem">
         <FlexBetween gap="1rem">
           <FlexBetween gap="0.3rem">

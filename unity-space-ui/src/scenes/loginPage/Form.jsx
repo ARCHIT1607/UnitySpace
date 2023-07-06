@@ -74,14 +74,15 @@ const Form = () => {
   };
 
   const login = async (values, onSubmitProps) => {
-    const loggedInResponse = await fetch("http://localhost:9000/auth/login", {
+
+      const loggedInResponse = await fetch("http://localhost:9000/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(values),
     });
     const loggedIn = await loggedInResponse.json();
     onSubmitProps.resetForm();
-    if (loggedIn) {
+    if (!loggedIn.errorMsg) {
       dispatch(
         setLogin({
           user: loggedIn.user,
@@ -89,6 +90,12 @@ const Form = () => {
         })
       );
       navigate("/home");
+    }
+     else{
+      
+      console.error("Something bad happened");
+      console.error(loggedIn.errorMsg);
+      navigate("/")
     }
   };
 
