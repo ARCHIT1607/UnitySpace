@@ -22,12 +22,13 @@ const Post = ({ friendId, name, subtitle, userPicturePath,postId,fromProfile }) 
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
   console.log("friends ",friends)
-  console.log("friendId ",friendId.sid)
+  console.log("friendId ",friendId&&friendId.sid)
   // const isFriend = friends&&friends.sid === friendId;
   const isFriend = friends.find(({ sid }) => friendId === sid);
 
  console.log("isfriend ",friends.find(({ sid }) => console.log(friendId === sid)));
  console.log("fromProfile data ",fromProfile);
+
   const patchFriend = async () => {
     console.log("calling patchFriend")
     const response = await Axios.get("http://localhost:9000/users", {
@@ -42,6 +43,7 @@ const Post = ({ friendId, name, subtitle, userPicturePath,postId,fromProfile }) 
     console.log("patch friend data ",response);
     const data = await response.data.friend;
     dispatch(setFriends({ friends: data }));
+    
   };
 
   const deletePost = async () => {

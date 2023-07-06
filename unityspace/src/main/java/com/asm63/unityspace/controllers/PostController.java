@@ -39,7 +39,7 @@ public class PostController {
         System.out.println("calling patchLike");
 
         postService.patchLike(Long.parseLong(postId),userId);
-        return new ResponseEntity<Object>(postService.getUserPosts(userId), HttpStatus.OK);
+        return new ResponseEntity<Object>(postService.getPosts(), HttpStatus.OK);
 //        return new ResponseEntity<Object>(postService.getPosts(), HttpStatus.OK);
 
     }
@@ -81,7 +81,7 @@ public class PostController {
     @PostMapping(value = "/posts")
     @Transactional
     public ResponseEntity<Object> createPost(@RequestParam("description") String description,@RequestParam("userId") String userId,
-                                             @RequestParam(value = "picture") MultipartFile picture) throws Exception {
+                                             @RequestParam(value = "picture",required = false) MultipartFile picture) throws Exception {
         try {
             PostDTO post = new PostDTO();
             post.setDescription(description);

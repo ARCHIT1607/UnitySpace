@@ -27,5 +27,5 @@ public class PostDTO {
     private String userPicturePath;
     private String likes;
 
-    private ArrayList<Comment> comments;
+    private ArrayList<String> comments;
 }

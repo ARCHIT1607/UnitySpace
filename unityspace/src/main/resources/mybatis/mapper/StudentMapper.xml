@@ -107,9 +107,7 @@
     <update id="updatePost">
         UPDATE
             post SET
-        <if test="likes != null and likes != ''">
-            LIKES = #{likes}
-        </if>
+            LIKES = COALESCE(#{likes}, LIKES)
         WHERE id=#{id}
     </update>
 

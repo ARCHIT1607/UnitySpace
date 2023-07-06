@@ -10,10 +10,10 @@ import FlexBetween from "components/FlexBetween";
 import Friend from "components/Friend";
 import Post from "components/Post";
 import WidgetWrapper from "components/WidgetWrapper";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setPost } from "state";
+import { setPost, setPosts } from "state";
 
 const PostWidget = ({
   postId,
@@ -32,13 +32,15 @@ const PostWidget = ({
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user.sid);
-  const isLiked = likes?Boolean(likes[loggedInUserId]):false;
-  const likeCount = likes?Object.keys(likes).length:0;
+  const isLiked = likes?Boolean(likes.includes(loggedInUserId)):false;
+  // const likeCount = likes?Object.keys(likes).length:0;
+  const likeCount = likes?likes.split(",").length:0;
 
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const primary = palette.primary.main;
-  const navigate = useNavigate();
+  
+
   const patchLike = async () => {
     const response = await Axios.post("http://localhost:9000/posts/like", null, {
       params: {
@@ -51,8 +53,38 @@ const PostWidget = ({
     });
     const updatedPost = await response.data;
     dispatch(setPost({ post: updatedPost }));
-    window.location.reload(false);
+    // window.location.reload(false);
+    getPosts();
+
+    if(fromProfile){
+      getUserPosts();
+    }
   };
+
+  const getUserPosts = async () => {
+    const response = await Axios.get(
+      `http://localhost:9000/posts/${userId}/posts`,
+      {
+        headers: { Authorization: "Bearer " + token.token},
+      }
+    );
+    const data = await response.data;
+    dispatch(setPosts({ posts: data }));
+  };
+
+  const getPosts = async () => {
+    const response = await Axios.get("http://localhost:9000/getPosts",{
+      headers: {
+        Authorization: "Bearer " + token.token,
+      },
+    });
+    const data = response.data;
+    console.log("data from getPosts ",data)
+    dispatch(setPosts({ posts: data }));
+  };
+
+  
+  
 
   console.log("postUserId in postwidget ",userId, name)
   return (

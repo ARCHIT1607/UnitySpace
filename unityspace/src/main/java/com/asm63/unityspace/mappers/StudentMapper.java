@@ -21,7 +21,7 @@ public interface StudentMapper {
 
     PostDTO findPostById(Long id);
 
-    void updatePost(PostDTO like);
+    void updatePost(PostDTO post);
 
     void createPost(PostDTO post);
 
