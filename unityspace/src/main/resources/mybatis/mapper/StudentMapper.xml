@@ -174,4 +174,9 @@
         delete from post where id = #{postId}
     </delete>
 
+    <select id="getEvents"
+            resultType="Event">
+        SELECT id, event_name as "eventName", created_date as "CreatedDate", event_date as "eventDate", is_active as "active" from event where is_active = TRUE
+    </select>
+
 </mapper>

@@ -7,12 +7,11 @@ import { setFriends, setPosts } from "state";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
 import  Axios from "axios";
-import { useEffect } from "react";
 
 const Post = ({ friendId, name, subtitle, userPicturePath,postId,fromProfile }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { sid } = useSelector((state) => state.user);
+  const { sid, course } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
   const friends = useSelector((state) => state.user.friends);
 
@@ -121,7 +120,7 @@ const Post = ({ friendId, name, subtitle, userPicturePath,postId,fromProfile }) 
               },
             }}
           >
-            {name}
+            {name} <span style={{ fontSize: '0.75rem' }}>({course})</span>
           </Typography>
           <Typography color={medium} fontSize="0.75rem">
             {subtitle}

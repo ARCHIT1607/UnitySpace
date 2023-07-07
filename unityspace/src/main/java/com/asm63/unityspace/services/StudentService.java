@@ -2,6 +2,7 @@ package com.asm63.unityspace.services;
 
 
 import com.asm63.unityspace.mappers.StudentMapper;
+import com.asm63.unityspace.models.Events;
 import com.asm63.unityspace.models.Student;
 import com.asm63.unityspace.repositories.ImageRepository;
 import com.asm63.unityspace.security.AuthenticationResponse;
@@ -93,5 +94,9 @@ public class StudentService {
 
     public void updateViewer(String userId, String sid) {
         studMapper.updateViewer(userId,sid);
+    }
+
+    public ArrayList<Events> getEvents() {
+       return studMapper.getEvents();
     }
 }

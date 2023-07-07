@@ -74,4 +74,10 @@ public class FriendController {
 
     }
 
+    @GetMapping("/events")
+    public ResponseEntity<Object> getEvents() {
+        return new ResponseEntity<Object>(studentService.getEvents(),HttpStatus.OK);
+
+    }
+
 }

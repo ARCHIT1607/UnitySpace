@@ -1,5 +1,6 @@
 package com.asm63.unityspace.mappers;
 
+import com.asm63.unityspace.models.Events;
 import com.asm63.unityspace.models.PostDTO;
 import com.asm63.unityspace.models.Student;
 import org.apache.ibatis.annotations.Mapper;
@@ -47,4 +48,6 @@ public interface StudentMapper {
     List<String> getUserPostLikes(String userId);
 
     void updateViewer(String userId, String sid);
+
+    ArrayList<Events> getEvents();
 }
