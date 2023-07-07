@@ -4,16 +4,24 @@ import {
   FavoriteOutlined,
   ShareOutlined,
 } from "@mui/icons-material";
-import { Box, Divider, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, Divider, IconButton, TextField, Typography, useTheme } from "@mui/material";
 import  Axios from "axios";
 import FlexBetween from "components/FlexBetween";
-import Friend from "components/Friend";
+
 import Post from "components/Post";
 import WidgetWrapper from "components/WidgetWrapper";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+
 import { setPost, setPosts } from "state";
+
+
+import Button from '@mui/material/Button';
+import Dialog, { DialogProps } from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const PostWidget = ({
   postId,
@@ -28,7 +36,7 @@ const PostWidget = ({
   comments,
   fromProfile
 }) => {
-  const [isComments, setIsComments] = useState(false);
+  const [comment, setComment] = useState("");
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user.sid);
@@ -83,8 +91,43 @@ const PostWidget = ({
     dispatch(setPosts({ posts: data }));
   };
 
+  const postComment =async()=>{
+    const formData = new FormData();
+    formData.append("comment",comment)
+    const response = await Axios.post("http://localhost:9000/postComment", formData, {
+      params: {
+        postId: postId
+      },
+      headers: {
+        Authorization: "Bearer " + token.token,
+      },
+    });
+    const data = response.data;
+    console.log("data from getPosts ",data)
+    dispatch(setPosts({ posts: data }));
+  }
   
-  
+  const [open, setOpen] = useState(false);
+  const [scroll, setScroll] = useState('paper');
+  const handleClickOpen = (scrollType) => () => {
+    setOpen(true);
+    setScroll(scrollType);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const descriptionElementRef = useRef(null);
+  useEffect(() => {
+    if (open) {
+      const { current: descriptionElement } = descriptionElementRef;
+      if (descriptionElement !== null) {
+        descriptionElement.focus();
+      }
+    }
+  }, [open]);
+
 
   console.log("postUserId in postwidget ",userId, name)
   return (
@@ -131,18 +174,23 @@ const PostWidget = ({
           </FlexBetween>
 
           <FlexBetween gap="0.3rem">
-            <IconButton onClick={() => setIsComments(!isComments)}>
+            <IconButton onClick={handleClickOpen('paper')}>
               <ChatBubbleOutlineOutlined />
             </IconButton>
-            <Typography>{comments&&comments.length}</Typography>
-          </FlexBetween>
-        </FlexBetween>
-
-        <IconButton>
-          <ShareOutlined />
-        </IconButton>
-      </FlexBetween>
-      {isComments && (
+            <Dialog
+        open={open}
+        onClose={handleClose}
+        scroll={scroll}
+        aria-labelledby="scroll-dialog-title"
+        aria-describedby="scroll-dialog-description"
+      ><DialogTitle id="scroll-dialog-title">Comment Section</DialogTitle>
+      <DialogContent dividers={scroll === 'paper'}>
+        <DialogContentText
+          id="scroll-dialog-description"
+          ref={descriptionElementRef}
+          tabIndex={-1}
+        >
+          {comments && (
         <Box mt="0.5rem">
           {comments.map((comment, i) => (
             <Box key={`${name}-${i}`}>
@@ -155,6 +203,34 @@ const PostWidget = ({
           <Divider />
         </Box>
       )}
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+      <TextField
+            autoFocus
+            margin="dense"
+            id="comment"
+            label="Add Comment"
+            type="comment"
+            fullWidth
+            variant="standard"
+            value={comment}
+            onChange={(e)=>{
+              setComment(e.target.value);
+            }}
+          />
+        <Button onClick={postComment}>Add</Button>
+      </DialogActions>
+      </Dialog>
+            <Typography>{comments&&comments.length}</Typography>
+          </FlexBetween>
+        </FlexBetween>
+
+        <IconButton>
+          <ShareOutlined />
+        </IconButton>
+      </FlexBetween>
+      
     </WidgetWrapper>
   );
 };

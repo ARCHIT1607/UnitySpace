@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class PostService {
@@ -40,23 +41,9 @@ public class PostService {
                     System.out.println("strList.contains(userId) not  "+strList.contains(userId) );
                     strList.add(userId);
                 }
-//                ListIterator<String> iterator = strList.listIterator();
-//                System.out.println("iterator "+iterator);
-//                while (iterator.hasNext()) {
-//                    String user = iterator.next();
-//                    if (user.equals(userId)) {
-//                        System.out.println("inside user.equal in iterator user "+user +" userId "+userId);
-//                        iterator.remove();
-//                        break;
-//                    } else {
-//                        System.out.println("inside user not equal in iterator user "+user +" userId "+userId);
-//                        iterator.add(userId);
-//                    }
-//                }
 
             }
             String convertedString = String.join(",", strList);
-//            String updatedLikes = like+","+userId;
             System.out.println("after adding user: " + convertedString);
             post.setLikes(convertedString);
             studentMapper.updatePost(post);
@@ -65,6 +52,22 @@ public class PostService {
             System.out.println("post.getLikes when there is no like " + post.getLikes());
             studentMapper.updatePost(post);
         }
+        Long likeCount = 0L;
+        List<String> postLikes = studentMapper.getUserPostLikes(userId);
+        for(String like : postLikes){
+            if(like!=null && !like.isEmpty()){
+                // split string by no space
+                String[] strSplit = like.split(",");
+
+                // Now convert string into ArrayList
+                ArrayList<String> strList = new ArrayList<String>(
+                        Arrays.asList(strSplit));
+                System.out.println("strList "+strList);
+                System.out.println("strList size "+strList.size());
+                likeCount = likeCount + strList.size();
+            }
+        }
+        studentMapper.updateImpression(likeCount,userId);
 
     }
 
@@ -85,6 +88,7 @@ public class PostService {
     }
 
     public ArrayList<PostDTO> getPosts() {
+
         return studentMapper.getPosts();
     }
 
@@ -98,5 +102,33 @@ public class PostService {
 
     public void deletePost(String postId) {
         studentMapper.deletePost(Long.parseLong(postId));
+    }
+
+    public void postComment(Long postId, String comment) {
+        String postComment = studentMapper.findCommentByPostId(postId);
+        PostDTO post = studentMapper.findPostById(postId);
+        System.out.println("post in postcomments: " + postComment );
+
+        if(postComment!=null){
+            postComment = postComment.replace("{","").replace("}","").replaceAll("\"", "");
+            System.out.println("postComment!=null: " + postComment );
+            String[] strSplit = postComment.split(",");
+            for(String s : strSplit){
+                System.out.println("postComment.split(\",\") " + s );
+            }
+            List<String> arrlist
+                    = new ArrayList<String>(
+                    Arrays.asList(strSplit));
+            arrlist.add(comment);
+            strSplit = arrlist.toArray(strSplit);
+            for(String s : strSplit){
+                System.out.println("strSplit " + s );
+            }
+            post.setComments(strSplit);
+        }else {
+            String[] strSplit = { comment };
+            post.setComments(strSplit);
+        }
+        studentMapper.postComment(post);
     }
 }

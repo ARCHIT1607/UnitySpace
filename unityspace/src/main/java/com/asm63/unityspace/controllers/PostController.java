@@ -23,6 +23,7 @@ import java.util.HashMap;
 
 @RestController
 @CrossOrigin
+@Transactional
 public class PostController {
 
     @Autowired
@@ -33,6 +34,15 @@ public class PostController {
 
     @Autowired
     private StreamingService service;
+
+    @PostMapping("/postComment")
+    public ResponseEntity<Object> postComment(@RequestParam("postId") String postId,@RequestParam("comment") String comment) {
+        System.out.println("calling postComment");
+        postService.postComment(Long.parseLong(postId),comment);
+        return new ResponseEntity<Object>(postService.getPosts(), HttpStatus.OK);
+//        return new ResponseEntity<Object>(postService.getPosts(), HttpStatus.OK);
+
+    }
 
     @PostMapping("/posts/like")
     public ResponseEntity<Object> patchLike(@RequestParam("postId") String postId,@RequestParam("userId") String userId ) {

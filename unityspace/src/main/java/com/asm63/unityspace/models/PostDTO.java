@@ -1,9 +1,7 @@
 package com.asm63.unityspace.models;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Id;
 import lombok.*;
-
-import java.util.ArrayList;
 
 
 @Getter
@@ -27,5 +25,5 @@ public class PostDTO {
     private String userPicturePath;
     private String likes;
 
-    private ArrayList<String> comments;
+    private String[] comments;
 }

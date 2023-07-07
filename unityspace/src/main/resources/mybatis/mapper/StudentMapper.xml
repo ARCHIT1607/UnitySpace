@@ -99,6 +99,11 @@
         SELECT id,post_user_id as "postUserId",description,location,picture_path as "picturePath",user_picture_path as "userPicturePath",likes,comments,firstname,lastname  from post where post_user_id = #{userId}
     </select>
 
+    <select id="getUserPostLikes" parameterType="String"
+            resultType="String">
+        SELECT likes  from post where post_user_id = #{userId}
+    </select>
+
     <select id="getLikes" parameterType="Long" resultType="String"
             >
         SELECT likes from post where id = #{postId}
@@ -108,6 +113,28 @@
         UPDATE
             post SET
             LIKES = COALESCE(#{likes}, LIKES)
+        WHERE id=#{id}
+    </update>
+
+    <update id="updateImpression">
+        UPDATE
+            student SET
+            impressions = #{likeCount}
+        WHERE sid=#{userId}
+    </update>
+
+
+    <select id="findCommentByPostId" parameterType="Post"
+            resultType="String">
+        SELECT comments  from post where id = #{id}
+    </select>
+
+    <update id="postComment" parameterType="Post">
+        UPDATE post SET comments = ARRAY[
+        <foreach item="comment" index="index" collection="comments" separator=",">
+            #{comment}
+        </foreach>
+        ]
         WHERE id=#{id}
     </update>
 

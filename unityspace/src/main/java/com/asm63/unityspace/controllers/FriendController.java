@@ -40,10 +40,6 @@ public class FriendController {
             } else{
                 System.out.println("before calling  addFriend service ");
                 studentService.addFriend(studentService.findByFriendId(id).getSid(), friendId);
-//                    HashMap<Object, Object> map = new HashMap<>();
-//                    map.put("friend",studentService.getFriends(id));
-//                    System.out.println("after calling  addFriend service "+ map.get("friend"));
-//                    return new ResponseEntity<Object>(map, HttpStatus.OK);
             }
         }
 

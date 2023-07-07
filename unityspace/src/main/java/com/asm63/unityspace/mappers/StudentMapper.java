@@ -5,6 +5,7 @@ import com.asm63.unityspace.models.Student;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Mapper
 public interface StudentMapper {
@@ -36,4 +37,12 @@ public interface StudentMapper {
     PostDTO getResource(String picturePath);
 
     void deletePost(Long postId);
+
+    void postComment(PostDTO post);
+
+    String findCommentByPostId(Long postId);
+
+    void updateImpression(Long likeCount, String userId);
+
+    List<String> getUserPostLikes(String userId);
 }
