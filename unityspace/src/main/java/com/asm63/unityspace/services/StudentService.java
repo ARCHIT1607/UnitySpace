@@ -10,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class StudentService {
@@ -68,9 +66,22 @@ public class StudentService {
     }
 
     public Student findById(String id) {
-//        Map user = new HashMap();
-//        user =studMapper.findById(id);
-//        user.put("friends",studMapper.getFriends());
+        Long likeCount = 0L;
+        List<String> postLikes = studMapper.getUserPostLikes(id);
+        for(String like : postLikes){
+            if(like!=null && !like.isEmpty()){
+                // split string by no space
+                String[] strSplit = like.split(",");
+
+                // Now convert string into ArrayList
+                ArrayList<String> strList = new ArrayList<String>(
+                        Arrays.asList(strSplit));
+                System.out.println("strList "+strList);
+                System.out.println("strList size "+strList.size());
+                likeCount = likeCount + strList.size();
+            }
+        }
+        studMapper.updateImpression(likeCount,id);
         Student student = studMapper.findById(id);
         student.setFriends(studMapper.getFriends(id));
         return student;
@@ -78,5 +89,9 @@ public class StudentService {
 
     public void deleteFriend(String id, String friendId) {
         studMapper.deleteFriend(id,friendId);
+    }
+
+    public void updateViewer(String userId, String sid) {
+        studMapper.updateViewer(userId,sid);
     }
 }

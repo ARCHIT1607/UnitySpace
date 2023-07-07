@@ -77,7 +77,7 @@
 
     <select id="findById" parameterType="String"
             resultType="Student">
-        SELECT * from student where sid = #{id}
+        SELECT id,sid,email,fname,lname,password,loc,course,role,impressions,viewed_profile as "viewedProfile"  from student where sid = #{id}
     </select>
 
     <select id="findPostById" parameterType="Long"
@@ -120,6 +120,13 @@
         UPDATE
             student SET
             impressions = #{likeCount}
+        WHERE sid=#{userId}
+    </update>
+
+    <update id="updateViewer">
+        UPDATE
+            student SET
+            viewed_profile = #{sid}
         WHERE sid=#{userId}
     </update>
 

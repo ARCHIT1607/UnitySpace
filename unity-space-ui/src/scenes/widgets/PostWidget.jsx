@@ -105,6 +105,7 @@ const PostWidget = ({
     const data = response.data;
     console.log("data from getPosts ",data)
     dispatch(setPosts({ posts: data }));
+    setComment("");
   }
   
   const [open, setOpen] = useState(false);

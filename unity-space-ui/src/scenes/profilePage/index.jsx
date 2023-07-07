@@ -12,6 +12,7 @@ import UserWidget from "scenes/widgets/UserWidget";
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
   const { userId } = useParams();
+  const { sid } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
 
@@ -20,6 +21,7 @@ const ProfilePage = () => {
       "http://localhost:9000/user", {
         params:{
           userId:userId,
+          sid:sid
         },
         headers: {
           Authorization: "Bearer " + token.token,

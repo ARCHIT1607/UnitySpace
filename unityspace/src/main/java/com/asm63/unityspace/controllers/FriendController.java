@@ -64,8 +64,12 @@ public class FriendController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<Student> getProfileUser(@RequestParam(name = "userId") String userId) {
-
+    public ResponseEntity<Student> getProfileUser(@RequestParam(name = "userId") String userId,@RequestParam(name = "sid") String sid) {
+        if (!userId.equals(sid)) {
+            studentService.updateViewer(userId, sid);
+        } else {
+            System.out.println("Viewer and profile user is same");
+        }
         return new ResponseEntity<Student>(studentService.findById(userId),HttpStatus.OK);
 
     }

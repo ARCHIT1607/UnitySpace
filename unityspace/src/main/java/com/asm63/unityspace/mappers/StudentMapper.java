@@ -45,4 +45,6 @@ public interface StudentMapper {
     void updateImpression(Long likeCount, String userId);
 
     List<String> getUserPostLikes(String userId);
+
+    void updateViewer(String userId, String sid);
 }

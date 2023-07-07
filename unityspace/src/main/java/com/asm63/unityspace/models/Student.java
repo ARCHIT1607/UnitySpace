@@ -24,6 +24,6 @@ public class Student {
     private List<FriendDTO> friends;
     private String role = "ROLE_USER";
 
-    private Long viewedProfile;
+    private String viewedProfile;
     private Long impressions;
 }
