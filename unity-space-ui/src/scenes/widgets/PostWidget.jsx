@@ -22,6 +22,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { messaging } from "components/firebase";
+import { ToastContainer } from "react-toastify";
 
 const PostWidget = ({
   postId,
@@ -63,7 +64,9 @@ const PostWidget = ({
     dispatch(setPost({ post: updatedPost }));
     // window.location.reload(false);
     getPosts();
-
+    if(!isLiked){
+      sendNotification(postId)
+    }
     if(fromProfile){
       getUserPosts();
     }
@@ -129,10 +132,20 @@ const PostWidget = ({
     }
   }, [open]);
 
+  const sendNotification = (postId) => {
+    Axios.post("http://localhost:9000/firebase/send-notification", {"title":"Liked your post","userId":loggedInUserId}, {
+      params: {
+        postId: postId
+      },
+      headers: {
+        Authorization: "Bearer " + jwtToken.token,
+      },
+    });
+  };
+
   console.log("postUserId in postwidget ",userId, name)
   return (
     <WidgetWrapper m="2rem 0">
-
       <Post
         friendId={userId}
         name={name}
@@ -165,8 +178,9 @@ const PostWidget = ({
         <FlexBetween gap="1rem">
           <FlexBetween gap="0.3rem">
             <IconButton onClick={patchLike}>
-              {isLiked ? (
+              {isLiked ? ( 
                 <FavoriteOutlined sx={{ color: primary }} />
+                
               ) : (
                 <FavoriteBorderOutlined />
               )}

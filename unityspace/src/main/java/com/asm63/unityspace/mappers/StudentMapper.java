@@ -1,5 +1,6 @@
 package com.asm63.unityspace.mappers;
 
+import com.asm63.unityspace.models.CloudMessageDTO;
 import com.asm63.unityspace.models.Events;
 import com.asm63.unityspace.models.PostDTO;
 import com.asm63.unityspace.models.Student;
@@ -50,4 +51,8 @@ public interface StudentMapper {
     void updateViewer(String userId, String sid);
 
     ArrayList<Events> getEvents();
+
+    void addFirebaseToken(CloudMessageDTO message);
+
+    String getToken(String postUserId);
 }

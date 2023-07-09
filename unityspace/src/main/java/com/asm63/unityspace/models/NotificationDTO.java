@@ -10,8 +10,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageDTO {
-    private String content;
-    private String sender;
+public class NotificationDTO {
+    private String title;
+    private String body;
+    private String token;
 
+    private String userId;
 }

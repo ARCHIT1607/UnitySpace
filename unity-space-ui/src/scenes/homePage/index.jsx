@@ -6,10 +6,50 @@ import MyPostWidget from "scenes/widgets/MyPostWidget";
 import PostsWidget from "scenes/widgets/PostsWidget";
 import AdvertWidget from "scenes/widgets/AdvertWidget";
 import FriendListWidget from "scenes/widgets/FriendListWidget";
+import { useEffect } from "react";
+import { messaging } from "components/firebase";
+import { getToken, onMessage  } from "firebase/messaging";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const HomePage = () => {
+
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const { sid, picturePath } = useSelector((state) => state.user);
+
+  const addFirebaseToken = async (token) => {
+
+    const response = await fetch("http://localhost:9000/firebase/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({"userId":sid,"firebase_token":token}),
+  });
+ console.log(response.json());
+};
+
+  async function requestPermission (){
+    const permission = await Notification.requestPermission();
+      if(permission === "granted"){
+        const token = await getToken(messaging,{vapidKey:'BBCz-opcNloxx-lcHRMg5OT82peYLYgh7RGZlzHeWRhUH64GqDVh-0bwVLEKzqUQfUncsCrdjZdEpufJrdui1L0'})
+        console.log(token)
+        addFirebaseToken(token);
+      }else if(permission === "denied"){
+alert("You denied for the notification")
+      }
+
+      const unsubscribe = onMessage(messaging, (payload) => {
+        console.log('Message received', payload);
+        toast(`${payload.notification.body} ${payload.notification.title} `)
+      });
+      return () => {
+        unsubscribe();
+      };
+
+    }
+    useEffect(() => {
+      requestPermission()
+    }, [])
+
 console.log("user ",sid);
   return (
     <Box>

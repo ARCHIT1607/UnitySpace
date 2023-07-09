@@ -83,8 +83,7 @@ public class PostService {
     }
 
     public PostDTO getPost(Long id) {
-//        return studentMapper.findPostById(id);
-        return new PostDTO();
+        return studentMapper.findPostById(id);
     }
 
     public ArrayList<PostDTO> getPosts() {

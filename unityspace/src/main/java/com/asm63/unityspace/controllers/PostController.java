@@ -51,16 +51,11 @@ public class PostController {
 
         postService.patchLike(Long.parseLong(postId),userId);
         return new ResponseEntity<Object>(postService.getPosts(), HttpStatus.OK);
-//        return new ResponseEntity<Object>(postService.getPosts(), HttpStatus.OK);
-
     }
 
     @GetMapping("/getPosts")
     public ResponseEntity<Object> getPosts(Authentication authentication) {
-//        System.out.println("calling authentication.getName()"+authentication.getName());
-//        Student student = studentService.findByEmail(authentication.getName());
         return new ResponseEntity<Object>(postService.getPosts(), HttpStatus.OK);
-
     }
 
     @GetMapping("/delete/post")

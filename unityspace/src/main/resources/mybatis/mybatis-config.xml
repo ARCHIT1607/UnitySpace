@@ -12,6 +12,7 @@
         <typeAlias type="com.asm63.unityspace.models.FriendDTO" alias="Friend" />
         <typeAlias type="com.asm63.unityspace.models.PostDTO" alias="Post" />
         <typeAlias type="com.asm63.unityspace.models.Events" alias="Event" />
+        <typeAlias type="com.asm63.unityspace.models.CloudMessageDTO" alias="CloudMessage" />
     </typeAliases>
     <typeHandlers>
         <typeHandler handler="com.asm63.unityspace.mappers.StringArrayListTypeHandler" />

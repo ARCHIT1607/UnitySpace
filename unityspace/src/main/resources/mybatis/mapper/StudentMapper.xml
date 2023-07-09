@@ -179,4 +179,22 @@
         SELECT id, event_name as "eventName", created_date as "CreatedDate", event_date as "eventDate", is_active as "active" from event where is_active = TRUE
     </select>
 
+    <insert id="addFirebaseToken" parameterType="CloudMessage" >
+        <selectKey keyProperty="id" resultType="Long" order="BEFORE">
+            select
+            nextval('FIREBASE_TOKEN_SEQ')
+        </selectKey>
+        INSERT INTO
+        fb_cloud_message
+        (id,firebase_token,user_id)
+        VALUES(#{id},#{firebase_token},#{userId})
+    </insert>
+
+    <select id="getToken"
+            resultType="String">
+        SELECT firebase_token from fb_cloud_message where user_id = #{postUserId}
+    </select>
+
+
+
 </mapper>
