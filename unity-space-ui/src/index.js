@@ -39,3 +39,14 @@ root.render(
       </PersistGate>
     </Provider>
 );
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker
+    .register(`${process.env.PUBLIC_URL}/firebase-messaging-sw.js`)
+    .then((registration) => {
+      console.log('Service Worker registration successful:', registration);
+    })
+    .catch((err) => {
+      console.log('Service Worker registration failed:', err);
+    });
+}

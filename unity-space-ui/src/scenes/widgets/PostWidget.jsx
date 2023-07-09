@@ -15,13 +15,13 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { setPost, setPosts } from "state";
 
-
 import Button from '@mui/material/Button';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
+import { messaging } from "components/firebase";
 
 const PostWidget = ({
   postId,
@@ -38,7 +38,7 @@ const PostWidget = ({
 }) => {
   const [comment, setComment] = useState("");
   const dispatch = useDispatch();
-  const token = useSelector((state) => state.token);
+  const jwtToken = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user.sid);
   const isLiked = likes?Boolean(likes.includes(loggedInUserId)):false;
   // const likeCount = likes?Object.keys(likes).length:0;
@@ -56,7 +56,7 @@ const PostWidget = ({
         userId:loggedInUserId
       },
       headers: {
-        Authorization: "Bearer " + token.token,
+        Authorization: "Bearer " + jwtToken.token,
       },
     });
     const updatedPost = await response.data;
@@ -73,7 +73,7 @@ const PostWidget = ({
     const response = await Axios.get(
       `http://localhost:9000/posts/${userId}/posts`,
       {
-        headers: { Authorization: "Bearer " + token.token},
+        headers: { Authorization: "Bearer " + jwtToken.token},
       }
     );
     const data = await response.data;
@@ -83,7 +83,7 @@ const PostWidget = ({
   const getPosts = async () => {
     const response = await Axios.get("http://localhost:9000/getPosts",{
       headers: {
-        Authorization: "Bearer " + token.token,
+        Authorization: "Bearer " + jwtToken.token,
       },
     });
     const data = response.data;
@@ -99,7 +99,7 @@ const PostWidget = ({
         postId: postId
       },
       headers: {
-        Authorization: "Bearer " + token.token,
+        Authorization: "Bearer " + jwtToken.token,
       },
     });
     const data = response.data;
@@ -129,10 +129,10 @@ const PostWidget = ({
     }
   }, [open]);
 
-
   console.log("postUserId in postwidget ",userId, name)
   return (
     <WidgetWrapper m="2rem 0">
+
       <Post
         friendId={userId}
         name={name}

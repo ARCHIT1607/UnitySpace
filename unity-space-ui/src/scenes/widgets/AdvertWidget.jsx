@@ -6,7 +6,7 @@ import WidgetWrapper from "components/WidgetWrapper";
 import { useEffect } from "react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { FixedSizeList } from "react-window";
+
 
 const AdvertWidget = () => {
   const { palette } = useTheme();
@@ -16,6 +16,7 @@ const AdvertWidget = () => {
   const token = useSelector((state) => state.token);
   const [event, setEvent] = useState()
   const [selectedDate, setSelectedDate] = useState(null);
+
 
   const getEvents = async () => {
     const response = await Axios.get(
@@ -31,7 +32,6 @@ const AdvertWidget = () => {
   useEffect(() => {
     getEvents()
   }, [])
-  
 
   return (
     <WidgetWrapper>
@@ -39,7 +39,8 @@ const AdvertWidget = () => {
         <Typography color={dark} variant="h5" fontWeight="500">
           Events
         </Typography>
-        {/* <Typography color={medium}>View Events</Typography> */}
+        <Typography color={medium}>
+          <a href="">View Events</a> </Typography>
       </FlexBetween>
       {/* <img
         width="100%"
@@ -60,6 +61,7 @@ const AdvertWidget = () => {
         Your pathway to stunning and immaculate beauty and made sure your skin
         is exfoliating skin and shining like light.
       </Typography> */}
+      
     </WidgetWrapper>
   );
 };

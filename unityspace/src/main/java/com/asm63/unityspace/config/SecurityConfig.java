@@ -36,7 +36,7 @@ public class SecurityConfig {
 
         http.csrf(csrf -> csrf.disable()).cors(cors -> cors.disable())
                 .authorizeHttpRequests(requests -> requests.requestMatchers("/auth/**").permitAll().requestMatchers("/post/image/**").permitAll()
-                        .requestMatchers("/video/**").permitAll()
+                        .requestMatchers("/video/**").permitAll().requestMatchers("/chat/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                 .anyRequest().authenticated())
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
