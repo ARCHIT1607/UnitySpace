@@ -1,19 +1,23 @@
 import { IconButton, useTheme } from "@mui/material";
 import ChatMessages from "components/Messages";
 import WidgetWrapper from "components/WidgetWrapper";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Paper from "@mui/material/Paper";
 import InputBase from "@mui/material/InputBase";
 import { Send } from "@mui/icons-material";
-import { Timestamp, arrayUnion, collection, doc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
+import { Timestamp, arrayUnion, collection, doc, getDocs, onSnapshot, query, setDoc, updateDoc, where } from "firebase/firestore";
 import { db } from "components/firebase";
 import { setMessages } from "state";
 
 function Chat() {
+  const [data, setData] = useState([
+    { id: ''},
+  ]);
   const { palette } = useTheme();
   const main = palette.neutral.main;
-  const messages = useSelector((state) => state.messages);
+  let messages = useSelector((state) => state.messages);
+  messages = messages.length!=0?messages:data;
   const { sid,fname } = useSelector((state) => state.user);
   const [inputMessage, setInputMessage] = useState("");
   const dispatch = useDispatch();
@@ -56,8 +60,20 @@ function Chat() {
     });
     console.log("Message added to the array successfully!");
     setInputMessage("")
-    getChats()
+    getChats();
   };
+
+  useEffect(() => {
+    if(messages[0].id){
+      const documentRef = doc(db, 'chats', messages[0].id);
+    const unsubscribe = onSnapshot(documentRef, (doc) => {
+      console.log("something got added")
+      getChats()
+    });
+    return () => unsubscribe();
+    }
+  }, [messages[0].id]);
+  
 
   return (
     <WidgetWrapper>

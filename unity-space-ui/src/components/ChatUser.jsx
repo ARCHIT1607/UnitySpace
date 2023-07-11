@@ -33,29 +33,7 @@ const ChatUser = ({ friendId, name, subtitle, userPicturePath }) => {
   const reverseId = friendId + ":" + sid;
   
   const getChats = async ()=>{
-    // const querySnapshot = await getDocs(collection(db, 'chats'));
-    // let document = null;
-    // querySnapshot.docs.map((doc) => {document = doc.data().id })
-    // console.log("exists ", document.includes(id) || document.includes(reverseId));
-    // if (document.includes(id) || document.includes(reverseId)) {
-    //   console.log("inside  documentExists false");
-    //   const chatRef = doc(db, "chats", id);
-    //   await setDoc(chatRef, {
-    //     id:id,
-    //     messages: [],
-    //   });
-    // } else {
-    //   console.log("inside  documentExists true");
-    //   const q = query(
-    //     collection(db, "chats"),
-    //     where("id", "in", [id, reverseId])
-    //   );
-    //   const querySnapshot = await getDocs(q);
-    //   const messages = querySnapshot.docs.map((doc) => doc.data());
-    //   console.log("messages ", messages);
-    //   dispatch(setMessages({ messages: messages }));
-    // }
-    
+
     const q = query(
       collection(db, "chats"),
       where("id", "in", [id, reverseId])
@@ -64,8 +42,8 @@ const ChatUser = ({ friendId, name, subtitle, userPicturePath }) => {
     const documents = querySnapshot.docs.map((doc) => doc.data());
     setChatDocuments(documents);
     console.log("id reverseId",id, reverseId);
-    console.log("setChatDocuments in chatUser", documents);
-    if(!chatDocuments){
+    console.log("setChatDocuments in chatUser", documents,documents.length);
+    if(documents.length==0){
       console.log("inside  chatDocuments false");
       const chatRef = doc(db, "chats", id);
       await setDoc(chatRef, {
@@ -74,7 +52,7 @@ const ChatUser = ({ friendId, name, subtitle, userPicturePath }) => {
       });
     }else {
         console.log("inside  chatDocuments true");
-        dispatch(setMessages({ messages: chatDocuments }));
+        dispatch(setMessages({ messages: documents }));
   }
 }
 
