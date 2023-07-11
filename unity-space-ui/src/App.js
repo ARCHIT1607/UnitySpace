@@ -10,6 +10,7 @@ import { themeSettings } from "./theme";
 
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import ChatHomePage from "scenes/chatPage";
 function App() {
 
   const mode = useSelector((state) => state.mode);
@@ -28,13 +29,17 @@ function App() {
             <Route path="/" element={<LoginPage />} />
             <Route
               path="/home"
-              // element={isAuth ? <HomePage /> : <Navigate to="/" />}
-              element={<HomePage />}
+              element={isAuth ? <HomePage /> : <Navigate to="/" />}
             />
             <Route
               path="/profile/:userId"
               element={isAuth ? <ProfilePage /> : <Navigate to="/" />}
             />
+            <Route
+              path="/chat"
+              element={isAuth ? <ChatHomePage /> : <Navigate to="/" />}
+            />
+  
           </Routes>
         </ThemeProvider>
       </BrowserRouter>

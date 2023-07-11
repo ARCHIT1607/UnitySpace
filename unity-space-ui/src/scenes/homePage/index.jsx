@@ -12,6 +12,7 @@ import { getToken, onMessage  } from "firebase/messaging";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
+
 const HomePage = () => {
 
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
@@ -24,7 +25,7 @@ const HomePage = () => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({"userId":sid,"firebase_token":token}),
   });
- console.log(response.json());
+ console.log(response);
 };
 
   async function requestPermission (){
@@ -46,9 +47,9 @@ alert("You denied for the notification")
       };
 
     }
-    useEffect(() => {
+    useEffect( () => {
       requestPermission()
-    }, [])
+    },[] )
 
 console.log("user ",sid);
   return (
