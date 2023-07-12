@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper
 public interface StudentMapper {
     public Student findByEmail(String email);
-    public Student register(Student student);
+    public void register(Student student);
 
     public Student findByFriendId(String friendId);
 
@@ -55,4 +55,6 @@ public interface StudentMapper {
     void addFirebaseToken(CloudMessageDTO message);
 
     String getToken(String postUserId);
+
+    Student getUserResource(String picturePath);
 }

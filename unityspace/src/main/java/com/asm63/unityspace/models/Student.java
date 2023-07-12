@@ -1,5 +1,9 @@
 package com.asm63.unityspace.models;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import lombok.*;
 
 import java.util.List;
@@ -11,7 +15,9 @@ import java.util.List;
 @ToString
 public class Student {
 
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "STUDENT_SEQ")
+    @SequenceGenerator(initialValue = 1, name = "STUDENT_SEQ", sequenceName = "STUDENT_SEQ", allocationSize = 1)
     private Long id;
     private String sid;
     private String fname;
@@ -20,7 +26,8 @@ public class Student {
     private String password;
     private String loc;
     private String course;
-
+    private byte[] profilePic;
+    private String pictureName;
     private List<FriendDTO> friends;
     private String role = "ROLE_USER";
 

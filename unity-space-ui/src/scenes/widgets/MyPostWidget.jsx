@@ -27,7 +27,7 @@ import { setPosts } from "state";
 import  Axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const MyPostWidget = ({ picturePath , fromProfile}) => {
+const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isImage, setIsImage] = useState(false);
@@ -52,7 +52,8 @@ const MyPostWidget = ({ picturePath , fromProfile}) => {
     const response = await Axios.post("http://localhost:9000/posts", formData, {
       params: {
         description: description,
-        userId:sid
+        userId:sid,
+        userPicturePath:userPicturePath
       },
       headers: {
         Authorization: "Bearer " + token.token,

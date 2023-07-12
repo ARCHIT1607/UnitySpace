@@ -35,7 +35,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http.csrf(csrf -> csrf.disable()).cors(cors -> cors.disable())
-                .authorizeHttpRequests(requests -> requests.requestMatchers("/auth/**").permitAll().requestMatchers("/post/image/**").permitAll()
+                .authorizeHttpRequests(requests -> requests.requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/post/image/**").permitAll()
+                        .requestMatchers("/user/image/**").permitAll()
                         .requestMatchers("/video/**").permitAll().requestMatchers("/firebase/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                 .anyRequest().authenticated())

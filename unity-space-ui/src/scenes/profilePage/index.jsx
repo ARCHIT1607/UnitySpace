@@ -27,8 +27,9 @@ const ProfilePage = () => {
           Authorization: "Bearer " + token.token,
         },
       });
-    const data = await response;
+    const data = response.data;
     setUser(data);
+    console.log("picturePath in ProfilePage ",user)
   };
 
   useEffect(() => {
@@ -48,7 +49,7 @@ const ProfilePage = () => {
         justifyContent="center"
       >
         <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
-          <UserWidget userId={userId} picturePath={user.picturePath} />
+          <UserWidget userId={userId} picturePath={user.pictureName} />
           <Box m="2rem 0" />
           <FriendListWidget userId={userId} />
         </Box>
@@ -56,7 +57,7 @@ const ProfilePage = () => {
           flexBasis={isNonMobileScreens ? "42%" : undefined}
           mt={isNonMobileScreens ? undefined : "2rem"}
         >
-          <MyPostWidget picturePath={user.picturePath} fromProfile ={true} />
+          <MyPostWidget picturePath={user.pictureName} fromProfile ={true} />
           <Box m="2rem 0" />
           <PostsWidget userId={userId} isProfile fromProfile={true}/>
         </Box>

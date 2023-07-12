@@ -14,7 +14,8 @@
         <result column="loc" property="loc" />
         <result column="course" property="course" />
         <result column="role" property="role" />
-
+        <result column="profile_pic" property="profilePic" />
+        <result column="picture_name" property="pictureName" />
     </resultMap>
 
     <resultMap id="FriendResultMap" type="Friend">
@@ -37,7 +38,7 @@
 
     <select id="findByEmail" parameterType="String"
             resultMap="StudentResultMap">
-        select * from student where email =#{email}
+        select id,sid,email,fname,lname,password,loc,course,role,picture_name from student where email =#{email}
     </select>
 
     <select id="findByFriendId" parameterType="String"
@@ -46,11 +47,15 @@
     </select>
 
     <insert id="register" parameterType="Student">
+        <selectKey keyProperty="id" resultType="Long" order="BEFORE">
+            select
+            nextval('STUDENT_SEQ')
+        </selectKey>
         INSERT INTO
         student
-        (id,sid,email,fname,lname,password,loc,course,role)
-        VALUES(#{id},#{sid},#{fname},#{lname},
-        #{email},#{password},#{loc},#{course},#{role})
+        (id,sid,email,fname,lname,password,loc,course,role,profile_pic,picture_name)
+        VALUES(#{id},#{sid},#{email},#{fname},#{lname},
+        #{password},#{loc},#{course},#{role},#{profilePic},#{pictureName})
     </insert>
 
     <insert id="addFriend" parameterType="Friend" >
@@ -66,7 +71,7 @@
 
     <select id="getFriends"
             resultType="HashMap" parameterType="String">
-        SELECT friend_list.id, student.course, student.fname, student.lname,student.sid
+        SELECT friend_list.id, student.course, student.fname, student.lname,student.sid, student.picture_name
         FROM friend_list
                  INNER JOIN student ON friend_list.friend_id = student.sid WHERE friend_list.student_id =#{userId}
     </select>
@@ -77,7 +82,7 @@
 
     <select id="findById" parameterType="String"
             resultType="Student">
-        SELECT id,sid,email,fname,lname,password,loc,course,role,impressions,viewed_profile as "viewedProfile"  from student where sid = #{id}
+        SELECT id,sid,email,fname,lname,password,loc,course,role,impressions,viewed_profile as "viewedProfile", picture_name as "pictureName"   from student where sid = #{id}
     </select>
 
     <select id="findPostById" parameterType="Long"
@@ -92,6 +97,10 @@
 
     <select id="getResource" parameterType="String" resultType="Post">
         SELECT picture from post where picture_path =#{picturePath}
+    </select>
+
+    <select id="getUserResource" parameterType="String" resultType="Student">
+        SELECT profile_pic as "profilePic" from student where picture_name =#{picturePath}
     </select>
 
     <select id="getUserPosts" parameterType="String"

@@ -9,8 +9,11 @@ import com.asm63.unityspace.security.AuthenticationResponse;
 import com.asm63.unityspace.security.JwtHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 @Service
@@ -49,16 +52,24 @@ public class StudentService {
 
     public void addFriend(String studentId, String friendId){
         studMapper.addFriend(studentId, friendId);
+        studMapper.addFriend(friendId, studentId);
     }
 
-    public AuthenticationResponse register(Student student) throws IOException {
-        Student result = studMapper.register(student);
+    public AuthenticationResponse register(Student student, MultipartFile file) throws IOException {
+        if (file!=null && !file.isEmpty()){
+            String fileName = file.getOriginalFilename();
+            byte[] data = file.getBytes();
+            student.setProfilePic(data);
+            student.setPictureName(fileName);
+        }
+        studMapper.register(student);
         var jwtToken = jwtService.generateToken(student);
 //        Picture img = new Picture();
 //        img.setImage(ImageUtility.compressImage(student.getBytes()));
 //        img.setName(file.getOriginalFilename());
 //        img.setType(file.getContentType());
 //        imageRepository.save(img);
+
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 
@@ -98,5 +109,12 @@ public class StudentService {
 
     public ArrayList<Events> getEvents() {
        return studMapper.getEvents();
+    }
+
+    public InputStream getResource(String picturePath) {
+        System.out.println("picturePath "+picturePath);
+        Student stu = studMapper.getUserResource(picturePath);
+        System.out.println("student "+stu);
+        return new ByteArrayInputStream(stu.getProfilePic());
     }
 }

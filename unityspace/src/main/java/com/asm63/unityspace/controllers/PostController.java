@@ -89,11 +89,13 @@ public class PostController {
     @PostMapping(value = "/posts")
     @Transactional
     public ResponseEntity<Object> createPost(@RequestParam("description") String description,@RequestParam("userId") String userId,
+                                             @RequestParam("userPicturePath") String userPicturePath,
                                              @RequestParam(value = "picture",required = false) MultipartFile picture) throws Exception {
         try {
             PostDTO post = new PostDTO();
             post.setDescription(description);
             post.setPostUserId(userId);
+            post.setUserPicturePath(userPicturePath);
             Student student = studentService.findById(userId);
 
             post.setFirstname(student.getFname());

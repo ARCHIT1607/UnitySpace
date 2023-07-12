@@ -18,4 +18,6 @@ public class FriendDTO {
 
     private String friendId;
 
+    private String pictureName;
+
 }

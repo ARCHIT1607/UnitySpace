@@ -1,17 +1,19 @@
 package com.asm63.unityspace.controllers;
 
-import com.asm63.unityspace.models.LoginDTO;
 import com.asm63.unityspace.models.Student;
 import com.asm63.unityspace.services.StudentService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.StreamUtils;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 
 @RestController
@@ -23,16 +25,28 @@ public class AuthController {
     @Autowired
     PasswordEncoder passwordEncode;
     @PostMapping(value = "/auth/register")
-    public ResponseEntity<Object> register(@RequestBody Student student) throws Exception {
+    public ResponseEntity<Object> register(@RequestParam("fname") String fname,@RequestParam("lname") String lname,
+                                           @RequestParam("sid") String sid,@RequestParam("email") String email,
+                                           @RequestParam("password") String password,@RequestParam("loc") String loc,
+                                           @RequestParam("course") String course,
+                                           @RequestParam(value = "picture",required = false) MultipartFile picture) throws Exception {
         try {
+            Student student = new Student();
+            student.setFname(fname);
+            student.setLname(lname);
+            student.setSid(sid);
+            student.setEmail(email);
+            student.setPassword(password);
+            student.setLoc(loc);
+            student.setCourse(course);
             Student user = studService.findByEmail(student.getEmail());
-
+            System.out.println("picture" +picture);
             if (user != null && user.getEmail().toUpperCase().equals(student.getEmail().toUpperCase())) {
                 throw new Exception("user already exists");
             }
             student.setPassword(passwordEncode.encode(student.getPassword()));
             System.out.println("Student "+student);
-            return new ResponseEntity<Object>(studService.register(student), HttpStatus.OK);
+            return new ResponseEntity<Object>(studService.register(student,picture), HttpStatus.OK);
         } catch (Exception e) {
             HashMap<Object, Object> map = new HashMap<>();
             if(e.getMessage().equals("user already exists")) {
@@ -47,15 +61,14 @@ public class AuthController {
     }
 
     @PostMapping("/auth/login")
-//    public ResponseEntity<Object> getUserDetails(@RequestParam(name = "email") String email,
-//                                                 @RequestParam(name = "password") String password) {
-        public ResponseEntity<Object> login(@RequestBody LoginDTO loggedUser) {
-        Student user = studService.findByEmail(loggedUser.getEmail());
+    public ResponseEntity<Object> getUserDetails(@RequestParam(name = "email") String email,
+                                                 @RequestParam(name = "password") String password) {
+        Student user = studService.findByEmail(email);
         System.out.println("Student " + user);
         try {
             if (user == null) {
                 throw new Exception("Student doesn't Exist");
-            } else if (passwordEncode.matches(loggedUser.getPassword(), user.getPassword())) {
+            } else if (passwordEncode.matches(password, user.getPassword())) {
                 System.out.println("pass is correct");
 
                 return new ResponseEntity<Object>(studService.authenticate(user), HttpStatus.OK);
@@ -76,5 +89,13 @@ public class AuthController {
             }
             return new ResponseEntity<Object>(map, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @GetMapping(value = "/user/image/{picturePath}",produces = MediaType.IMAGE_JPEG_VALUE)
+    public void downloadImage(@PathVariable("picturePath") String picturePath, HttpServletResponse response) throws IOException {
+        InputStream resource = studService.getResource(picturePath);
+        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+        StreamUtils.copy(resource,response.getOutputStream());
+
     }
 }

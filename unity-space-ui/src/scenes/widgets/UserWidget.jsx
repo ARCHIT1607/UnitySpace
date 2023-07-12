@@ -22,7 +22,7 @@ const UserWidget = ({ userId, picturePath }) => {
   const dark = palette.neutral.dark;
   const medium = palette.neutral.medium;
   const main = palette.neutral.main;
-
+  console.log("picturePath in UserWidget ",picturePath)
   const getUser = async () => {
     const response = await Axios.get("http://localhost:9000/getUser", {
       params:{
@@ -65,7 +65,7 @@ const UserWidget = ({ userId, picturePath }) => {
         onClick={() => navigate(`/profile/${userId}`)}
       >
         <FlexBetween gap="1rem">
-          {/* <UserImage image={picturePath!=null?picturePath : ""} /> */}
+          <UserImage image={picturePath!=null?picturePath : ""} />
           <Box>
             <Typography
               variant="h4"
@@ -92,7 +92,7 @@ const UserWidget = ({ userId, picturePath }) => {
       <Box p="1rem 0">
         <Box display="flex" alignItems="center" gap="1rem" mb="0.5rem">
           <LocationOnOutlined fontSize="large" sx={{ color: main }} />
-          <Typography color={medium}>{user.location}</Typography>
+          <Typography color={medium}>{user.loc}</Typography>
         </Box>
         <Box display="flex" alignItems="center" gap="1rem">
           <WorkOutlineOutlined fontSize="large" sx={{ color: main }} />

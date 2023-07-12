@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setFriends } from "state";
 import Axios from "axios";
 
-const FriendListWidget = ({ userId }) => {
+const FriendListWidget = ({ userId,userPicturePath }) => {
   const dispatch = useDispatch();
   const { palette } = useTheme();
   const token = useSelector((state) => state.token);
@@ -54,7 +54,7 @@ const FriendListWidget = ({ userId }) => {
             friendId={friend.sid}
             name={`${friend.fname} ${friend.lname}`}
             subtitle={friend.course}
-            // userPicturePath={friend.picturePath}
+            userPicturePath={friend.picture_name}
           />
         ))}
       </Box>

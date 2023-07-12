@@ -5,11 +5,11 @@ import PostWidget from "./PostWidget";
 import  Axios from "axios";
 import {Buffer} from 'buffer';
 
-const PostsWidget = ({ userId, isProfile = false ,fromProfile}) => {
+const PostsWidget = ({ userId, isProfile = false ,fromProfile, userPicturePath}) => {
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.posts);
   const token = useSelector((state) => state.token);
-
+  console.log("user pic from home page in postsWidget ",userPicturePath)
   const getPosts = async () => {
     const response = await Axios.get("http://localhost:9000/getPosts",{
       headers: {

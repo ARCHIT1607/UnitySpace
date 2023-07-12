@@ -6,13 +6,17 @@ import {
   useMediaQuery,
   Typography,
   useTheme,
+  IconButton,
 } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLogin } from "state";
-import { Axios } from "axios";
+import Dropzone from "react-dropzone";
+import FlexBetween from "components/FlexBetween";
+import { EditOutlined, DeleteOutlined } from "@mui/icons-material";
+import Axios from "axios";
 
 const registerSchema = yup.object().shape({
   fname: yup.string(),
@@ -25,8 +29,8 @@ const registerSchema = yup.object().shape({
 });
 
 const loginSchema = yup.object().shape({
-  email: yup.string().email("invalid email").required("required"),
-  password: yup.string().required("required"),
+  email: yup.string().email("invalid email"),
+  password: yup.string(),
 });
 
 const initialValuesRegister = {
@@ -36,7 +40,8 @@ const initialValuesRegister = {
   password: "",
   loc: "",
   course: "",
-  picId: "",
+  picture_name: "",
+  picture: "",
 };
 
 const initialValuesLogin = {
@@ -52,51 +57,87 @@ const Form = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const isLogin = pageType === "login";
   const isRegister = pageType === "register";
+  const [image, setImage] = useState(null);
+  const [fname, setFname] = useState("");
+  const [lname, setLname] = useState("");
+  const [sid, setSid] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loc, setLoc] = useState("");
+  const [course, setCourse] = useState("");
 
   const register = async (values, onSubmitProps) => {
     // this allows us to send form info with image
     const formData = new FormData();
-    for (let value in values) {
-      formData.append(value, values[value]);
+    // for (let value in values) {
+    //   formData.append(value, values[value]);
+    // }
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
     }
-    const savedUserResponse = await fetch(
-      "http://localhost:9000/auth/register" ,{
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-    const savedUser = await savedUserResponse.json();
+    if (image) {
+      formData.append("picture", image);
+      formData.append("pictureName", image.name);
+    }
+    const savedUserResponse = await Axios.post(
+      "http://localhost:9000/auth/register",
+      formData,
+      {
+        params: {
+          fname: fname,
+          lname: lname,
+          sid: sid,
+          email: email,
+          password: password,
+          loc: loc,
+          course: course
+        },
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    const savedUser = savedUserResponse;
     onSubmitProps.resetForm();
-
+    console.log("in savedUser", savedUser)
     if (savedUser) {
+      console.log("in savedUser")
+      setEmail("");
+      setPassword("");
       setPageType("login");
     }
+
   };
 
   const login = async (values, onSubmitProps) => {
-
-      const loggedInResponse = await fetch("http://localhost:9000/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
-    });
-    const loggedIn = await loggedInResponse.json();
-    onSubmitProps.resetForm();
-    if (!loggedIn.errorMsg) {
-      dispatch(
-        setLogin({
-          user: loggedIn.user,
-          token: loggedIn.token,
-        })
+    console.log("login");
+    const loggedIn = "";
+    try {
+      const loggedInResponse = await Axios.post(
+        "http://localhost:9000/auth/login",{},
+        {
+          params: {
+            email: email,
+            password: password,
+          },
+        }
       );
-      navigate("/home");
-    }
-     else{
       
-      console.error("Something bad happened");
-      console.error(loggedIn.errorMsg);
-      navigate("/")
-    }
+      const loggedIn = loggedInResponse.data;
+      console.log("loggedIn ",loggedInResponse);
+      onSubmitProps.resetForm();
+        dispatch(
+          setLogin({
+            user: loggedIn.user,
+            token: loggedIn.token,
+          })
+        );
+        navigate("/home");
+    } catch (error) {
+        console.error("Something bad happened");
+        console.error(loggedIn.errorMsg);
+        navigate("/");
+      }
   };
 
   const handleFormSubmit = async (values, onSubmitProps) => {
@@ -115,9 +156,7 @@ const Form = () => {
         errors,
         touched,
         handleBlur,
-        handleChange,
         handleSubmit,
-        setFieldValue,
         resetForm,
       }) => (
         <form onSubmit={handleSubmit}>
@@ -134,19 +173,17 @@ const Form = () => {
                 <TextField
                   label="First Name"
                   onBlur={handleBlur}
-                  onChange={handleChange}
+                  onChange={(e) => setFname(e.target.value)}
                   value={values.fname}
                   name="fname"
-                  error={
-                    Boolean(touched.fname) && Boolean(errors.fname)
-                  }
+                  error={Boolean(touched.fname) && Boolean(errors.fname)}
                   helperText={touched.fname && errors.fname}
                   sx={{ gridColumn: "span 2" }}
                 />
                 <TextField
                   label="Last Name"
                   onBlur={handleBlur}
-                  onChange={handleChange}
+                  onChange={(e) => setLname(e.target.value)}
                   value={values.lname}
                   name="lname"
                   error={Boolean(touched.lname) && Boolean(errors.lname)}
@@ -156,7 +193,7 @@ const Form = () => {
                 <TextField
                   label="Location"
                   onBlur={handleBlur}
-                  onChange={handleChange}
+                  onChange={(e) => setLoc(e.target.value)}
                   value={values.loc}
                   name="loc"
                   error={Boolean(touched.loc) && Boolean(errors.loc)}
@@ -166,35 +203,78 @@ const Form = () => {
                 <TextField
                   label="Course"
                   onBlur={handleBlur}
-                  onChange={handleChange}
+                  onChange={(e) => setCourse(e.target.value)}
                   value={values.course}
                   name="course"
-                  error={
-                    Boolean(touched.course) && Boolean(errors.course)
-                  }
+                  error={Boolean(touched.course) && Boolean(errors.course)}
                   helperText={touched.course && errors.course}
                   sx={{ gridColumn: "span 2" }}
                 />
-                 <TextField
+                <TextField
                   label="Student ID"
                   onBlur={handleBlur}
-                  onChange={handleChange}
+                  onChange={(e) => setSid(e.target.value)}
                   value={values.sid}
                   name="sid"
-                  error={
-                    Boolean(touched.sid) && Boolean(errors.sid)
-                  }
+                  error={Boolean(touched.sid) && Boolean(errors.sid)}
                   helperText={touched.sid && errors.sid}
                   sx={{ gridColumn: "span 2" }}
                 />
+                <Box
+                  gridColumn="span 4"
+                  border={`1px solid ${palette.neutral.medium}`}
+                  borderRadius="5px"
+                  p="1rem"
+                >
+                  {
+                    <Dropzone
+                      acceptedFiles=".jpg,.jpeg,.png"
+                      multiple={false}
+                      onDrop={(acceptedFiles) => {
+                        console.log("acceptedFiles[0])", acceptedFiles[0]);
+                        setImage(acceptedFiles[0]);
+                      }}
+                    >
+                      {({ getRootProps, getInputProps }) => (
+                        <FlexBetween>
+                          <Box
+                            {...getRootProps()}
+                            border={`2px dashed ${palette.primary.main}`}
+                            p="1rem"
+                            width="100%"
+                            sx={{ "&:hover": { cursor: "pointer" } }}
+                          >
+                            <input {...getInputProps()} />
+                            {!image ? (
+                              <p>Add Image Here</p>
+                            ) : (
+                              <FlexBetween>
+                                <Typography>{image.name}</Typography>
+                                <EditOutlined />
+                              </FlexBetween>
+                            )}
+                          </Box>
+                          {image && (
+                            <IconButton
+                              onClick={() => setImage(null)}
+                              sx={{ width: "15%" }}
+                            >
+                              <DeleteOutlined />
+                            </IconButton>
+                          )}
+                        </FlexBetween>
+                      )}
+                    </Dropzone>
+                  }
+                </Box>
               </>
             )}
-
             <TextField
               label="Email"
               onBlur={handleBlur}
-              onChange={handleChange}
-              value={values.email}
+              onChange={(e) => {
+                setEmail(e.target.value)}}
+              value={email}
               name="email"
               error={Boolean(touched.email) && Boolean(errors.email)}
               helperText={touched.email && errors.email}
@@ -204,8 +284,8 @@ const Form = () => {
               label="Password"
               type="password"
               onBlur={handleBlur}
-              onChange={handleChange}
-              value={values.password}
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
               name="password"
               error={Boolean(touched.password) && Boolean(errors.password)}
               helperText={touched.password && errors.password}
@@ -231,7 +311,7 @@ const Form = () => {
             <Typography
               onClick={() => {
                 setPageType(isLogin ? "register" : "login");
-                console.log("pagetType ",pageType)
+                console.log("pagetType ", pageType);
                 resetForm();
               }}
               sx={{

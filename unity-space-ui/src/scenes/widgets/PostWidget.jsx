@@ -44,7 +44,7 @@ const PostWidget = ({
   const isLiked = likes?Boolean(likes.includes(loggedInUserId)):false;
   // const likeCount = likes?Object.keys(likes).length:0;
   const likeCount = likes?likes.split(",").length:0;
-
+console.log("user pic from home page ",userPicturePath)
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const primary = palette.primary.main;
