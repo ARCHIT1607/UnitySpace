@@ -17,7 +17,7 @@ import {
 } from "firebase/firestore";
 import { useState } from "react";
 import { useEffect } from "react";
-import { setMessages } from "state";
+import { setCurrentChat, setMessages } from "state";
 
 const ChatUser = ({ friendId, name, subtitle, userPicturePath }) => {
   const dispatch = useDispatch();
@@ -31,7 +31,9 @@ const ChatUser = ({ friendId, name, subtitle, userPicturePath }) => {
 
   const id = sid + ":" + friendId;
   const reverseId = friendId + ":" + sid;
-  
+  const currentChat = useSelector((state) => state.currentChat);
+
+
   const getChats = async ()=>{
 
     const q = query(
@@ -79,17 +81,19 @@ const ChatUser = ({ friendId, name, subtitle, userPicturePath }) => {
       );
   
     }
+    let currentFriend = {"friendId":friendId,"name":name,"profilePic":userPicturePath,"course":subtitle}
+    dispatch(setCurrentChat({ currentChat: currentFriend }));
     getChats()
     
   };
 
   useEffect(() => {
     getChats()
-  }, [])
+  }, [currentChat])
   
 
   return (
-    <FlexBetween>
+    <FlexBetween style={{justifyContent:"center"}} gap="1rem">
       <UserImage image={userPicturePath} size="55px" />
       <Box onClick={createUserChatId}>
         <Typography

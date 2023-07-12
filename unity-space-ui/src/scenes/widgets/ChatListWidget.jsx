@@ -6,7 +6,7 @@ import { setFriends } from "state";
 import Axios from "axios";
 import ChatUser from "components/ChatUser";
 
-const ChatListWidget = ({ userId }) => {
+const ChatListWidget = ({ userId,userPicturePath }) => {
   const dispatch = useDispatch();
   const { palette } = useTheme();
   const token = useSelector((state) => state.token);
@@ -54,7 +54,7 @@ const ChatListWidget = ({ userId }) => {
             friendId={friend.sid}
             name={`${friend.fname} ${friend.lname}`}
             subtitle={friend.course}
-            // userPicturePath={friend.picturePath}
+            userPicturePath={friend.picture_name}
             
           />
         ))}

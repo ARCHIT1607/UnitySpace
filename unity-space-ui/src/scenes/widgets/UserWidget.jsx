@@ -4,6 +4,8 @@ import {
   LocationOnOutlined,
   WorkOutlineOutlined,
 } from "@mui/icons-material";
+import VideoChatIcon from '@mui/icons-material/VideoChat';
+import EmailIcon from '@mui/icons-material/Email';
 import { Box, Typography, Divider, useTheme, Button } from "@mui/material";
 import UserImage from "components/UserImage";
 import FlexBetween from "components/FlexBetween";
@@ -18,7 +20,7 @@ const UserWidget = ({ userId, picturePath }) => {
   const { palette } = useTheme();
   const navigate = useNavigate();
   const token = useSelector((state) => state.token);
-  const sid = useSelector((state) => state.user.sid);
+  const {email} = useSelector((state) => state.user);
   const dark = palette.neutral.dark;
   const medium = palette.neutral.medium;
   const main = palette.neutral.main;
@@ -130,15 +132,12 @@ const UserWidget = ({ userId, picturePath }) => {
           <FlexBetween gap="1rem">
             {/* <img src="../assets/twitter.png" alt="twitter" /> */}
             <a href="https://teams.microsoft.com/l/call/0/0?users=asm63@student.le.ac.uk"
-            target="_blank">Open Microsoft team</a>
+            target="_blank"><VideoChatIcon fontSize="large" /></a>
             <Box>
-               <Typography color={main} fontWeight="500">
-                Twitter
-              </Typography>
-              <Typography color={medium}>Social Network</Typography>
+            <a href={"mailto:"+email}
+            target="_blank"><EmailIcon fontSize="large" /></a>
              </Box>
           </FlexBetween>
-          <EditOutlined sx={{ color: main }} />
         </FlexBetween>
 
         {/* <FlexBetween gap="1rem">
