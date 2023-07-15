@@ -10,17 +10,23 @@ import { Box, Typography, Divider, useTheme, Button } from "@mui/material";
 import UserImage from "components/UserImage";
 import FlexBetween from "components/FlexBetween";
 import WidgetWrapper from "components/WidgetWrapper";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import  Axios from "axios";
+import { setFriends } from "state";
 
 const UserWidget = ({ userId, picturePath }) => {
+  const dispatch = useDispatch();
   const [user, setUser] = useState();
   const { palette } = useTheme();
   const navigate = useNavigate();
   const token = useSelector((state) => state.token);
   const {email} = useSelector((state) => state.user);
+  const sid = useSelector((state) => state.user.sid);
+  const friends = useSelector((state) => state.user.friends);
+  let impressions = useSelector((state) => state.posts);
+  impressions = impressions.find(({ postUserId }) => sid === postUserId);
   const dark = palette.neutral.dark;
   const medium = palette.neutral.medium;
   const main = palette.neutral.main;
@@ -41,8 +47,10 @@ const UserWidget = ({ userId, picturePath }) => {
   };
 
   useEffect(() => {
+    // getFriends();
     getUser();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    
+  }, [friends,impressions]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!user) {
     return null;

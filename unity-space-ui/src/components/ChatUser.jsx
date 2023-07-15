@@ -43,17 +43,17 @@ const ChatUser = ({ friendId, name, subtitle, userPicturePath }) => {
     const querySnapshot = await getDocs(q);
     const documents = querySnapshot.docs.map((doc) => doc.data());
     setChatDocuments(documents);
-    console.log("id reverseId",id, reverseId);
+    // console.log("id reverseId",id, reverseId);
     console.log("setChatDocuments in chatUser", documents,documents.length);
     if(documents.length==0){
-      console.log("inside  chatDocuments false");
+      // console.log("inside  chatDocuments false");
       const chatRef = doc(db, "chats", id);
       await setDoc(chatRef, {
         id:id,
         messages: [],
       });
     }else {
-        console.log("inside  chatDocuments true");
+        // console.log("inside  chatDocuments true");
         dispatch(setMessages({ messages: documents }));
   }
 }
@@ -88,7 +88,7 @@ const ChatUser = ({ friendId, name, subtitle, userPicturePath }) => {
   };
 
   useEffect(() => {
-    getChats()
+    // getChats()
   }, [currentChat])
   
 

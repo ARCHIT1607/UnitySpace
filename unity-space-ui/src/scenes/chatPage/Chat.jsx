@@ -44,7 +44,7 @@ function Chat({ pictureName,name, course, friendId }) {
     const querySnapshot = await getDocs(q);
     const documents = querySnapshot.docs.map((doc) => doc.data());
     setChatDocuments(documents);
-    console.log("setChatDocuments in chatUser", documents);
+    // console.log("setChatDocuments in chatUser", documents);
     if (!chatDocuments) {
       console.log("inside  chatDocuments false");
       const chatRef = doc(db, "chats", messages[0].id);
@@ -53,7 +53,7 @@ function Chat({ pictureName,name, course, friendId }) {
         messages: [],
       });
     } else {
-      console.log("inside  chatDocuments true", documents);
+      // console.log("inside  chatDocuments true", documents);
       dispatch(setMessages({ messages: documents }));
     }
   };
@@ -84,16 +84,16 @@ function Chat({ pictureName,name, course, friendId }) {
     }
   };
 
-  useEffect(() => {
-    if (messages[0].id) {
-      const documentRef = doc(db, "chats", messages[0].id);
-      const unsubscribe = onSnapshot(documentRef, (doc) => {
-        console.log("something got added");
-        getChats();
-      });
-      return () => unsubscribe();
-    }
-  }, [messages[0].id]);
+  // useEffect(() => {
+  //   if (messages[0].id) {
+  //     const documentRef = doc(db, "chats", messages[0].id);
+  //     const unsubscribe = onSnapshot(documentRef, (doc) => {
+  //       console.log("something got added");
+  //       getChats();
+  //     });
+  //     return () => unsubscribe();
+  //   }
+  // }, [messages[0].id]);
 
   const navigate = useNavigate();
   const medium = palette.neutral.medium;

@@ -26,6 +26,7 @@ function Messages({ message }) {
   const [chatDocuments, setChatDocuments] = useState([]);
   let messages = useSelector((state) => state.messages);
   messages = messages !== null && messages.length != 0 ? messages : data;
+
   const getChats = async () => {
     console.log("messages[0].id", messages[0].id);
     const q = query(
@@ -35,22 +36,22 @@ function Messages({ message }) {
     const querySnapshot = await getDocs(q);
     const documents = querySnapshot.docs.map((doc) => doc.data());
     setChatDocuments(documents);
-    console.log("setChatDocuments in chatUser", documents);
+    console.log("setChatDocuments in messages", documents);
     if (!chatDocuments) {
-      console.log("inside  chatDocuments false");
+      // console.log("inside  chatDocuments false");
       const chatRef = doc(db, "chats", messages[0].id);
       await setDoc(chatRef, {
         id: messages[0].id,
         messages: [],
       });
     } else {
-      console.log("inside  chatDocuments true", documents);
+      // console.log("inside  chatDocuments true", documents);
       dispatch(setMessages({ messages: documents }));
     }
   };
 
   useEffect(() => {
-    getChats();
+    // getChats();
   }, []);
 
 
