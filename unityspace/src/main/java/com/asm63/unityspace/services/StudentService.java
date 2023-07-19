@@ -117,4 +117,9 @@ public class StudentService {
         System.out.println("student "+stu);
         return new ByteArrayInputStream(stu.getProfilePic());
     }
+
+
+    public List<HashMap> findAllStudent() {
+        return studMapper.findAllStudent();
+    }
 }

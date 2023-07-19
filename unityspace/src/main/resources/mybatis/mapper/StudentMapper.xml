@@ -85,6 +85,12 @@
         SELECT id,sid,email,fname,lname,password,loc,course,role,impressions,viewed_profile as "viewedProfile", picture_name as "pictureName"   from student where sid = #{id}
     </select>
 
+    <select id="findAllStudent"
+            resultType="HashMap">
+        SELECT fname, sid from student
+    </select>
+
+
     <select id="findPostById" parameterType="Long"
             resultType="Post">
         SELECT id,post_user_id AS "postUserId",description,location,picture_path,user_picture_path,likes,comments,firstname,lastname  from post where id = #{id}

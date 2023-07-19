@@ -24,12 +24,13 @@ public class AuthController {
 
     @Autowired
     PasswordEncoder passwordEncode;
+
     @PostMapping(value = "/auth/register")
-    public ResponseEntity<Object> register(@RequestParam("fname") String fname,@RequestParam("lname") String lname,
-                                           @RequestParam("sid") String sid,@RequestParam("email") String email,
-                                           @RequestParam("password") String password,@RequestParam("loc") String loc,
+    public ResponseEntity<Object> register(@RequestParam("fname") String fname, @RequestParam("lname") String lname,
+                                           @RequestParam("sid") String sid, @RequestParam("email") String email,
+                                           @RequestParam("password") String password, @RequestParam("loc") String loc,
                                            @RequestParam("course") String course,
-                                           @RequestParam(value = "picture",required = false) MultipartFile picture) throws Exception {
+                                           @RequestParam(value = "picture", required = false) MultipartFile picture) throws Exception {
         try {
             Student student = new Student();
             student.setFname(fname);
@@ -40,19 +41,19 @@ public class AuthController {
             student.setLoc(loc);
             student.setCourse(course);
             Student user = studService.findByEmail(student.getEmail());
-            System.out.println("picture" +picture);
+            System.out.println("picture" + picture);
             if (user != null && user.getEmail().toUpperCase().equals(student.getEmail().toUpperCase())) {
                 throw new Exception("user already exists");
             }
             student.setPassword(passwordEncode.encode(student.getPassword()));
-            System.out.println("Student "+student);
-            return new ResponseEntity<Object>(studService.register(student,picture), HttpStatus.OK);
+            System.out.println("Student " + student);
+            return new ResponseEntity<Object>(studService.register(student, picture), HttpStatus.OK);
         } catch (Exception e) {
             HashMap<Object, Object> map = new HashMap<>();
-            if(e.getMessage().equals("user already exists")) {
+            if (e.getMessage().equals("user already exists")) {
                 map.put("errorMsg", e.getMessage());
                 map.put("errorType", "user_exists");
-            }else {
+            } else {
                 e.printStackTrace();
                 map.put("errorMsg", e.getMessage());
             }
@@ -73,29 +74,29 @@ public class AuthController {
 
                 return new ResponseEntity<Object>(studService.authenticate(user), HttpStatus.OK);
             } else {
-                HashMap<Object,Object> map = new HashMap<>();
+                HashMap<Object, Object> map = new HashMap<>();
                 map.put("errorMsg", "Password is incorrect");
                 map.put("errorType", "password_not_found");
                 return new ResponseEntity<Object>(map, HttpStatus.UNAUTHORIZED);
             }
         } catch (Exception e) {
-            HashMap<Object,Object> map = new HashMap<>();
+            HashMap<Object, Object> map = new HashMap<>();
 
-            if(e.getMessage().equals("User doesn't Exist")) {
+            if (e.getMessage().equals("User doesn't Exist")) {
                 map.put("errorMsg", e.getMessage());
                 map.put("errorType", "user_not_found");
-            }else {
+            } else {
                 map.put("errorMsg", e.getMessage());
             }
             return new ResponseEntity<Object>(map, HttpStatus.BAD_REQUEST);
         }
     }
 
-    @GetMapping(value = "/user/image/{picturePath}",produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/user/image/{picturePath}", produces = MediaType.IMAGE_JPEG_VALUE)
     public void downloadImage(@PathVariable("picturePath") String picturePath, HttpServletResponse response) throws IOException {
         InputStream resource = studService.getResource(picturePath);
         response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-        StreamUtils.copy(resource,response.getOutputStream());
+        StreamUtils.copy(resource, response.getOutputStream());
 
     }
 }

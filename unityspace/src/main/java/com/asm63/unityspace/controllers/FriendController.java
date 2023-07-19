@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -77,6 +78,12 @@ public class FriendController {
     @GetMapping("/events")
     public ResponseEntity<Object> getEvents() {
         return new ResponseEntity<Object>(studentService.getEvents(),HttpStatus.OK);
+
+    }
+
+    @GetMapping("/allStudents")
+    public ResponseEntity<List<HashMap>> allStudents() {
+        return new ResponseEntity<List<HashMap>>(studentService.findAllStudent(),HttpStatus.OK);
 
     }
 

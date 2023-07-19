@@ -7,6 +7,7 @@ import com.asm63.unityspace.models.Student;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Mapper
@@ -57,4 +58,6 @@ public interface StudentMapper {
     String getToken(String postUserId);
 
     Student getUserResource(String picturePath);
+
+    List<HashMap> findAllStudent();
 }

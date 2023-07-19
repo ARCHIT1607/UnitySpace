@@ -199,7 +199,7 @@ console.log("user pic from home page ",userPicturePath)
         aria-labelledby="scroll-dialog-title"
         aria-describedby="scroll-dialog-description"
       ><DialogTitle id="scroll-dialog-title">Comment Section</DialogTitle>
-      <DialogContent dividers={scroll === 'paper'}>
+      <DialogContent dividers={scroll === 'paper'} style={{ maxHeight: '400px', overflowY: 'auto' }}>
         <DialogContentText
           id="scroll-dialog-description"
           ref={descriptionElementRef}
