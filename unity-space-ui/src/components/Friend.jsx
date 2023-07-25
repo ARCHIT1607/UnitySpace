@@ -9,7 +9,7 @@ import UserImage from "./UserImage";
 import  Axios from "axios";
 import { useEffect } from "react";
 
-const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
+const Friend = ({ friendId, name, subtitle, userPicturePath, onlineStatus,profileUser }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { sid } = useSelector((state) => state.user);
@@ -32,7 +32,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
     console.log("calling patchFriend")
     const response = await Axios.get("http://localhost:9000/users", {
       params:{
-        id:sid,
+        id:profileUser!=null?profileUser:sid,
         friendId:friendId
       },
       headers: {
@@ -44,29 +44,29 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
     dispatch(setFriends({ friends: data }));
   };
 
-  const getFriends = async () => {
-    console.log("token ",token)
-    const response = await Axios.get("http://localhost:9000/users/friends", {
-      params:{
-        id:sid,
-      },
-      headers: {
-        Authorization: "Bearer " + token.token,
-      },
-    });
-    console.log("resoinsedata ",response.data);
-    const data = await response.data;
-    dispatch(setFriends({ friends: data }));
-    console.log("in getAllBills");
+  // const getFriends = async () => {
+  //   console.log("token ",token)
+  //   const response = await Axios.get("http://localhost:9000/users/friends", {
+  //     params:{
+  //       id:sid,
+  //     },
+  //     headers: {
+  //       Authorization: "Bearer " + token.token,
+  //     },
+  //   });
+  //   console.log("resoinsedata ",response.data);
+  //   const data = await response.data;
+  //   dispatch(setFriends({ friends: data }));
+  //   console.log("in getAllBills");
     
    
-  };
+  // };
 
-  useEffect(() => {
-    console.log("calling")
-    getFriends();
-    console.log("friends ",friends)
-  }, []); 
+  // useEffect(() => {
+  //   console.log("calling")
+  //   getFriends();
+  //   console.log("friends ",friends)
+  // }, []); 
 
   return (
     <FlexBetween>
@@ -94,10 +94,14 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
           <Typography color={medium} fontSize="0.75rem">
             {subtitle}
           </Typography>
+          <Typography color={medium} fontSize="0.75rem">
+          {onlineStatus===true?"online":"offline"}
+          </Typography>
         </Box>
       </FlexBetween>
       <FlexBetween>
-
+{console.log("friendId !==sid ",friendId !==sid)}
+{console.log("isFriendd ",isFriend)}
       <IconButton
         onClick={() => patchFriend()}
         sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
@@ -107,7 +111,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
           <PersonRemoveOutlined sx={{ color: primaryDark }} />
         ) : (
           <PersonAddOutlined sx={{ color: primaryDark }} />
-        ):""}
+        ): <PersonRemoveOutlined sx={{ color: primaryDark }} />}
       </IconButton>
       </FlexBetween>
     </FlexBetween>

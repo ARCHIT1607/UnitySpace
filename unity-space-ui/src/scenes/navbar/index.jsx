@@ -24,6 +24,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { setMode, setLogout } from "state";
 import { Navigate, useNavigate } from "react-router-dom";
 import FlexBetween from "components/FlexBetween";
+import TextField from "@mui/material/TextField";
+import Stack from "@mui/material/Stack";
+import Autocomplete from "@mui/material/Autocomplete";
+import Axios from "axios";
+import { useEffect } from "react";
+
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
@@ -38,8 +44,42 @@ const Navbar = () => {
   const background = theme.palette.background.default;
   const primaryLight = theme.palette.primary.light;
   const alt = theme.palette.background.alt;
-
+  const token = useSelector((state) => state.token);
   const fullName = `${user.fname} ${user.lname}`;
+
+  const [data, setData] = useState([]);
+  const getAllStudents = async () => {
+    const response = await Axios.get("http://localhost:9000/allStudents", {
+      headers: {
+        Authorization: "Bearer " + token.token,
+      },
+    });
+    console.log("getAllStudents ", response.data);
+    const data = response;
+    setData(data.data);
+  };
+
+  const updateOnlineStatus = async (status,userId) => {
+    const response = await Axios.post("http://localhost:9000/updateOnlineStatus", null, {
+      params: {
+        status: status,
+        userId:user.sid
+      },
+      headers: {
+        Authorization: "Bearer " +  token.token,
+      },
+    });
+  }
+
+  useEffect(() => {
+    getAllStudents();
+  }, []);
+
+  const handleOptionChange = (event, value) => {
+    console.log(`Selected option: ${value.fname}`);
+    navigate(`/profile/${value.sid}`);
+    navigate(0);
+  };
 
   return (
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>
@@ -65,10 +105,31 @@ const Navbar = () => {
             gap="3rem"
             padding="0.1rem 1.5rem"
           >
-            <InputBase placeholder="Search..." />
-            <IconButton>
-              <Search />
-            </IconButton>
+            {/* <InputBase placeholder="Search..." /> */}
+            <Stack spacing={2} sx={{ width: 300 }}>
+              <Autocomplete
+                freeSolo
+                id="free-solo-2-demo"
+                disableClearable
+                // options={data.map((student) => student.fname)}
+                options={data}
+                getOptionLabel={(student) => student.fname}
+                getOptionSelected={(student, sid) =>
+                  student.value === sid.value
+                }
+                onChange={handleOptionChange}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Search people"
+                    InputProps={{
+                      ...params.InputProps,
+                      type: "search",
+                    }}
+                  />
+                )}
+              />
+            </Stack>
           </FlexBetween>
         )}
       </FlexBetween>
@@ -83,10 +144,12 @@ const Navbar = () => {
               <LightMode sx={{ color: dark, fontSize: "25px" }} />
             )}
           </IconButton>
-          <IconButton onClick={() => {
-            navigate("/chat");
-          }}>
-          <Message sx={{ fontSize: "25px" }} />
+          <IconButton
+            onClick={() => {
+              navigate("/chat");
+            }}
+          >
+            <Message sx={{ fontSize: "25px" }} />
           </IconButton>
           <Notifications sx={{ fontSize: "25px" }} />
           <Help sx={{ fontSize: "25px" }} />
@@ -111,8 +174,15 @@ const Navbar = () => {
               <MenuItem value={fullName}>
                 <Typography>{fullName}</Typography>
               </MenuItem>
-              <MenuItem onClick={() =>{ dispatch(setLogout());
-              navigate("/")}}>Log Out</MenuItem>
+              <MenuItem
+                onClick={() => {
+                  dispatch(setLogout());
+                  updateOnlineStatus(false,user.sid)
+                  navigate("/");
+                }}
+              >
+                Log Out
+              </MenuItem>
             </Select>
           </FormControl>
         </FlexBetween>

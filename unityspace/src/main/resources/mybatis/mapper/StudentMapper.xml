@@ -16,6 +16,7 @@
         <result column="role" property="role" />
         <result column="profile_pic" property="profilePic" />
         <result column="picture_name" property="pictureName" />
+        <result column="is_online_status" property="isOnlineStatus" />
     </resultMap>
 
     <resultMap id="FriendResultMap" type="Friend">
@@ -71,7 +72,7 @@
 
     <select id="getFriends"
             resultType="HashMap" parameterType="String">
-        SELECT friend_list.id, student.course, student.fname, student.lname,student.sid, student.picture_name
+        SELECT friend_list.id, student.course, student.fname, student.lname,student.sid, student.picture_name, student.is_online_status as "onlineStatus"
         FROM friend_list
                  INNER JOIN student ON friend_list.friend_id = student.sid WHERE friend_list.student_id =#{userId}
     </select>
@@ -210,6 +211,11 @@
         SELECT firebase_token from fb_cloud_message where user_id = #{postUserId}
     </select>
 
-
+    <update id="updateOnlineStatus">
+        UPDATE
+            student SET
+            is_online_status = #{status}
+        WHERE sid=#{userId}
+    </update>
 
 </mapper>

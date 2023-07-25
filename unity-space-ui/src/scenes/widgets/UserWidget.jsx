@@ -56,15 +56,6 @@ const UserWidget = ({ userId, picturePath }) => {
     return null;
   }
 
-  // const {
-  //   fname,
-  //   lname,
-  //   location,
-  //   course,
-  //   viewedProfile,
-  //   impressions,
-  //   friends,
-  // } = user;
 
   return (
     <WidgetWrapper>

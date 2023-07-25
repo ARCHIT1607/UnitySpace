@@ -17,7 +17,7 @@ const FriendListWidget = ({ userId,userPicturePath }) => {
     console.log("token ",token)
     const response = await Axios.get("http://localhost:9000/users/friends", {
       params:{
-        id:sid,
+        id:userId,
       },
       headers: {
         Authorization: "Bearer " + token.token,
@@ -55,6 +55,8 @@ const FriendListWidget = ({ userId,userPicturePath }) => {
             name={`${friend.fname} ${friend.lname}`}
             subtitle={friend.course}
             userPicturePath={friend.picture_name}
+            onlineStatus={friend.onlineStatus}
+            profileUser={userId}
           />
         ))}
       </Box>

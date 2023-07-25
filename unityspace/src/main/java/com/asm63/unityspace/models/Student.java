@@ -33,4 +33,6 @@ public class Student {
 
     private String viewedProfile;
     private Long impressions;
+
+    private boolean is_online_status;
 }

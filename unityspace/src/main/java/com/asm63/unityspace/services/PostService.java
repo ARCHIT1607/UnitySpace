@@ -1,5 +1,6 @@
 package com.asm63.unityspace.services;
 
+import com.asm63.unityspace.mappers.PostMapper;
 import com.asm63.unityspace.mappers.StudentMapper;
 import com.asm63.unityspace.models.PostDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,11 +19,14 @@ import java.util.List;
 public class PostService {
 
     @Autowired
+    private PostMapper postMapper;
+    @Autowired
     private StudentMapper studentMapper;
+
 
     public void patchLike (Long postId, String userId) {
 
-        PostDTO post = studentMapper.findPostById(postId);
+        PostDTO post = postMapper.findPostById(postId);
         if (post.getLikes()!= null && post.getLikes().length()>4) {
             String like = post.getLikes();
             // split string by no space
@@ -46,14 +51,14 @@ public class PostService {
             String convertedString = String.join(",", strList);
             System.out.println("after adding user: " + convertedString);
             post.setLikes(convertedString);
-            studentMapper.updatePost(post);
+            postMapper.updatePost(post);
         } else {
             post.setLikes(userId);
             System.out.println("post.getLikes when there is no like " + post.getLikes());
-            studentMapper.updatePost(post);
+            postMapper.updatePost(post);
         }
         Long likeCount = 0L;
-        List<String> postLikes = studentMapper.getUserPostLikes(userId);
+        List<String> postLikes = postMapper.getUserPostLikes(userId);
         for(String like : postLikes){
             if(like!=null && !like.isEmpty()){
                 // split string by no space
@@ -72,40 +77,51 @@ public class PostService {
     }
 
     public void createPost(PostDTO post, MultipartFile file) throws IOException {
-//        System.out.println("file!=null" +file!=null + " file.isEmpty() "+file.isEmpty());
+        post.setCreatedDate(LocalDate.now().toString());
+        post.setCreatedBy(post.getPostUserId());
         if (file!=null && !file.isEmpty()){
             String fileName = file.getOriginalFilename();
             byte[] data = file.getBytes();
-            post.setPicture(data);
-            post.setPicturePath(fileName);
+            System.out.println("picture data "+data);
+
+            if(data!=null) {
+                post.setPicture(data);
+                post.setPicturePath(fileName);
+                postMapper.createPost(post);
+            }
+
+        }else{
+            post.setPicture(null);
+            postMapper.createPostWithoutPicture(post);
         }
-        studentMapper.createPost(post);
+
+
     }
 
     public PostDTO getPost(Long id) {
-        return studentMapper.findPostById(id);
+        return postMapper.findPostById(id);
     }
 
     public ArrayList<PostDTO> getPosts() {
 
-        return studentMapper.getPosts();
+        return postMapper.getPosts();
     }
 
     public ArrayList<PostDTO> getUserPosts(String userId) {
-        return studentMapper.getUserPosts(userId);
+        return postMapper.getUserPosts(userId);
     }
 
     public InputStream getResource(String picturePath) {
-        return new ByteArrayInputStream(studentMapper.getResource(picturePath).getPicture());
+        return picturePath!=null?new ByteArrayInputStream(postMapper.getResource(picturePath).getPicture()):null;
     }
 
     public void deletePost(String postId) {
-        studentMapper.deletePost(Long.parseLong(postId));
+        postMapper.deletePost(Long.parseLong(postId));
     }
 
     public void postComment(Long postId, String comment) {
-        String postComment = studentMapper.findCommentByPostId(postId);
-        PostDTO post = studentMapper.findPostById(postId);
+        String postComment = postMapper.findCommentByPostId(postId);
+        PostDTO post = postMapper.findPostById(postId);
         System.out.println("post in postcomments: " + postComment );
 
         if(postComment!=null){
@@ -128,6 +144,6 @@ public class PostService {
             String[] strSplit = { comment };
             post.setComments(strSplit);
         }
-        studentMapper.postComment(post);
+        postMapper.postComment(post);
     }
 }

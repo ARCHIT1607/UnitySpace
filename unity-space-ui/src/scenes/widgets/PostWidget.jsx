@@ -24,6 +24,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { messaging } from "components/firebase";
 import { ToastContainer } from "react-toastify";
 
+import badWords from 'bad-words';
+
 const PostWidget = ({
   postId,
   userId,
@@ -94,7 +96,21 @@ console.log("user pic from home page ",userPicturePath)
     dispatch(setPosts({ posts: data }));
   };
 
-  const postComment =async()=>{
+
+  const handleTextChange = (event) => {
+    const filter = new badWords();
+    filter.removeWords("hell");
+    const newText = event.target.value ? event.target.value : '';
+    if(filter.isProfane(newText)){
+      alert("profane")
+      setComment("")
+    }else{
+      setComment(newText);
+    }
+  };
+
+
+  const postComment =async(e)=>{
     const formData = new FormData();
     formData.append("comment",comment)
     const response = await Axios.post("http://localhost:9000/postComment", formData, {
@@ -166,14 +182,15 @@ console.log("user pic from home page ",userPicturePath)
           controls
           src={`http://localhost:9000/post/image/${picturePath}`}
         />
-      ):(
+      ):picturePath?(
         <img
           width="100%"
           height="auto"
           alt="post"
           style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
           src={`http://localhost:9000/post/image/${picturePath}`}
-        />)} 
+        />):picturePath
+      } 
       <FlexBetween mt="0.25rem">
         <FlexBetween gap="1rem">
           <FlexBetween gap="0.3rem">
@@ -230,9 +247,7 @@ console.log("user pic from home page ",userPicturePath)
             fullWidth
             variant="standard"
             value={comment}
-            onChange={(e)=>{
-              setComment(e.target.value);
-            }}
+            onChange={handleTextChange}
           />
         <Button onClick={postComment}>Add</Button>
       </DialogActions>

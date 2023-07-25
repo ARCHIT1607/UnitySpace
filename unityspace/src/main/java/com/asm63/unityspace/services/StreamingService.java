@@ -1,6 +1,6 @@
 package com.asm63.unityspace.services;
 
-import com.asm63.unityspace.mappers.StudentMapper;
+import com.asm63.unityspace.mappers.PostMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -17,9 +17,9 @@ public class StreamingService {
     private ResourceLoader resourceLoader;
 
     @Autowired
-    private StudentMapper studentMapper;
+    private PostMapper postMapper;
 
     public Mono<Resource> getVideo(String title){
-        return Mono.fromSupplier(()->new ByteArrayResource(studentMapper.getResource(title).getPicture()));
+        return Mono.fromSupplier(()->new ByteArrayResource(postMapper.getResource(title).getPicture()));
     }
 }

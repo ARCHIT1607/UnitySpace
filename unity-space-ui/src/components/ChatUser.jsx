@@ -19,7 +19,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { setCurrentChat, setMessages } from "state";
 
-const ChatUser = ({ friendId, name, subtitle, userPicturePath }) => {
+const ChatUser = ({ friendId, name, subtitle, userPicturePath, onlineStatus }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { palette } = useTheme();
@@ -103,6 +103,14 @@ const ChatUser = ({ friendId, name, subtitle, userPicturePath }) => {
           justifyContent="flex-start"
         >
           {name}
+        </Typography>
+        <Typography
+          color={main}
+          variant="h5"
+          fontWeight="500"
+          justifyContent="flex-start"
+        >
+          {onlineStatus===true?"online":"offline"}
         </Typography>
       </Box>
     </FlexBetween>

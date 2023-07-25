@@ -1,6 +1,7 @@
 package com.asm63.unityspace.services;
 
 
+import com.asm63.unityspace.mappers.PostMapper;
 import com.asm63.unityspace.mappers.StudentMapper;
 import com.asm63.unityspace.models.Events;
 import com.asm63.unityspace.models.Student;
@@ -21,6 +22,9 @@ public class StudentService {
 
     @Autowired
     private StudentMapper studMapper;
+
+    @Autowired
+    private PostMapper postMapper;
 
     @Autowired
     ImageRepository imageRepository;
@@ -79,7 +83,7 @@ public class StudentService {
 
     public Student findById(String id) {
         Long likeCount = 0L;
-        List<String> postLikes = studMapper.getUserPostLikes(id);
+        List<String> postLikes = postMapper.getUserPostLikes(id);
         for(String like : postLikes){
             if(like!=null && !like.isEmpty()){
                 // split string by no space
@@ -108,7 +112,7 @@ public class StudentService {
     }
 
     public ArrayList<Events> getEvents() {
-       return studMapper.getEvents();
+       return postMapper.getEvents();
     }
 
     public InputStream getResource(String picturePath) {
@@ -121,5 +125,9 @@ public class StudentService {
 
     public List<HashMap> findAllStudent() {
         return studMapper.findAllStudent();
+    }
+
+    public void updateOnlineStatus(boolean status, String userId) {
+        studMapper.updateOnlineStatus(status, userId);
     }
 }

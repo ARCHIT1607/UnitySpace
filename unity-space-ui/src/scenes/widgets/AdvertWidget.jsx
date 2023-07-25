@@ -70,21 +70,18 @@ const AdvertWidget = () => {
         style={{ borderRadius: "0.75rem", margin: "0.75rem 0" }}
       /> */}
 
-      <h1>My Outlook Calendar</h1>
-      <Calendar localizer={localizer} events={events} />
+      {/* <h1>My Outlook Calendar</h1> */}
+      {/* <Calendar localizer={localizer} events={events} /> */}
 
-      {/* {event&&event.map((ev)=>(
+      {event&&event.map((ev)=>(
        <FlexBetween><Typography color={dark} variant="h6" fontWeight="500">
         {ev.eventName}
         </Typography>
       <Typography color={dark} variant="h6" fontWeight="500">
         {ev.eventDate}
         </Typography>
-      </FlexBetween>))}; */}
-      {/* <Typography color={medium} m="0.5rem 0">
-        Your pathway to stunning and immaculate beauty and made sure your skin
-        is exfoliating skin and shining like light.
-      </Typography> */}
+      </FlexBetween>))}
+       
     </WidgetWrapper>
   );
 };

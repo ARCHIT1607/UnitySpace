@@ -23,6 +23,8 @@ import { setMessages } from "state";
 import FlexBetween from "components/FlexBetween";
 import UserImage from "components/UserImage";
 import { useNavigate } from "react-router-dom";
+import badWords from 'bad-words';
+
 
 function Chat({ pictureName,name, course, friendId }) {
   const [data, setData] = useState([{ id: "" }]);
@@ -55,6 +57,18 @@ function Chat({ pictureName,name, course, friendId }) {
     } else {
       // console.log("inside  chatDocuments true", documents);
       dispatch(setMessages({ messages: documents }));
+    }
+  };
+
+  const handleTextChange = (event) => {
+    const filter = new badWords();
+    filter.removeWords("hell");
+    const newText = event.target.value ? event.target.value : '';
+    if(filter.isProfane(newText)){
+      alert("profane")
+      setInputMessage("")
+    }else{
+      setInputMessage(newText);
     }
   };
 
@@ -144,7 +158,7 @@ function Chat({ pictureName,name, course, friendId }) {
           sx={{ ml: 1, flex: 1 }}
           placeholder="Enter your message"
           value={inputMessage}
-          onChange={(e) => setInputMessage(e.target.value)}
+          onChange={handleTextChange}
           onKeyDown={handleKeyDown}
         />
         <IconButton

@@ -32,11 +32,6 @@ const Post = ({
   // const isFriend = friends&&friends.sid === friendId;
   const isFriend = friends.find(({ sid }) => friendId === sid);
 
-  console.log(
-    "isfriend ",
-    friends.find(({ sid }) => console.log(friendId === sid))
-  );
-  console.log("fromProfile data ", fromProfile);
 
   const patchFriend = async () => {
     console.log("calling patchFriend");
@@ -83,29 +78,6 @@ const Post = ({
     const data = await response.data;
     dispatch(setPosts({ posts: data }));
   };
-
-  //   const getFriends = async () => {
-  //     console.log("token ",token)
-  //     const response = await Axios.get("http://localhost:9000/users/friends", {
-  //       params:{
-  //         id:sid,
-  //       },
-  //       headers: {
-  //         Authorization: "Bearer " + token.token,
-  //       },
-  //     });
-  //     console.log("resoinsedata ",response.data);
-  //     const data = await response.data;
-  //     dispatch(setFriends({ friends: data }));
-  //     console.log("in getAllBills");
-
-  //   };
-
-  //   useEffect(() => {
-  //     console.log("calling")
-  //     getFriends();
-  //     console.log("friends ",friends)
-  //   }, []);
 
   return (
     <FlexBetween>

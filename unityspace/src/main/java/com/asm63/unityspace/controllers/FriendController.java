@@ -5,10 +5,7 @@ import com.asm63.unityspace.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +35,7 @@ public class FriendController {
             if (isFriend) {
                 System.out.println("after calling  delete service "+ friendId);
                 studentService.deleteFriend(id, friendId);
+                studentService.deleteFriend(friendId, id);
             } else{
                 System.out.println("before calling  addFriend service ");
                 studentService.addFriend(studentService.findByFriendId(id).getSid(), friendId);
@@ -84,7 +82,12 @@ public class FriendController {
     @GetMapping("/allStudents")
     public ResponseEntity<List<HashMap>> allStudents() {
         return new ResponseEntity<List<HashMap>>(studentService.findAllStudent(),HttpStatus.OK);
+    }
 
+    @PostMapping("/updateOnlineStatus")
+    public ResponseEntity<?> updateOnlineStatus(@RequestParam(name = "status") String status, @RequestParam(name = "userId") String userId) {
+        studentService.updateOnlineStatus(Boolean.parseBoolean(status), userId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

@@ -31,4 +31,8 @@ public class PostDTO {
     private String likes;
 
     private String[] comments;
+
+    private String createdDate;
+
+    private String createdBy;
 }
