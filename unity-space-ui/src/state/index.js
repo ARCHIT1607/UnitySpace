@@ -6,7 +6,8 @@ const initialState = {
   token: null,
   posts: [],
   messages: null,
-  currentChat:[]
+  currentChat:[],
+  currentGroupChat:[]
 };
 
 export const authSlice = createSlice({
@@ -47,6 +48,10 @@ export const authSlice = createSlice({
       console.log("cuurenChat payload ",action.payload)
       state.currentChat = action.payload;
     },
+    setCurrentGroupChat: (state, action) => {
+      console.log("CurrentGroupChat payload ",action.payload)
+      state.currentGroupChat = action.payload;
+    },
     setPost: (state, action) => {
       const updatedPosts = state.posts.map((post) => {
         if (post.id === action.payload.post.id) return action.payload.post;
@@ -57,6 +62,6 @@ export const authSlice = createSlice({
   },
 });
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost, setMessages,setCurrentChat} =
+export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost, setMessages,setCurrentChat,setCurrentGroupChat} =
   authSlice.actions;
 export default authSlice.reducer;

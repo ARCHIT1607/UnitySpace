@@ -38,52 +38,70 @@ public class PostController {
 
     @PostMapping("/postComment")
     public ResponseEntity<Object> postComment(@RequestParam("postId") String postId,@RequestParam("comment") String comment) {
-        System.out.println("calling postComment");
-        postService.postComment(Long.parseLong(postId),comment);
-        return new ResponseEntity<Object>(postService.getPosts(), HttpStatus.OK);
-//        return new ResponseEntity<Object>(postService.getPosts(), HttpStatus.OK);
-
+        try {
+            System.out.println("calling postComment");
+            postService.postComment(Long.parseLong(postId),comment);
+            return new ResponseEntity<Object>(postService.getPosts(), HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<Object>(e.getMessage(),HttpStatus.OK);
+        }
     }
 
     @PostMapping("/posts/like")
     public ResponseEntity<Object> patchLike(@RequestParam("postId") String postId,@RequestParam("userId") String userId ) {
-        System.out.println("calling patchLike");
-
-        postService.patchLike(Long.parseLong(postId),userId);
-        return new ResponseEntity<Object>(postService.getPosts(), HttpStatus.OK);
+        try {
+            System.out.println("calling patchLike");
+            postService.patchLike(Long.parseLong(postId),userId);
+            return new ResponseEntity<Object>(postService.getPosts(), HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<Object>(e.getMessage(),HttpStatus.OK);
+        }
     }
 
     @GetMapping("/getPosts")
     public ResponseEntity<Object> getPosts(Authentication authentication) {
-        return new ResponseEntity<Object>(postService.getPosts(), HttpStatus.OK);
+
+        try {
+            return new ResponseEntity<Object>(postService.getPosts(), HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<Object>(e.getMessage(),HttpStatus.OK);
+        }
     }
 
     @GetMapping("/delete/post")
     public ResponseEntity<Object> deletePost(@RequestParam("postId") String postId) {
-        postService.deletePost(postId);
-        return new ResponseEntity<Object>(postService.getPosts(), HttpStatus.OK);
+        try {
+            postService.deletePost(postId);
+            return new ResponseEntity<Object>(postService.getPosts(), HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<Object>(e.getMessage(),HttpStatus.OK);
+        }
+
 
     }
 
     @GetMapping(value = "/post/image/{picturePath}",produces = MediaType.IMAGE_JPEG_VALUE)
     public void downloadImage(@PathVariable("picturePath") String picturePath, HttpServletResponse response) throws IOException {
-        InputStream resource = postService.getResource(picturePath);
-        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-        StreamUtils.copy(resource,response.getOutputStream());
-
+            InputStream resource = postService.getResource(picturePath);
+            response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+            StreamUtils.copy(resource,response.getOutputStream());
     }
 
     @GetMapping(value = "video/{title}", produces = "video/mp4")
     public Mono<Resource> getVideos(@PathVariable String title) {
 //        System.out.println("range in bytes() : " + range);
         return service.getVideo(title);
+
     }
 
     @GetMapping("/posts/{userId}/posts")
     public ResponseEntity<Object> getUserPosts(@PathVariable String userId) {
-        System.out.println("getUserPosts "+userId);
-        return new ResponseEntity<Object>(postService.getUserPosts(userId), HttpStatus.OK);
-
+        try {
+            System.out.println("getUserPosts "+userId);
+            return new ResponseEntity<Object>(postService.getUserPosts(userId), HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<Object>(e.getMessage(),HttpStatus.OK);
+        }
     }
 
     @PostMapping(value = "/posts")
@@ -91,6 +109,7 @@ public class PostController {
     public ResponseEntity<Object> createPost(@RequestParam("description") String description,@RequestParam("userId") String userId,
                                              @RequestParam("userPicturePath") String userPicturePath,
                                              @RequestParam(value = "picture",required = false) MultipartFile picture) throws Exception {
+
         try {
             PostDTO post = new PostDTO();
             post.setDescription(description);

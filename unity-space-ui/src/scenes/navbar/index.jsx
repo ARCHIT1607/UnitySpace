@@ -100,14 +100,15 @@ const Navbar = () => {
         </Typography>
         {isNonMobileScreens && (
           <FlexBetween
-            backgroundColor={neutralLight}
+            
             borderRadius="9px"
             gap="3rem"
             padding="0.1rem 1.5rem"
           >
             {/* <InputBase placeholder="Search..." /> */}
-            <Stack spacing={2} sx={{ width: 300 }}>
+            <Stack spacing={2} sx={{ width: 300, border:"none" }}>
               <Autocomplete
+              sx={{backgroundColor:{neutralLight}}}
                 freeSolo
                 id="free-solo-2-demo"
                 disableClearable
@@ -151,8 +152,6 @@ const Navbar = () => {
           >
             <Message sx={{ fontSize: "25px" }} />
           </IconButton>
-          <Notifications sx={{ fontSize: "25px" }} />
-          <Help sx={{ fontSize: "25px" }} />
           <FormControl variant="standard" value={fullName}>
             <Select
               value={fullName}

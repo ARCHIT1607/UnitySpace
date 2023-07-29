@@ -19,7 +19,7 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "components/firebase";
-import { setMessages } from "state";
+import { setCurrentChat, setCurrentGroupChat, setMessages } from "state";
 import FlexBetween from "components/FlexBetween";
 import UserImage from "components/UserImage";
 import { useNavigate } from "react-router-dom";
@@ -27,7 +27,7 @@ import badWords from 'bad-words';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-function Chat({ pictureName,name, course, friendId }) {
+function GroupChat({ pictureName,name, member, id, size = "60px" }) {
   const [data, setData] = useState([{ id: "" }]);
   const { palette } = useTheme();
   const main = palette.neutral.main;
@@ -38,28 +38,28 @@ function Chat({ pictureName,name, course, friendId }) {
   const dispatch = useDispatch();
   const [chatDocuments, setChatDocuments] = useState([]);
 
-  const getChats = async () => {
-    console.log("messages[0].id", messages[0].id);
-    const q = query(
-      collection(db, "chats"),
-      where("id", "in", [messages[0].id])
-    );
+  const getGroupMsg = async ()=>{
+
+    // const q = query(
+    //   collection(db, "roomChats"),
+    //   where("id", "in", [sid])
+    // );
+    // const querySnapshot = await getDocs(q);
+    // const documents = querySnapshot.docs.map((doc) => doc.data());
+    // // console.log("id reverseId",id, reverseId);
+    // console.log("setChatDocuments in Group", documents,documents.length);
+    
+  console.log("sid in GroupChat", sid);
+  const q = query(collection(db, "roomChats"), where("members", "array-contains", sid));
     const querySnapshot = await getDocs(q);
-    const documents = querySnapshot.docs.map((doc) => doc.data());
-    setChatDocuments(documents);
-    // console.log("setChatDocuments in chatUser", documents);
-    if (!chatDocuments) {
-      console.log("inside  chatDocuments false");
-      const chatRef = doc(db, "chats", messages[0].id);
-      await setDoc(chatRef, {
-        id: messages[0].id,
-        messages: [],
-      });
-    } else {
-      // console.log("inside  chatDocuments true", documents);
-      dispatch(setMessages({ messages: documents }));
-    }
-  };
+    const document = querySnapshot.docs.map((doc) => doc.data());
+    console.log("setChatDocuments in GroupChat", document,document.length,sid);
+    dispatch(setMessages({ messages: document}));
+    let currentGroupChat = {"id":document[0].id,"name":document[0].groupName,"profilePic":document[0].picture,"member":document[0].members.length}
+    dispatch(setCurrentGroupChat({ currentGroupChat: currentGroupChat }));
+    dispatch(setCurrentChat({ currentChat: [] }));
+    // getGroupMsg()
+  }
 
   const handleTextChange = (event) => {
     const filter = new badWords();
@@ -75,7 +75,7 @@ function Chat({ pictureName,name, course, friendId }) {
 
   const sendMessage = async () => {
     console.log("messages[0].id ", messages[0].id);
-    const documentRef = doc(db, "chats", messages[0].id);
+    const documentRef = doc(db, "roomChats", messages[0].id);
     console.log("inputMessage ", inputMessage);
     await updateDoc(documentRef, {
       messages: arrayUnion({
@@ -88,7 +88,7 @@ function Chat({ pictureName,name, course, friendId }) {
     });
     console.log("Message added to the array successfully!");
     setInputMessage("");
-    getChats();
+    getGroupMsg();
   };
 
   const handleKeyDown = (event) => {
@@ -115,12 +115,16 @@ function Chat({ pictureName,name, course, friendId }) {
   return (
     <WidgetWrapper>
       <FlexBetween gap={"1rem"} style={{justifyContent:"flex-start"}}>
-        <UserImage image={pictureName} size="55px" />
+      <Box width={size} height={size}>
+      <img
+        style={{ objectFit: "cover", borderRadius: "50%" }}
+        width={size}
+        height={size}
+        alt="user"
+        src={pictureName}
+      />
+    </Box>
         <Box
-          onClick={() => {
-            navigate(`/profile/${friendId}`);
-            navigate(0);
-          }}
         >
           <Typography
             color={main}
@@ -136,7 +140,7 @@ function Chat({ pictureName,name, course, friendId }) {
             {name}
           </Typography>
           <Typography color={medium} fontSize="0.9rem">
-          {course}
+          {member}
           </Typography>
         </Box>
       </FlexBetween>
@@ -175,4 +179,4 @@ function Chat({ pictureName,name, course, friendId }) {
   );
 }
 
-export default Chat;
+export default GroupChat;

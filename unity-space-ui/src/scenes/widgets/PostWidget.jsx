@@ -21,9 +21,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { messaging } from "components/firebase";
-import { ToastContainer } from "react-toastify";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import badWords from 'bad-words';
 
 const PostWidget = ({
@@ -102,7 +101,7 @@ console.log("user pic from home page ",userPicturePath)
     filter.removeWords("hell");
     const newText = event.target.value ? event.target.value : '';
     if(filter.isProfane(newText)){
-      alert("profane")
+      toast("Inappropriate Content detected");
       setComment("")
     }else{
       setComment(newText);
@@ -255,10 +254,6 @@ console.log("user pic from home page ",userPicturePath)
             <Typography>{comments&&comments.length}</Typography>
           </FlexBetween>
         </FlexBetween>
-
-        <IconButton>
-          <ShareOutlined />
-        </IconButton>
       </FlexBetween>
       
     </WidgetWrapper>

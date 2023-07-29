@@ -21,73 +21,105 @@ public class FriendController {
     @GetMapping("/users")
     public ResponseEntity<Object> users(@RequestParam(name = "id") String id,
                                                  @RequestParam(name = "friendId") String friendId) throws Exception{
-        ArrayList<HashMap> friends = studentService.getFriends(id);
-        System.out.println("friends "+friends + "friendId " +friendId);
-        boolean isFriend = false;
-        if(friends!=null){
-            for(HashMap h : friends) {
-                System.out.println("h.get(\"sid\").equals(friendId)" +h.get("sid").equals(friendId));
-                if(h.get("sid").equals(friendId))
-                {
-                    isFriend = true;
+        HashMap<Object, Object> map = new HashMap<>();
+        try {
+            ArrayList<HashMap> friends = studentService.getFriends(id);
+            System.out.println("friends "+friends + "friendId " +friendId);
+            boolean isFriend = false;
+            if(friends!=null){
+                for(HashMap h : friends) {
+                    System.out.println("h.get(\"sid\").equals(friendId)" +h.get("sid").equals(friendId));
+                    if(h.get("sid").equals(friendId))
+                    {
+                        isFriend = true;
+                    }
+                }
+                if (isFriend) {
+                    System.out.println("after calling  delete service "+ friendId);
+                    studentService.deleteFriend(id, friendId);
+                    studentService.deleteFriend(friendId, id);
+                } else{
+                    System.out.println("before calling  addFriend service ");
+                    studentService.addFriend(studentService.findByFriendId(id).getSid(), friendId);
                 }
             }
-            if (isFriend) {
-                System.out.println("after calling  delete service "+ friendId);
-                studentService.deleteFriend(id, friendId);
-                studentService.deleteFriend(friendId, id);
-            } else{
-                System.out.println("before calling  addFriend service ");
-                studentService.addFriend(studentService.findByFriendId(id).getSid(), friendId);
-            }
+
+            map.put("friend",studentService.getFriends(id));
+        }catch (Exception e){
+            map.put("errorMsg",e.getMessage());
         }
-
-        HashMap<Object, Object> map = new HashMap<>();
-        map.put("friend",studentService.getFriends(id));
         return new ResponseEntity<Object>(map, HttpStatus.OK);
-
     }
 
     @GetMapping("/users/friends")
     public ResponseEntity<Object> friends(@RequestParam(name = "id") String userId) {
 
-        return new ResponseEntity<Object>(studentService.getFriends(userId),HttpStatus.OK);
+        try {
+            return new ResponseEntity<Object>(studentService.getFriends(userId),HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<Object>(e.getMessage(),HttpStatus.OK);
+        }
 
     }
 
     @GetMapping("/getUser")
-    public ResponseEntity<Student> getUser(@RequestParam(name = "userId") String userId) {
+    public ResponseEntity<?> getUser(@RequestParam(name = "userId") String userId) {
+        try {
+            return new ResponseEntity<Student>(studentService.findById(userId),HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<Object>(e.getMessage(),HttpStatus.OK);
+        }
 
-        return new ResponseEntity<Student>(studentService.findById(userId),HttpStatus.OK);
 
     }
 
     @GetMapping("/user")
-    public ResponseEntity<Student> getProfileUser(@RequestParam(name = "userId") String userId,@RequestParam(name = "sid") String sid) {
-        if (!userId.equals(sid)) {
-            studentService.updateViewer(userId, sid);
-        } else {
-            System.out.println("Viewer and profile user is same");
+    public ResponseEntity<?> getProfileUser(@RequestParam(name = "userId") String userId,@RequestParam(name = "sid") String sid) {
+
+        try {
+            if (!userId.equals(sid)) {
+                studentService.updateViewer(userId, sid);
+            } else {
+                System.out.println("Viewer and profile user is same");
+            }
+            return new ResponseEntity<Student>(studentService.findById(userId),HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<Object>(e.getMessage(),HttpStatus.OK);
         }
-        return new ResponseEntity<Student>(studentService.findById(userId),HttpStatus.OK);
+
 
     }
 
     @GetMapping("/events")
     public ResponseEntity<Object> getEvents() {
-        return new ResponseEntity<Object>(studentService.getEvents(),HttpStatus.OK);
+        try {
+            return new ResponseEntity<Object>(studentService.getEvents(),HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<Object>(e.getMessage(),HttpStatus.OK);
+        }
+
 
     }
 
     @GetMapping("/allStudents")
-    public ResponseEntity<List<HashMap>> allStudents() {
-        return new ResponseEntity<List<HashMap>>(studentService.findAllStudent(),HttpStatus.OK);
+    public ResponseEntity<?> allStudents() {
+        try {
+            return new ResponseEntity<List<HashMap>>(studentService.findAllStudent(),HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<Object>(e.getMessage(),HttpStatus.OK);
+        }
+
     }
 
     @PostMapping("/updateOnlineStatus")
     public ResponseEntity<?> updateOnlineStatus(@RequestParam(name = "status") String status, @RequestParam(name = "userId") String userId) {
-        studentService.updateOnlineStatus(Boolean.parseBoolean(status), userId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            studentService.updateOnlineStatus(Boolean.parseBoolean(status), userId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<Object>(e.getMessage(),HttpStatus.OK);
+        }
+
     }
 
 }

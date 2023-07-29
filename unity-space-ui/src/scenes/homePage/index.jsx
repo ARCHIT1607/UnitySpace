@@ -1,23 +1,29 @@
 import { Box, useMediaQuery } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Navbar from "scenes/navbar";
 import UserWidget from "scenes/widgets/UserWidget";
 import MyPostWidget from "scenes/widgets/MyPostWidget";
 import PostsWidget from "scenes/widgets/PostsWidget";
 import AdvertWidget from "scenes/widgets/AdvertWidget";
 import FriendListWidget from "scenes/widgets/FriendListWidget";
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
 import { messaging } from "components/firebase";
 import { getToken, onMessage } from "firebase/messaging";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Axios from "axios";
 import createActivityDetector from "activity-detector";
+import { setFriends } from "state";
 
 const HomePage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const { sid, pictureName } = useSelector((state) => state.user);
   const jwtToken = useSelector((state) => state.token.token);
+  let friends = useSelector((state) => state.user.friends);
+  const onlineStatusArray = friends.map((friend) => friend.onlineStatus);
+console.log("onlineStatusArray ",onlineStatusArray)
+  const dispatch = useDispatch();
+
 
   const addFirebaseToken = async (token) => {
     const response = await fetch("http://localhost:9000/firebase/token", {
@@ -51,19 +57,23 @@ const HomePage = () => {
   }
 
   const updateOnlineStatus = async (status, userId) => {
-    const response = await Axios.post(
-      "http://localhost:9000/updateOnlineStatus",
-      null,
-      {
-        params: {
-          status: status,
-          userId: userId,
-        },
-        headers: {
-          Authorization: "Bearer " + jwtToken,
-        },
-      }
-    );
+    try {
+      const response = await Axios.post(
+        "http://localhost:9000/updateOnlineStatus",
+        null,
+        {
+          params: {
+            status: status,
+            userId: userId,
+          },
+          headers: {
+            Authorization: "Bearer " + jwtToken,
+          },
+        }
+      );
+    } catch (error) {
+      console.log("error in updateOnlineStatus ",error)
+    }
   };
 
   function useIdle(options) {
@@ -78,24 +88,53 @@ const HomePage = () => {
   }
   const isIdle = useIdle({ timeToIdle: 20000 });
 
+  const getFriends = async () => {
+    console.log("token ",jwtToken)
+    const response = await Axios.get("http://localhost:9000/users/friends", {
+      params:{
+        id:sid,
+      },
+      headers: {
+        Authorization: "Bearer " + jwtToken,
+      },
+    });
+    console.log("resoinsedata ",response.data);
+    const data = await response.data;
+    dispatch(setFriends({ friends: data }));
+    console.log("in home page");
+  };
+
   useEffect(() => {
     requestPermission();
-    console.log("updateOnlineStatus from home page")
+    getFriends();
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = '';
+      // Perform any necessary actions, such as saving data or notifying the user
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    updateOnlineStatus(true, sid);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      console.log("updateOnlineStatus inside destroy")
+      updateOnlineStatus(false, sid);
+    };
   }, []);
 
-  if(isIdle){
-    // window.alert("You there?")
-    console.log("updateOnlineStatus if of idle")
-    updateOnlineStatus(false, sid);
-  }else{
-    console.log("updateOnlineStatus else of idle")
-    updateOnlineStatus(true, sid);
-  }
+  // if(isIdle){
+  //   // window.alert("You there?")
+  //   // console.log("updateOnlineStatus if of idle")
+  //   // updateOnlineStatus(false, sid);
+  // }else{
+  //   console.log("updateOnlineStatus else of idle")
+  //   updateOnlineStatus(true, sid);
+  // }
 
   console.log("user ", sid);
   return (
     <Box>
-      {isIdle ? "Are you still there?" : "Hello there!"}
+      {/* {isIdle ? "Are you still there?" : "Hello there!"} */}
 
       <Navbar />
       <Box

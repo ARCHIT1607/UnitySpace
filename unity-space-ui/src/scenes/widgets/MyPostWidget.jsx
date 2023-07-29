@@ -26,6 +26,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
 import  Axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import badWords from 'bad-words';
 
 const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
   const dispatch = useDispatch();
@@ -83,6 +86,17 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
     dispatch(setPosts({ posts: data }));
   };
 
+  const handleTextChange = (event) => {
+    const filter = new badWords();
+    filter.removeWords("hell");
+    const newText = event.target.value ? event.target.value : '';
+    if(filter.isProfane(newText)){
+      toast("Inappropriate Content detected");
+      setDescription("")
+    }else{
+      setDescription(newText);
+    }
+  };
 
   return (
     <WidgetWrapper>
@@ -90,7 +104,7 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
         <UserImage image={picturePath} />
         <InputBase
           placeholder="What's ons your mind..."
-          onChange={(e) => setDescription(e.target.value)}
+          onChange={handleTextChange}
           value={description}
           sx={{
             width: "100%",
@@ -123,7 +137,7 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
                 >
                   <input {...getInputProps()} />
                   {!image ? (
-                    <p>Add Image Here</p>
+                    <p>Add Media Here</p>
                   ) : (
                     <FlexBetween>
                       <Typography>{image.name}</Typography>
@@ -147,8 +161,8 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
 
       <Divider sx={{ margin: "1.25rem 0" }} />
 
-      <FlexBetween>
-        <FlexBetween gap="0.25rem" onClick={() => setIsImage(!isImage)}>
+      <FlexBetween style={{justifyContent:"space-around"}}>
+        <FlexBetween gap="0.25rem" onClick={() => setIsImage(!isImage)} >
           <ImageOutlined sx={{ color: mediumMain }} />
           <Typography
             color={mediumMain}
@@ -161,18 +175,15 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
         {isNonMobileScreens ? (
           <>
             <FlexBetween gap="0.25rem">
-              <GifBoxOutlined sx={{ color: mediumMain }} />
-              <Typography color={mediumMain}>Clip</Typography>
-            </FlexBetween>
-
-            <FlexBetween gap="0.25rem">
-              <AttachFileOutlined sx={{ color: mediumMain }} />
-              <Typography color={mediumMain}>Attachment</Typography>
-            </FlexBetween>
-
-            <FlexBetween gap="0.25rem">
-              <MicOutlined sx={{ color: mediumMain }} />
-              <Typography color={mediumMain}>Audio</Typography>
+            <FlexBetween gap="0.25rem" onClick={() => setIsImage(!isImage)}>
+          <ImageOutlined sx={{ color: mediumMain }} />
+          <Typography
+            color={mediumMain}
+            sx={{ "&:hover": { cursor: "pointer", color: medium } }}
+          >
+            Clip
+          </Typography>
+        </FlexBetween>
             </FlexBetween>
           </>
         ) : (
@@ -186,7 +197,7 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
           disabled={!description}
           onClick={handlePost}
           sx={{
-            color: palette.background.alt,
+            color: "grey",
             backgroundColor: palette.primary.main,
             borderRadius: "3rem",
           }}

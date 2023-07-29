@@ -1,4 +1,4 @@
-import { Avatar, Box, Divider, Typography, useTheme } from "@mui/material";
+import { Avatar, Box, Divider, IconButton, Typography, useTheme } from "@mui/material";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
@@ -26,7 +26,7 @@ function Messages({ message }) {
   const [chatDocuments, setChatDocuments] = useState([]);
   let messages = useSelector((state) => state.messages);
   messages = messages !== null && messages.length != 0 ? messages : data;
-
+  const primaryLight = palette.primary.light;
   const getChats = async () => {
     console.log("messages[0].id", messages[0].id);
     const q = query(
@@ -54,7 +54,6 @@ function Messages({ message }) {
     // getChats();
   }, []);
 
-
   return (
     <WidgetWrapper>
       <Box sx={{ height: "70vh", overflow: "auto" }}>
@@ -71,13 +70,32 @@ function Messages({ message }) {
                   }}
                 >
                   <ListItemText
-                    primary={<Typography variant="h2" style={{ fontSize: "20px",
-                    color: sid === m.senderId ?"blue":""}}>
-                    {m.senderText}
-                  </Typography>}
-                    secondary={<Typography variant="h2" style={{ fontSize: "12px" }}>
-                    {m.createdDate.toString()}
-                  </Typography>}
+                    primary={
+                      <Typography
+                        variant="h2"
+                        style={{
+                          fontSize: "20px",
+                          color: sid === m.senderId ? "blue" : "",
+                        }}
+                      >
+                        {sid === m.senderId?<IconButton
+                          sx={{ backgroundColor: primaryLight, p: "0.6rem",fontSize:"1rem",color:"grey",textAlign:"right" }}
+                        >
+                          {m.senderId}
+                        </IconButton>:""}
+                        {m.senderText}
+                        {sid !== m.senderId?<IconButton
+                          sx={{ backgroundColor: primaryLight, p: "0.6rem",fontSize:"1rem",color:"grey",textAlign:"right" }}
+                        >
+                          {m.senderId}
+                        </IconButton>:""}
+                      </Typography>
+                    }
+                    secondary={
+                      <Typography variant="h2" style={{ fontSize: "12px" }}>
+                        {m.createdDate.toString()}
+                      </Typography>
+                    }
                   />
                 </ListItem>
               </Typography>

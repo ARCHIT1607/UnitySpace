@@ -12,7 +12,7 @@ const FriendListWidget = ({ userId,userPicturePath }) => {
   const token = useSelector((state) => state.token);
   const friends = useSelector((state) => state.user.friends);
   const { sid } = useSelector((state) => state.user);
-
+  let status = useSelector((state) => state.user.friends.onlineStatus);
   const getFriends = async () => {
     console.log("token ",token)
     const response = await Axios.get("http://localhost:9000/users/friends", {
@@ -27,15 +27,13 @@ const FriendListWidget = ({ userId,userPicturePath }) => {
     const data = await response.data;
     dispatch(setFriends({ friends: data }));
     console.log("in getAllBills");
-    
-   
   };
 
   useEffect(() => {
     console.log("calling")
     getFriends();
     console.log("friends ",friends)
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [status]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <WidgetWrapper>
