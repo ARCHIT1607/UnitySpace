@@ -29,7 +29,8 @@ import Stack from "@mui/material/Stack";
 import Autocomplete from "@mui/material/Autocomplete";
 import Axios from "axios";
 import { useEffect } from "react";
-
+import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
+import { Button } from "bootstrap";
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
@@ -46,6 +47,14 @@ const Navbar = () => {
   const alt = theme.palette.background.alt;
   const token = useSelector((state) => state.token);
   const fullName = `${user.fname} ${user.lname}`;
+
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: "AIzaSyCBHQ2PytqvWuk1RcoWshj57oxZf12l9yM",
+  });
+
+  const [userLocation, setUserLocation] = useState(null);
 
   const [data, setData] = useState([]);
   const getAllStudents = async () => {
@@ -71,8 +80,42 @@ const Navbar = () => {
     });
   }
 
+  function error() {
+    console.log("Unable to retrieve your location");
+  }
+
+  function success(position) {
+    const latitude = position.coords.latitude;
+    const longitude = position.coords.longitude;
+    setUserLocation({ latitude, longitude });
+    console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+  }
+
+  const sendEmergency = async () => {
+    const response = await Axios.post("http://localhost:9000/auth/emergencyCall",
+    null,
+    {
+      params: {
+        longitude: userLocation.longitude,
+        latitude: userLocation.latitude,
+        from:user.email
+      },
+      headers: {
+        Authorization: "Bearer " + token.token,
+      },
+    });
+    console.log("sendEmergency done", response.data);
+  };
+
   useEffect(() => {
     getAllStudents();
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(success, error);
+    } else {
+      console.log("Geolocation not supported");
+    }
+    
+    
   }, []);
 
   const handleOptionChange = (event, value) => {
@@ -96,7 +139,7 @@ const Navbar = () => {
             },
           }}
         >
-          UnitySpace
+          UnitySpace 
         </Typography>
         {isNonMobileScreens && (
           <FlexBetween
@@ -138,6 +181,7 @@ const Navbar = () => {
       {/* DESKTOP NAV */}
       {isNonMobileScreens ? (
         <FlexBetween gap="2rem">
+          <IconButton onClick={sendEmergency}>Emergency Button</IconButton>
           <IconButton onClick={() => dispatch(setMode())}>
             {theme.palette.mode === "dark" ? (
               <DarkMode sx={{ fontSize: "25px" }} />
@@ -145,6 +189,7 @@ const Navbar = () => {
               <LightMode sx={{ color: dark, fontSize: "25px" }} />
             )}
           </IconButton>
+          
           <IconButton
             onClick={() => {
               navigate("/chat");
@@ -222,6 +267,7 @@ const Navbar = () => {
             alignItems="center"
             gap="3rem"
           >
+            <IconButton onClick={sendEmergency}>Emergency Button</IconButton>
             <IconButton
               onClick={() => dispatch(setMode())}
               sx={{ fontSize: "25px" }}

@@ -1,7 +1,9 @@
 package com.asm63.unityspace.controllers;
 
 import com.asm63.unityspace.models.Student;
+import com.asm63.unityspace.services.EmailSenderService;
 import com.asm63.unityspace.services.StudentService;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,9 @@ public class AuthController {
 
     @Autowired
     PasswordEncoder passwordEncode;
+
+    @Autowired
+    EmailSenderService service;
 
     @PostMapping(value = "/auth/register")
     public ResponseEntity<Object> register(@RequestParam("fname") String fname, @RequestParam("lname") String lname,
@@ -99,4 +104,17 @@ public class AuthController {
         StreamUtils.copy(resource, response.getOutputStream());
 
     }
+
+    @GetMapping("/auth/test")
+    public void test() throws MessagingException, IOException {
+        service.sendEmailWithGoogleMaps("");
+    }
+
+    @PostMapping("/auth/emergencyCall")
+    public void test2(@RequestParam("longitude") String longitude,
+                      @RequestParam("latitude") String latitude,@RequestParam("from") String from) throws MessagingException, IOException {
+        service.sendEmailWithGoogleMapsUrl(Double.parseDouble(longitude),Double.parseDouble(latitude),from);
+    }
+
+
 }
