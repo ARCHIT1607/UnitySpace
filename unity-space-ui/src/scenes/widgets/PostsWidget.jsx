@@ -3,33 +3,52 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "state";
 import PostWidget from "./PostWidget";
 import  Axios from "axios";
-import {Buffer} from 'buffer';
+import { useNavigate } from "react-router-dom";
 
 const PostsWidget = ({ userId, isProfile = false ,fromProfile, userPicturePath}) => {
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.posts);
   const token = useSelector((state) => state.token);
   console.log("user pic from home page in postsWidget ",userPicturePath)
+  const navigate = useNavigate();
+
+
   const getPosts = async () => {
-    const response = await Axios.get("http://localhost:9000/getPosts",{
-      headers: {
-        Authorization: "Bearer " + token.token,
-      },
-    });
-    const data = response.data;
-    console.log("data from getPosts ",data)
-    dispatch(setPosts({ posts: data }));
+    try {
+      const response = await Axios.get("http://localhost:9000/getPosts",{
+        headers: {
+          Authorization: "Bearer " + token.token,
+        },
+      });
+      const data = response.data;
+      console.log("data from getPosts ",data)
+      dispatch(setPosts({ posts: data }));
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      if(error.code=="ERR_NETWORK"){
+        window.alert("Session Expired Please login again")
+        navigate("/");
+      }
+    }
   };
 
   const getUserPosts = async () => {
-    const response = await Axios.get(
-      `http://localhost:9000/posts/${userId}/posts`,
-      {
-        headers: { Authorization: "Bearer " + token.token},
+    try {
+      const response = await Axios.get(
+        `http://localhost:9000/posts/${userId}/posts`,
+        {
+          headers: { Authorization: "Bearer " + token.token},
+        }
+      );
+      const data = await response.data;
+      dispatch(setPosts({ posts: data }));
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      if(error.code=="ERR_NETWORK"){
+        window.alert("Session Expired Please login again")
+        navigate("/");
       }
-    );
-    const data = await response.data;
-    dispatch(setPosts({ posts: data }));
+    }
   };
 
   useEffect(() => {
@@ -53,6 +72,7 @@ const PostsWidget = ({ userId, isProfile = false ,fromProfile, userPicturePath})
           description,
           location,
           picture,
+          course,
           picturePath,
           userPicturePath,
           likes,
@@ -65,6 +85,7 @@ const PostsWidget = ({ userId, isProfile = false ,fromProfile, userPicturePath})
             name={firstname + " "+ lastname}
             description={description}
             location={location}
+            course={course}
             picture={picture}
             picturePath={picturePath}
             userPicturePath={userPicturePath}

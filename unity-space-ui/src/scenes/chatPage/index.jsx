@@ -46,8 +46,8 @@ function ChatHomePage() {
             <Box m="2rem 0" />
          {currentChat.friendId&&<Chat friendId={currentChat.friendId}
           pictureName={currentChat.profilePic} name={currentChat.name} course={currentChat.course} />}
-          {currentGroupChat&&<GroupChat
-          pictureName={currentGroupChat.profilePic} name={currentGroupChat.name} member={currentGroupChat.member} />}
+          {currentGroupChat.id&&<GroupChat
+          pictureName={currentGroupChat.profilePic} name={currentGroupChat.name} member={currentGroupChat.member} id={currentGroupChat.id}/>}
         </Box>
       </Box>
     </Box>

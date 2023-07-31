@@ -7,32 +7,32 @@ import { setFriends } from "state";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
 import  Axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
-const Friend = ({ friendId, name, subtitle, userPicturePath, onlineStatus,profileUser }) => {
+const Friend = ({ friendId, name, subtitle, userPicturePath, onlineStatus,fromProfile, profileUser }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { sid } = useSelector((state) => state.user);
+  const  friends  = useSelector((state) => state.user.friends);
   const token = useSelector((state) => state.token);
-  const friends = useSelector((state) => state.user.friends);
+const [userFriends, setUserFriends] = useState([])
 
   const { palette } = useTheme();
   const primaryLight = palette.primary.light;
   const primaryDark = palette.primary.dark;
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
-  console.log("friends ",friends)
-  console.log("friendId ",friendId.sid)
-  // const isFriend = friends&&friends.sid === friendId;
-  const isFriend = friends.find(({ sid }) => friendId === sid);
+  const sameFriends = fromProfile===true?userFriends.find(({ sid }) => friendId === sid):
+  friends.find(({ sid }) => friendId === sid);
 
- console.log("isfriend ",friends.find(({ sid }) => console.log(friendId === sid)));
+ console.log("userIsSameAsFriend ccheck",sameFriends);
 
   const patchFriend = async () => {
     console.log("calling patchFriend")
-    const response = await Axios.get("http://localhost:9000/users", {
+    try {
+    const response = await Axios.get("http://localhost:9000/patchFriend", {
       params:{
-        id:profileUser!=null?profileUser:sid,
+        id:sid,
         friendId:friendId
       },
       headers: {
@@ -41,33 +41,52 @@ const Friend = ({ friendId, name, subtitle, userPicturePath, onlineStatus,profil
     });
     console.log("patch friend data ",response);
     const data = await response.data.friend;
-    dispatch(setFriends({ friends: data }));
+    if(profileUser===sid)
+    {
+      dispatch(setFriends({ friends: data }));
+    }
+    
+    getFriends();
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    if(error.code=="ERR_NETWORK"){
+      window.alert("Session Expired Please login again")
+      navigate("/");
+    }
+  }
   };
 
-  // const getFriends = async () => {
-  //   console.log("token ",token)
-  //   const response = await Axios.get("http://localhost:9000/users/friends", {
-  //     params:{
-  //       id:sid,
-  //     },
-  //     headers: {
-  //       Authorization: "Bearer " + token.token,
-  //     },
-  //   });
-  //   console.log("resoinsedata ",response.data);
-  //   const data = await response.data;
-  //   dispatch(setFriends({ friends: data }));
-  //   console.log("in getAllBills");
-    
-   
-  // };
+  const getFriends = async () => {
+    try{const response = await Axios.get("http://localhost:9000/users/friends", {
+      params:{
+        id:sid,
+      },
+      headers: {
+        Authorization: "Bearer " + token.token,
+      },
+    });
+    console.log("resoinsedata ",response.data);
+    const data = await response.data;
+    console.log("from profile in friend",fromProfile===undefined)
+    if(fromProfile===undefined){
+      dispatch(setFriends({ friends: data }));
+    }
+    setUserFriends(data);
+    console.log("userFriends ",data)
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    if(error.code=="ERR_NETWORK"){
+      window.alert("Session Expired Please login again")
+      navigate("/");
+    }
+  }
+  };
 
-  // useEffect(() => {
-  //   console.log("calling")
-  //   getFriends();
-  //   console.log("friends ",friends)
-  // }, []); 
-
+  useEffect(() => {
+    console.log("getUserFriends in Friend")
+    getFriends()
+  }, [])
+  
   return (
     <FlexBetween>
       <FlexBetween gap="1rem">
@@ -100,19 +119,21 @@ const Friend = ({ friendId, name, subtitle, userPicturePath, onlineStatus,profil
         </Box>
       </FlexBetween>
       <FlexBetween>
-{console.log("friendId !==sid ",friendId !==sid)}
-{console.log("isFriendd ",isFriend)}
-      <IconButton
-        onClick={() => patchFriend()}
-        sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
-      >
-        {friendId !==sid ? 
-        isFriend ? (
-          <PersonRemoveOutlined sx={{ color: primaryDark }} />
+{friendId !==sid ? (
+          <IconButton
+            onClick={() => patchFriend()}
+            sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
+          >
+            { sameFriends ? (
+             
+               <PersonRemoveOutlined sx={{ color: primaryDark }} />
+            ) : (
+              <PersonAddOutlined sx={{ color: primaryDark }} />
+            )}
+          </IconButton>
         ) : (
-          <PersonAddOutlined sx={{ color: primaryDark }} />
-        ): <PersonRemoveOutlined sx={{ color: primaryDark }} />}
-      </IconButton>
+          ""
+        )}
       </FlexBetween>
     </FlexBetween>
   );

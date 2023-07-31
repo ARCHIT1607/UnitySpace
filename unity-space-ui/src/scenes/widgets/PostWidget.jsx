@@ -24,14 +24,16 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import badWords from 'bad-words';
+import { useNavigate } from "react-router-dom";
 
 const PostWidget = ({
   postId,
   userId,
   name,
   description,
-  location,
+  course,
   picture,
+  location,
   picturePath,
   userPicturePath,
   likes,
@@ -49,10 +51,11 @@ console.log("user pic from home page ",userPicturePath)
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const primary = palette.primary.main;
-  
+  const navigate = useNavigate();
 
   const patchLike = async () => {
-    const response = await Axios.post("http://localhost:9000/posts/like", null, {
+    try {
+      const response = await Axios.post("http://localhost:9000/posts/like", null, {
       params: {
         postId: postId,
         userId:loggedInUserId
@@ -71,28 +74,51 @@ console.log("user pic from home page ",userPicturePath)
     if(fromProfile){
       getUserPosts();
     }
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      if(error.code=="ERR_NETWORK"){
+        window.alert("Session Expired Please login again")
+        navigate("/");
+      }
+    }
   };
 
   const getUserPosts = async () => {
-    const response = await Axios.get(
-      `http://localhost:9000/posts/${userId}/posts`,
-      {
-        headers: { Authorization: "Bearer " + jwtToken.token},
+    try {
+      const response = await Axios.get(
+        `http://localhost:9000/posts/${userId}/posts`,
+        {
+          headers: { Authorization: "Bearer " + jwtToken.token},
+        }
+      );
+      const data = await response.data;
+      dispatch(setPosts({ posts: data }));
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      if(error.code=="ERR_NETWORK"){
+        window.alert("Session Expired Please login again")
+        navigate("/");
       }
-    );
-    const data = await response.data;
-    dispatch(setPosts({ posts: data }));
+    }
   };
 
   const getPosts = async () => {
-    const response = await Axios.get("http://localhost:9000/getPosts",{
-      headers: {
-        Authorization: "Bearer " + jwtToken.token,
-      },
-    });
-    const data = response.data;
-    console.log("data from getPosts ",data)
-    dispatch(setPosts({ posts: data }));
+    try {
+      const response = await Axios.get("http://localhost:9000/getPosts",{
+        headers: {
+          Authorization: "Bearer " + jwtToken.token,
+        },
+      });
+      const data = response.data;
+      console.log("data from getPosts ",data)
+      dispatch(setPosts({ posts: data }));
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      if(error.code=="ERR_NETWORK"){
+        window.alert("Session Expired Please login again")
+        navigate("/");
+      }
+    }
   };
 
 
@@ -112,18 +138,26 @@ console.log("user pic from home page ",userPicturePath)
   const postComment =async(e)=>{
     const formData = new FormData();
     formData.append("comment",comment)
-    const response = await Axios.post("http://localhost:9000/postComment", formData, {
-      params: {
-        postId: postId
-      },
-      headers: {
-        Authorization: "Bearer " + jwtToken.token,
-      },
-    });
-    const data = response.data;
-    console.log("data from getPosts ",data)
-    dispatch(setPosts({ posts: data }));
-    setComment("");
+    try {
+      const response = await Axios.post("http://localhost:9000/postComment", formData, {
+        params: {
+          postId: postId
+        },
+        headers: {
+          Authorization: "Bearer " + jwtToken.token,
+        },
+      });
+      const data = response.data;
+      console.log("data from getPosts ",data)
+      dispatch(setPosts({ posts: data }));
+      setComment("");
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      if(error.code=="ERR_NETWORK"){
+        window.alert("Session Expired Please login again")
+        navigate("/");
+      }
+    }
   }
   
   const [open, setOpen] = useState(false);
@@ -148,14 +182,22 @@ console.log("user pic from home page ",userPicturePath)
   }, [open]);
 
   const sendNotification = (postId) => {
-    Axios.post("http://localhost:9000/firebase/send-notification", {"title":"Liked your post","userId":loggedInUserId}, {
-      params: {
-        postId: postId
-      },
-      headers: {
-        Authorization: "Bearer " + jwtToken.token,
-      },
-    });
+    try {
+      Axios.post("http://localhost:9000/firebase/send-notification", {"title":"Liked your post","userId":loggedInUserId}, {
+        params: {
+          postId: postId
+        },
+        headers: {
+          Authorization: "Bearer " + jwtToken.token,
+        },
+      });
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      if(error.code=="ERR_NETWORK"){
+        window.alert("Session Expired Please login again")
+        navigate("/");
+      }
+    }
   };
 
   console.log("postUserId in postwidget ",userId, name)
@@ -167,6 +209,7 @@ console.log("user pic from home page ",userPicturePath)
         subtitle={location}
         userPicturePath={userPicturePath}
         postId={postId}
+        course={course}
         fromProfile={fromProfile}
       />
       <Typography color={main} sx={{ mt: "1rem" }}>

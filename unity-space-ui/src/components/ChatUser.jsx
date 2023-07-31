@@ -17,7 +17,7 @@ import {
 } from "firebase/firestore";
 import { useState } from "react";
 import { useEffect } from "react";
-import { setCurrentChat, setMessages } from "state";
+import { setCurrentChat, setCurrentGroupChat, setMessages } from "state";
 
 const ChatUser = ({ friendId, name, subtitle, userPicturePath, onlineStatus }) => {
   const dispatch = useDispatch();
@@ -43,47 +43,25 @@ const ChatUser = ({ friendId, name, subtitle, userPicturePath, onlineStatus }) =
     const querySnapshot = await getDocs(q);
     const documents = querySnapshot.docs.map((doc) => doc.data());
     setChatDocuments(documents);
-    // console.log("id reverseId",id, reverseId);
     console.log("setChatDocuments in chatUser", documents,documents.length);
+   
     if(documents.length==0){
-      // console.log("inside  chatDocuments false");
+       // if there is no document created for user and his friend
       const chatRef = doc(db, "chats", id);
       await setDoc(chatRef, {
         id:id,
         messages: [],
       });
     }else {
-        // console.log("inside  chatDocuments true");
         dispatch(setMessages({ messages: documents }));
   }
 }
 
   const createUserChatId = async () => {
-    const q = query(
-      collection(db, "userChats"),
-      where("id", "in", [id, reverseId])
-    );
-    const querySnapshot = await getDocs(q);
-    const documents = querySnapshot.docs.map((doc) => doc.data());
-    setDocuments(documents);
-
-    console.log("user chat id checking done ", documents);
-    if(!documents){
-      const userRef = doc(db, "userChats", id);
-      await setDoc(userRef, {
-        id: id,
-        userId: sid,
-        friendId: friendId,
-        displayName: name,
-      });
-      console.log(
-        "userChats collection with its corresponding chat reference created "
-      );
-  
-    }
     let currentFriend = {"friendId":friendId,"name":name,"profilePic":userPicturePath,"course":subtitle}
     dispatch(setCurrentChat({ currentChat: currentFriend }));
     getChats()
+    dispatch(setCurrentGroupChat({ currentGroupChat: [] }));
     
   };
 

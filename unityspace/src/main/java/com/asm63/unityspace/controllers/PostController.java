@@ -119,6 +119,8 @@ public class PostController {
 
             post.setFirstname(student.getFname());
             post.setLastname(student.getLname());
+            post.setLocation(student.getLoc());
+            post.setCourse(student.getCourse());
             System.out.println("post.getFirstname()" +post.getFirstname());
             System.out.println("post.getLastname()" +post.getLastname());
             System.out.println("picture" +picture);

@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import { useNavigate } from "react-router-dom";
 
 const AdvertWidget = () => {
   const { palette } = useTheme();
@@ -24,7 +25,7 @@ const AdvertWidget = () => {
   const token = useSelector((state) => state.token);
   const [event, setEvent] = useState();
   const [selectedDate, setSelectedDate] = useState(null);
-
+  const navigate = useNavigate();
   const localizer = momentLocalizer(moment);
 
   const events = [
@@ -41,11 +42,19 @@ const AdvertWidget = () => {
   ];
 
   const getEvents = async () => {
-    const response = await Axios.get(`http://localhost:9000/events`, {
-      headers: { Authorization: "Bearer " + token.token },
-    });
-    setEvent(response.data);
-    console.log("events ", response.data);
+    try {
+      const response = await Axios.get(`http://localhost:9000/events`, {
+        headers: { Authorization: "Bearer " + token.token },
+      });
+      setEvent(response.data);
+      console.log("events ", response.data);
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      if(error.code=="ERR_NETWORK"){
+        window.alert("Session Expired Please login again")
+        navigate("/");
+      }
+    }
   };
 
   useEffect(() => {

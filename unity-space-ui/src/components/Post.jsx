@@ -7,6 +7,7 @@ import { setFriends, setPosts } from "state";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
 import Axios from "axios";
+import { useEffect, useState } from "react";
 
 const Post = ({
   friendId,
@@ -15,30 +16,33 @@ const Post = ({
   userPicturePath,
   postId,
   fromProfile,
+  course
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { sid, course } = useSelector((state) => state.user);
+  const { sid } = useSelector((state) => state.user);
+  const  friends  = useSelector((state) => state.user.friends);
   const token = useSelector((state) => state.token);
-  const friends = useSelector((state) => state.user.friends);
+  const [userFriends, setUserFriends] = useState([])
 
   const { palette } = useTheme();
   const primaryLight = palette.primary.light;
   const primaryDark = palette.primary.dark;
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
-  console.log("friends ", friends);
-  console.log("friendId ", friendId && friendId.sid);
-  // const isFriend = friends&&friends.sid === friendId;
-  const isFriend = friends.find(({ sid }) => friendId === sid);
-
+  console.log("friendId ",friendId)
+  console.log("userFriends in post ",userFriends)
+  console.log("fromProfile in post ",fromProfile)
+  let sameFriends = fromProfile===true?userFriends.find(({ sid }) => friendId === sid):
+  friends.find(({ sid }) => friendId === sid);
+ console.log("sameFriends in post ",sameFriends)
 
   const patchFriend = async () => {
     console.log("calling patchFriend");
-    const response = await Axios.get("http://localhost:9000/users", {
+    try{const response = await Axios.get("http://localhost:9000/patchFriend", {
       params: {
         id: sid,
-        friendId: friendId,
+        friendId: friendId
       },
       headers: {
         Authorization: "Bearer " + token.token,
@@ -47,11 +51,45 @@ const Post = ({
     console.log("patch friend data ", response);
     const data = await response.data.friend;
     dispatch(setFriends({ friends: data }));
+    // setUserFriends(data);
+    getFriends()
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    if(error.code=="ERR_NETWORK"){
+      window.alert("Session Expired Please login again")
+      navigate("/");
+    }
+  }
   };
+
+  const getFriends = async () => {
+    try{
+      const response = await Axios.get("http://localhost:9000/users/friends", {
+      params:{
+        id:sid,
+      },
+      headers: {
+        Authorization: "Bearer " + token.token,
+      },
+    });
+    console.log("resoinsedata ",response.data);
+    const data = await response.data;
+    console.log("from profile ",fromProfile)
+    setUserFriends(data);
+    console.log("userFriends ",data)
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    if(error.code=="ERR_NETWORK"){
+      window.alert("Session Expired Please login again")
+      navigate("/");
+    }
+  }
+  };
+
 
   const deletePost = async () => {
     console.log("calling deletePost");
-    const response = await Axios.get("http://localhost:9000/delete/post", {
+    try{const response = await Axios.get("http://localhost:9000/delete/post", {
       params: {
         postId: postId,
       },
@@ -66,10 +104,17 @@ const Post = ({
     if (fromProfile) {
       getUserPosts();
     }
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    if(error.code=="ERR_NETWORK"){
+      window.alert("Session Expired Please login again")
+      navigate("/");
+    }
+  }
   };
 
   const getUserPosts = async () => {
-    const response = await Axios.get(
+    try{const response = await Axios.get(
       `http://localhost:9000/posts/${sid}/posts`,
       {
         headers: { Authorization: "Bearer " + token.token },
@@ -77,7 +122,19 @@ const Post = ({
     );
     const data = await response.data;
     dispatch(setPosts({ posts: data }));
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    if(error.code=="ERR_NETWORK"){
+      window.alert("Session Expired Please login again")
+      navigate("/");
+    }
+  }
   };
+
+  useEffect(() => {
+    console.log("getUserFriends in Post")
+    getFriends()
+  }, [friends])
 
   return (
     <FlexBetween>
@@ -108,28 +165,24 @@ const Post = ({
         </Box>
       </FlexBetween>
       <FlexBetween>
-        {sid === friendId ? (
-          <IconButton
-            onClick={() => deletePost()}
-            sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
-          >
-            <DeleteIcon />
-          </IconButton>
-        ) :""}
-        {friendId !== sid ? (
+      {friendId !==sid ? (
           <IconButton
             onClick={() => patchFriend()}
             sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
           >
-            {isFriend ? (
-              <PersonRemoveOutlined sx={{ color: primaryDark }} />
+            { sameFriends ? (
+             
+               <PersonRemoveOutlined sx={{ color: primaryDark }} />
             ) : (
               <PersonAddOutlined sx={{ color: primaryDark }} />
             )}
           </IconButton>
-        ) : (
-          ""
-        )}
+        ) : <IconButton
+        onClick={() => deletePost()}
+        sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
+      >
+        <DeleteIcon></DeleteIcon>
+        </IconButton>}
       </FlexBetween>
     </FlexBetween>
   );

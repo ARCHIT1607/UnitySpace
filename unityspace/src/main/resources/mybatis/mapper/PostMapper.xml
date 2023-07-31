@@ -9,6 +9,7 @@
         <result column="description" property="description" />
         <result column="firstname" property="firstname" />
         <result column="lastname" property="lastname" />
+        <result column="course" property="course" />
         <result column="location" property="location" />
         <result column="picture_path" property="picturePath" />
         <result column="post_user_id" property="postUserId" />
@@ -22,12 +23,12 @@
 
     <select id="findPostById" parameterType="Long"
             resultType="Post">
-        SELECT id,post_user_id AS "postUserId",description,location,picture_path,user_picture_path,likes,comments,firstname,lastname, created_date  from post where id = #{id}
+        SELECT id,post_user_id AS "postUserId",description,course,location,picture_path,user_picture_path,likes,comments,firstname,lastname, created_date  from post where id = #{id}
     </select>
 
     <select id="getPosts"
             resultType="HashMap">
-        SELECT id,post_user_id AS "postUserId",description,location,picture_path as "picturePath",user_picture_path as "userPicturePath" ,
+        SELECT id,post_user_id AS "postUserId",description,course,location,picture_path as "picturePath",user_picture_path as "userPicturePath" ,
                likes,comments,firstname,lastname, created_date from post ORDER BY created_date desc
     </select>
 
@@ -41,7 +42,7 @@
 
     <select id="getUserPosts" parameterType="String"
             resultType="HashMap">
-        SELECT id,post_user_id as "postUserId",description,location,picture_path as "picturePath",user_picture_path as "userPicturePath",likes,comments,firstname,lastname, created_date
+        SELECT id,post_user_id as "postUserId",description,course,location,picture_path as "picturePath",user_picture_path as "userPicturePath",likes,comments,firstname,lastname, created_date
         from post where post_user_id = #{userId} order by created_date desc
     </select>
 
@@ -83,10 +84,10 @@
         </selectKey>
         INSERT INTO
         post
-        (id,post_user_id,description,location,picture_path,user_picture_path,
+        (id,post_user_id,description,course,location,picture_path,user_picture_path,
         created_date,created_by,likes,firstname,lastname,picture)
         VALUES(#{id},#{postUserId},#{description},
-        #{location},#{picturePath},#{userPicturePath},
+        #{course},#{location},#{picturePath},#{userPicturePath},
         #{createdDate},#{createdBy},
         <if test="likes != null">
             likes =#{likes},
@@ -94,13 +95,7 @@
         <if test="likes == null">
             NULL,
         </if>
-        <if test="picture != null and picture != ''">
-            #{picture},
-        </if>
-        <if test="picture == null">
-            #{picture},
-        </if>
-        #{firstname},#{lastname})
+        #{firstname},#{lastname}, #{picture})
     </insert>
 
     <insert id="createPostWithoutPicture" parameterType="Post">
@@ -110,10 +105,10 @@
         </selectKey>
         INSERT INTO
         post
-        (id,post_user_id,description,location,user_picture_path,
+        (id,post_user_id,description,course,location,user_picture_path,
         created_date,created_by,likes,firstname,lastname)
         VALUES(#{id},#{postUserId},#{description},
-        #{location},#{userPicturePath},
+        #{course},#{location},#{userPicturePath},
         #{createdDate},#{createdBy},
         <if test="likes != null">
             likes =#{likes},
@@ -132,5 +127,11 @@
             resultType="Event">
         SELECT id, event_name as "eventName", created_date as "CreatedDate", event_date as "eventDate", is_active as "active" from event where is_active = TRUE
     </select>
+
+
+    <delete id="deletedUserPost" parameterType="String">
+        delete from post where post_user_id = #{userId}
+    </delete>
+
 
 </mapper>

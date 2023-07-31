@@ -32,18 +32,26 @@ const UserWidget = ({ userId, picturePath }) => {
   const main = palette.neutral.main;
   console.log("picturePath in UserWidget ",picturePath)
   const getUser = async () => {
-    const response = await Axios.get("http://localhost:9000/getUser", {
-      params:{
-        userId:userId,
-      },
-      headers: {
-        Authorization: "Bearer " + token.token,
-      },
-    });
-    console.log("response in getUser ",response.data)
-    const data = response;
-    setUser(response.data);
-    console.log("user in userWidget ",user)
+    try {
+      const response = await Axios.get("http://localhost:9000/getUser", {
+        params:{
+          userId:userId,
+        },
+        headers: {
+          Authorization: "Bearer " + token.token,
+        },
+      });
+      console.log("response in getUser ",response.data)
+      const data = response;
+      setUser(response.data);
+      console.log("user in userWidget ",user)
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      if(error.code=="ERR_NETWORK"){
+        window.alert("Session Expired Please login again")
+        navigate("/");
+      }
+    }
   };
 
   useEffect(() => {

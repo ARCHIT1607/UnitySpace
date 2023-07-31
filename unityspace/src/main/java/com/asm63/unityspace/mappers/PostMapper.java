@@ -36,4 +36,6 @@ public interface PostMapper {
     ArrayList<String> getLikes(Long postId);
 
     void createPostWithoutPicture(PostDTO post);
+
+    void deletedUserPost(String userId);
 }

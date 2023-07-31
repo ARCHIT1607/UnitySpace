@@ -3,16 +3,13 @@ import WidgetWrapper from "components/WidgetWrapper";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentChat, setCurrentGroupChat, setFriends, setMessages } from "state";
-import Axios from "axios";
-import ChatUser from "components/ChatUser";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
 import ListItemText from "@mui/material/ListItemText";
 import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
-import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
+import { collection, doc, getDocs, onSnapshot, query, setDoc, where } from "firebase/firestore";
 import { db } from "components/firebase";
 import Group from "components/Group";
 import Modal from "@mui/material/Modal";
@@ -21,9 +18,11 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {v4 as uuidv4} from 'uuid';
 
 const GroupListWidget = ({ userId, userPicturePath }) => {
+  const [data, setData] = useState([{ id: "" }]);
   const dispatch = useDispatch();
   const { palette } = useTheme();
-  const token = useSelector((state) => state.token);
+  // let currentGroupChat = useSelector((state) => state.currentGroupChat);
+  let currentGroup = useSelector((state) => state.currentGroupChat.currentGroupChat);
   const friends = useSelector((state) => state.user.friends);
   const { sid } = useSelector((state) => state.user);
   const [documents, setDocuments] = useState([]);
@@ -37,7 +36,7 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
     position: "absolute",
     top: "50%",
     left: "50%",
-    height: "30rem",
+    height: "20rem",
     transform: "translate(-50%, -50%)",
     width: "20rem",
     bgcolor: "background.paper",
@@ -47,15 +46,6 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
   };
 
   const getGroupMsg = async ()=>{
-
-    // const q = query(
-    //   collection(db, "roomChats"),
-    //   where("id", "in", [sid])
-    // );
-    // const querySnapshot = await getDocs(q);
-    // const documents = querySnapshot.docs.map((doc) => doc.data());
-    // // console.log("id reverseId",id, reverseId);
-    // console.log("setChatDocuments in Group", documents,documents.length);
     
   console.log("sid in Group", sid);
   const q = query(collection(db, "roomChats"), where("members", "array-contains", sid));
@@ -64,17 +54,25 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
     console.log("setChatDocuments in groupListWidget", document,document.length,sid);
     setDocuments(document);
     dispatch(setMessages({ messages: document}));
-  let currentGroupChat = {"id":document[0].id,"name":document[0].groupName,"profilePic":document[0].picture,"member":document[0].members.length}
+  let currentGroupChat = document.length!=0?{"id":document[0].id,"name":document[0].groupName,"profilePic":document[0].picture,
+  "member":document[0].members.length}:[]
     dispatch(setCurrentGroupChat({ currentGroupChat: currentGroupChat }));
     dispatch(setCurrentChat({ currentChat: [] }));
     // getGroupMsg()
   }
 
   useEffect(() => {
-    console.log("calling getGroupMsg");
+    console.log("calling getGroupMsg in groupListWidget after change in groupList");
     getGroupMsg();
-    console.log("getGroupMsg from useffect groupListWidget", documents);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    if (currentGroup.id) {
+          const documentRef = doc(db, "roomChats", currentGroup.id);
+          const unsubscribe = onSnapshot(documentRef, (doc) => {
+            console.log("something got changed");
+            getGroupMsg();
+          });
+          return () => unsubscribe();
+        }
+  }, [currentGroup.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
@@ -87,7 +85,7 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
     },
   };
 
-  const [personName, setPersonName] = useState([userId]);
+  const [personName, setPersonName] = useState([sid]);
 
   const handleChange = (event) => {
     const {
@@ -127,7 +125,7 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
     const downloadURL = await getDownloadURL(storageRef);
     console.log("Download URL:", downloadURL);
     setPersonName(
-      typeof userId === "string" ? userId.split(",") : userId
+      typeof sid === "string" ? userId.split(",") : sid
     );
  console.log("setPersonName ",personName)
     // Set the data for the new document
@@ -142,32 +140,12 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
 
     // Reset the form
     setGroupName("");
-    setPersonName([]);
+    setPersonName([sid]);
     setGroupPicture(null);
     handleClose(false);
+    getGroupMsg()
   };
 
-  // const createGroupChat = async () => {
-  //   const q = query(collection(db, "roomChats"));
-  //   const querySnapshot = await getDocs(q);
-  //   const documents = querySnapshot.docs.map((doc) => doc.data());
-  //   setDocuments(documents);
-
-  //   console.log("group chat id checking done ", documents);
-  //   if (documents.length == 0) {
-  //     const newCollectionRef = collection(db, "roomChats");
-  //     const docRef = doc(newCollectionRef);
-  //     await setDoc(docRef, {
-  //       members: personName,
-  //       createdBy: sid,
-  //       groupPicture: "",
-  //       messages: [],
-  //     });
-  //     console.log(
-  //       "roomChats collection with its corresponding chat reference created "
-  //     );
-  //   }
-  // };
 
   return (
     <WidgetWrapper  sx={{textAlign:"center",justifyItems:"center"}}>
@@ -179,7 +157,7 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
       >
         Group Chats
       </Typography>
-      <Button variant="contained" onClick={handleOpen}>Open modal</Button>
+      <Button variant="contained" onClick={handleOpen}>Create Group</Button>
       <Box m="2rem 0"  />
       <Modal
         open={open}
@@ -218,7 +196,9 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
               onChange={handleGroupNameChange}
               required
             />
+            <Box m={"2rem"}></Box>
             <input type="file" onChange={handleGroupPictureChange} required />
+            <Box m={"2rem"}></Box>
             <Button type="submit" variant="contained">
               Create
             </Button>
@@ -229,7 +209,7 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
       <Box display="flex" flexDirection="column" gap="1.5rem">
         {documents &&
           documents.map((group) => (
-            <Group name={group.groupName} members={group.members} groupImage={group.picture} size="55px"/>
+            <Group id={group.id} name={group.groupName} members={group.members} groupImage={group.picture} size="55px"/>
           ))}
       </Box>
     </WidgetWrapper>

@@ -130,4 +130,10 @@ public class StudentService {
     public void updateOnlineStatus(boolean status, String userId) {
         studMapper.updateOnlineStatus(status, userId);
     }
+
+    public void deleteUser(String userId) {
+        postMapper.deletedUserPost(userId);
+        studMapper.deletedUserFriends(userId);
+        studMapper.deleteUser(userId);
+    }
 }

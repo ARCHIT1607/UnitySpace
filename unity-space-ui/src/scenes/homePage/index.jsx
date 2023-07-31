@@ -14,6 +14,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Axios from "axios";
 import createActivityDetector from "activity-detector";
 import { setFriends } from "state";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
@@ -23,7 +24,7 @@ const HomePage = () => {
   const onlineStatusArray = friends.map((friend) => friend.onlineStatus);
 console.log("onlineStatusArray ",onlineStatusArray)
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
 
   const addFirebaseToken = async (token) => {
     const response = await fetch("http://localhost:9000/firebase/token", {
@@ -56,26 +57,6 @@ console.log("onlineStatusArray ",onlineStatusArray)
     };
   }
 
-  const updateOnlineStatus = async (status, userId) => {
-    try {
-      const response = await Axios.post(
-        "http://localhost:9000/updateOnlineStatus",
-        null,
-        {
-          params: {
-            status: status,
-            userId: userId,
-          },
-          headers: {
-            Authorization: "Bearer " + jwtToken,
-          },
-        }
-      );
-    } catch (error) {
-      console.log("error in updateOnlineStatus ",error)
-    }
-  };
-
   function useIdle(options) {
     const [isIdle, setIsIdle] = useState(false);
     useEffect(() => {
@@ -90,7 +71,8 @@ console.log("onlineStatusArray ",onlineStatusArray)
 
   const getFriends = async () => {
     console.log("token ",jwtToken)
-    const response = await Axios.get("http://localhost:9000/users/friends", {
+    try{
+      const response = await Axios.get("http://localhost:9000/users/friends", {
       params:{
         id:sid,
       },
@@ -102,34 +84,20 @@ console.log("onlineStatusArray ",onlineStatusArray)
     const data = await response.data;
     dispatch(setFriends({ friends: data }));
     console.log("in home page");
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    if(error.code=="ERR_NETWORK"){
+      window.alert("Session Expired Please login again")
+      navigate("/");
+    }
+  }
   };
 
   useEffect(() => {
     requestPermission();
     getFriends();
-    const handleBeforeUnload = (event) => {
-      event.preventDefault();
-      event.returnValue = '';
-      // Perform any necessary actions, such as saving data or notifying the user
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    updateOnlineStatus(true, sid);
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      console.log("updateOnlineStatus inside destroy")
-      updateOnlineStatus(false, sid);
-    };
   }, []);
 
-  // if(isIdle){
-  //   // window.alert("You there?")
-  //   // console.log("updateOnlineStatus if of idle")
-  //   // updateOnlineStatus(false, sid);
-  // }else{
-  //   console.log("updateOnlineStatus else of idle")
-  //   updateOnlineStatus(true, sid);
-  // }
 
   console.log("user ", sid);
   return (
@@ -155,7 +123,7 @@ console.log("onlineStatusArray ",onlineStatusArray)
             picturePath={pictureName}
             userPicturePath={pictureName}
           />
-          <PostsWidget userId={sid} userPicturePath={pictureName} />
+          <PostsWidget userId={sid} userPicturePath={pictureName} fromProfile={false} />
         </Box>
         {isNonMobileScreens && (
           <Box flexBasis="26%">

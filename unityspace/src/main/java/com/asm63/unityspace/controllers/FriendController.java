@@ -18,8 +18,8 @@ public class FriendController {
     @Autowired
     private StudentService studentService;
 
-    @GetMapping("/users")
-    public ResponseEntity<Object> users(@RequestParam(name = "id") String id,
+    @GetMapping("/patchFriend")
+    public ResponseEntity<Object> patchFriend(@RequestParam(name = "id") String id,
                                                  @RequestParam(name = "friendId") String friendId) throws Exception{
         HashMap<Object, Object> map = new HashMap<>();
         try {
@@ -122,4 +122,14 @@ public class FriendController {
 
     }
 
+    @PostMapping("/user/deleteAccount")
+    public ResponseEntity<String> deleteAccount( @RequestParam(name = "user") String userId) {
+        try {
+            studentService.deleteUser(userId);
+            return new ResponseEntity<String>("Account deleted successfully",HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<String>(e.getMessage(),HttpStatus.OK);
+        }
+
+    }
 }

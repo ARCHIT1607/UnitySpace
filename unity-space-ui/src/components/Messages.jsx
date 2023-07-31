@@ -56,7 +56,7 @@ function Messages({ message }) {
 
   return (
     <WidgetWrapper>
-      <Box sx={{ height: "70vh", overflow: "auto" }}>
+      <Box sx={{ height: "40vh", overflow: "auto" }}>
         {message &&
           message.map((m) => (
             <Box>

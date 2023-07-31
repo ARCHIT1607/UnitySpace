@@ -37,7 +37,7 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
   const [image, setImage] = useState(null);
   const [description, setDescription] = useState("");
   const { palette } = useTheme();
-  const { sid } = useSelector((state) => state.user);
+  const { sid,course } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const mediumMain = palette.neutral.mediumMain;
@@ -52,38 +52,54 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
     for (const [key, value] of formData.entries()) {
       console.log(`${key}: ${value}`);
     }
-    const response = await Axios.post("http://localhost:9000/posts", formData, {
-      params: {
-        description: description,
-        userId:sid,
-        userPicturePath:userPicturePath
-      },
-      headers: {
-        Authorization: "Bearer " + token.token,
-        "Content-Type": "multipart/form-data"
-      },
-    });
-    const posts = await response.data;
-    dispatch(setPosts({ posts }));
-    console.log("after creating post ",posts)
-    setImage(null);
-    // setPost("");
-    setDescription("");
-    console.log("fromProfile ",fromProfile)
-    if(fromProfile){
-      getUserPosts();
+    try {
+      const response = await Axios.post("http://localhost:9000/posts", formData, {
+        params: {
+          description: description,
+          userId:sid,
+          userPicturePath:userPicturePath
+        },
+        headers: {
+          Authorization: "Bearer " + token.token,
+          "Content-Type": "multipart/form-data"
+        },
+      });
+      const posts = await response.data;
+      dispatch(setPosts({ posts }));
+      console.log("after creating post ",posts)
+      setImage(null);
+      // setPost("");
+      setDescription("");
+      console.log("fromProfile ",fromProfile)
+      if(fromProfile){
+        getUserPosts();
+      }
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      if(error.code=="ERR_NETWORK"){
+        window.alert("Session Expired Please login again")
+        navigate("/");
+      }
     }
   };
   
   const getUserPosts = async () => {
-    const response = await Axios.get(
-      `http://localhost:9000/posts/${sid}/posts`,
-      {
-        headers: { Authorization: "Bearer " + token.token},
+    try {
+      const response = await Axios.get(
+        `http://localhost:9000/posts/${sid}/posts`,
+        {
+          headers: { Authorization: "Bearer " + token.token},
+        }
+      );
+      const data = await response.data;
+      dispatch(setPosts({ posts: data }));
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      if(error.code=="ERR_NETWORK"){
+        window.alert("Session Expired Please login again")
+        navigate("/");
       }
-    );
-    const data = await response.data;
-    dispatch(setPosts({ posts: data }));
+    }
   };
 
   const handleTextChange = (event) => {

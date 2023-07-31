@@ -2,7 +2,7 @@ import { Box, useMediaQuery } from "@mui/material";
 import  Axios from "axios";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "scenes/navbar";
 import FriendListWidget from "scenes/widgets/FriendListWidget";
 import MyPostWidget from "scenes/widgets/MyPostWidget";
@@ -15,21 +15,30 @@ const ProfilePage = () => {
   const { sid } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
+  const navigate = useNavigate();
 
   const getUser = async () => {
-    const response = await Axios.get(
-      "http://localhost:9000/user", {
-        params:{
-          userId:userId,
-          sid:sid
-        },
-        headers: {
-          Authorization: "Bearer " + token.token,
-        },
-      });
-    const data = response.data;
-    setUser(data);
-    console.log("picturePath in ProfilePage ",user)
+    try {
+      const response = await Axios.get(
+        "http://localhost:9000/user", {
+          params:{
+            userId:userId,
+            sid:sid
+          },
+          headers: {
+            Authorization: "Bearer " + token.token,
+          },
+        });
+      const data = response.data;
+      setUser(data);
+      console.log("picturePath in ProfilePage ",user)
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      if(error.code=="ERR_NETWORK"){
+        window.alert("Session Expired Please login again")
+        navigate("/");
+      }
+    }
   };
 
   useEffect(() => {
@@ -51,13 +60,13 @@ const ProfilePage = () => {
         <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
           <UserWidget userId={userId} picturePath={user.pictureName} />
           <Box m="2rem 0" />
-          <FriendListWidget userId={userId} />
+          <FriendListWidget userId={userId} fromProfile={true}/>
         </Box>
         <Box
           flexBasis={isNonMobileScreens ? "42%" : undefined}
           mt={isNonMobileScreens ? undefined : "2rem"}
         >
-          <MyPostWidget picturePath={user.pictureName} fromProfile ={true} />
+          {userId===sid?<MyPostWidget picturePath={user.pictureName} fromProfile ={true} />:""}
           <Box m="2rem 0" />
           <PostsWidget userId={userId} isProfile fromProfile={true}/>
         </Box>

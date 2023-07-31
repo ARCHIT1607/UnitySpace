@@ -58,27 +58,35 @@ const Navbar = () => {
 
   const [data, setData] = useState([]);
   const getAllStudents = async () => {
-    const response = await Axios.get("http://localhost:9000/allStudents", {
-      headers: {
-        Authorization: "Bearer " + token.token,
-      },
-    });
-    console.log("getAllStudents ", response.data);
-    const data = response;
-    setData(data.data);
+    try {
+      const response = await Axios.get("http://localhost:9000/allStudents", {
+        headers: {
+          Authorization: "Bearer " + token.token,
+        },
+      });
+      console.log("getAllStudents ", response.data);
+      const data = response;
+      setData(data.data);
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      if(error.code=="ERR_NETWORK"){
+        window.alert("Session Expired Please login again")
+        navigate("/");
+      }
+    }
   };
 
-  const updateOnlineStatus = async (status,userId) => {
-    const response = await Axios.post("http://localhost:9000/updateOnlineStatus", null, {
-      params: {
-        status: status,
-        userId:user.sid
-      },
-      headers: {
-        Authorization: "Bearer " +  token.token,
-      },
-    });
-  }
+  // const updateOnlineStatus = async (status,userId) => {
+  //   const response = await Axios.post("http://localhost:9000/updateOnlineStatus", null, {
+  //     params: {
+  //       status: status,
+  //       userId:user.sid
+  //     },
+  //     headers: {
+  //       Authorization: "Bearer " +  token.token,
+  //     },
+  //   });
+  // }
 
   function error() {
     console.log("Unable to retrieve your location");
@@ -91,20 +99,54 @@ const Navbar = () => {
     console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
   }
 
+  const deleteAccount = async () => {
+    let confirm = window.confirm("Are you sure");
+    if(confirm){
+      try {
+        const response = await Axios.post("http://localhost:9000/user/deleteAccount",
+        null,
+        {
+          params: {
+            user:user.sid
+          },
+          headers: {
+            Authorization: "Bearer " + token.token,
+          },
+        });
+        console.log("deleteAccount done", response.data);
+        navigate("/");
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+        if(error.code=="ERR_NETWORK"){
+          window.alert("Session Expired Please login again")
+          navigate("/");
+        }
+      }
+    }
+  }
+
   const sendEmergency = async () => {
-    const response = await Axios.post("http://localhost:9000/auth/emergencyCall",
-    null,
-    {
-      params: {
-        longitude: userLocation.longitude,
-        latitude: userLocation.latitude,
-        from:user.email
-      },
-      headers: {
-        Authorization: "Bearer " + token.token,
-      },
-    });
-    console.log("sendEmergency done", response.data);
+    try {
+      const response = await Axios.post("http://localhost:9000/auth/emergencyCall",
+      null,
+      {
+        params: {
+          longitude: userLocation.longitude,
+          latitude: userLocation.latitude,
+          from:user.email
+        },
+        headers: {
+          Authorization: "Bearer " + token.token,
+        },
+      });
+      console.log("sendEmergency done", response.data);
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      if(error.code=="ERR_NETWORK"){
+        window.alert("Session Expired Please login again")
+        navigate("/");
+      }
+    }
   };
 
   useEffect(() => {
@@ -218,10 +260,13 @@ const Navbar = () => {
               <MenuItem value={fullName}>
                 <Typography>{fullName}</Typography>
               </MenuItem>
+              <MenuItem onClick={deleteAccount }>
+                  Delete Account
+                </MenuItem>
               <MenuItem
                 onClick={() => {
                   dispatch(setLogout());
-                  updateOnlineStatus(false,user.sid)
+                  // updateOnlineStatus(false,user.sid)
                   navigate("/");
                 }}
               >
@@ -301,6 +346,9 @@ const Navbar = () => {
               >
                 <MenuItem value={fullName}>
                   <Typography>{fullName}</Typography>
+                </MenuItem>
+                <MenuItem onClick={deleteAccount }>
+                  Delete Account
                 </MenuItem>
                 <MenuItem onClick={() => dispatch(setLogout())}>
                   Log Out

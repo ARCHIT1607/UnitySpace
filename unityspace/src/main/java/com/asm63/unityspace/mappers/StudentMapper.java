@@ -45,4 +45,8 @@ public interface StudentMapper {
     List<HashMap> findAllStudent();
 
     void updateOnlineStatus(boolean status, String userId);
+
+    void deletedUserFriends(String userId);
+
+    void deleteUser(String userId);
 }

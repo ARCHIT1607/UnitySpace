@@ -15,6 +15,7 @@ import Checkbox from '@mui/material/Checkbox';
 import { collection, doc, getDocs, query, setDoc } from "firebase/firestore";
 import { db } from "components/firebase";
 import FlexBetween from "components/FlexBetween";
+import { useNavigate } from "react-router-dom";
 
 const ChatListWidget = ({ userId,userPicturePath }) => {
   const dispatch = useDispatch();
@@ -23,23 +24,31 @@ const ChatListWidget = ({ userId,userPicturePath }) => {
   const friends = useSelector((state) => state.user.friends);
   const { sid } = useSelector((state) => state.user);
   const [documents, setDocuments] = useState([]);
-
+  const navigate = useNavigate();
 
 console.log("friends ",friends);
   const getFriends = async () => {
-    console.log("token ",token)
-    const response = await Axios.get("http://localhost:9000/users/friends", {
-      params:{
-        id:sid,
-      },
-      headers: {
-        Authorization: "Bearer " + token.token,
-      },
-    });
-    console.log("resoinsedata ",response.data);
-    const data = await response.data;
-    dispatch(setFriends({ friends: data }));
-    console.log("in getAllBills");
+    try {
+      console.log("token ",token)
+      const response = await Axios.get("http://localhost:9000/users/friends", {
+        params:{
+          id:sid,
+        },
+        headers: {
+          Authorization: "Bearer " + token.token,
+        },
+      });
+      console.log("resoinsedata ",response.data);
+      const data = await response.data;
+      dispatch(setFriends({ friends: data }));
+      console.log("in getAllBills");
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      if(error.code=="ERR_NETWORK"){
+        window.alert("Session Expired Please login again")
+        navigate("/");
+      }
+    }
     
    
   };

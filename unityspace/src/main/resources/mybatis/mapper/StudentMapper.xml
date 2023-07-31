@@ -218,4 +218,12 @@
         WHERE sid=#{userId}
     </update>
 
+    <delete id="deletedUserFriends" parameterType="String">
+        delete from friend_list where friend_id = #{userId} OR student_id =#{userId}
+    </delete>
+
+    <delete id="deleteUser" parameterType="String">
+        delete from student where sid = #{userId}
+    </delete>
+
 </mapper>

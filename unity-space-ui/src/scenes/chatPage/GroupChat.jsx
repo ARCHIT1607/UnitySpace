@@ -40,26 +40,19 @@ function GroupChat({ pictureName,name, member, id, size = "60px" }) {
 
   const getGroupMsg = async ()=>{
 
-    // const q = query(
-    //   collection(db, "roomChats"),
-    //   where("id", "in", [sid])
-    // );
-    // const querySnapshot = await getDocs(q);
-    // const documents = querySnapshot.docs.map((doc) => doc.data());
-    // // console.log("id reverseId",id, reverseId);
-    // console.log("setChatDocuments in Group", documents,documents.length);
     
-  console.log("sid in GroupChat", sid);
-  const q = query(collection(db, "roomChats"), where("members", "array-contains", sid));
-    const querySnapshot = await getDocs(q);
-    const document = querySnapshot.docs.map((doc) => doc.data());
-    console.log("setChatDocuments in GroupChat", document,document.length,sid);
-    dispatch(setMessages({ messages: document}));
-    let currentGroupChat = {"id":document[0].id,"name":document[0].groupName,"profilePic":document[0].picture,"member":document[0].members.length}
-    dispatch(setCurrentGroupChat({ currentGroupChat: currentGroupChat }));
-    dispatch(setCurrentChat({ currentChat: [] }));
-    // getGroupMsg()
-  }
+    console.log("id in Group", id);
+    const q = query(collection(db, "roomChats"), where("id", "==", id));
+      const querySnapshot = await getDocs(q);
+      const document = querySnapshot.docs.map((doc) => doc.data());
+      console.log("setChatDocuments in Group", document,document.length);
+      dispatch(setMessages({ messages: document}));
+      let currentGroupChat = document.length!=0?{"id":document[0].id,"name":document[0].groupName,"profilePic":document[0].picture,
+      "member":document[0].members.length}:[]
+      dispatch(setCurrentGroupChat({ currentGroupChat: currentGroupChat }));
+      dispatch(setCurrentChat({ currentChat: [] }));
+      // getGroupMsg()
+    }
 
   const handleTextChange = (event) => {
     const filter = new badWords();

@@ -17,6 +17,8 @@ import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
 import { EditOutlined, DeleteOutlined } from "@mui/icons-material";
 import Axios from "axios";
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
 
 const registerSchema = yup.object().shape({
   fname: yup.string(),
@@ -69,43 +71,51 @@ const Form = () => {
   const register = async (values, onSubmitProps) => {
     // this allows us to send form info with image
     const formData = new FormData();
-    // for (let value in values) {
-    //   formData.append(value, values[value]);
-    // }
     for (const [key, value] of formData.entries()) {
       console.log(`${key}: ${value}`);
     }
     if (image) {
       formData.append("picture", image);
       formData.append("pictureName", image.name);
-    }
-    const savedUserResponse = await Axios.post(
-      "http://localhost:9000/auth/register",
-      formData,
-      {
-        params: {
-          fname: fname,
-          lname: lname,
-          sid: sid,
-          email: email,
-          password: password,
-          loc: loc,
-          course: course
-        },
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      try{
+        const savedUserResponse = await Axios.post(
+        "http://localhost:9000/auth/register",
+        formData,
+        {
+          params: {
+            fname: fname,
+            lname: lname,
+            sid: sid,
+            email: email,
+            password: password,
+            loc: loc,
+            course: course
+          },
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      const savedUser = savedUserResponse;
+      onSubmitProps.resetForm();
+      console.log("in savedUser", savedUser)
+      if (savedUser) {
+        console.log("in savedUser")
+        setEmail("");
+        setPassword("");
+        setPageType("login");
       }
-    );
-    const savedUser = savedUserResponse;
-    onSubmitProps.resetForm();
-    console.log("in savedUser", savedUser)
-    if (savedUser) {
-      console.log("in savedUser")
-      setEmail("");
-      setPassword("");
-      setPageType("login");
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      if(error.code=="ERR_NETWORK"){
+        window.alert("Session Expired Please login again")
+        navigate("/");
+      }
     }
+    }else{
+      window.alert("Please add profile picture")
+    }
+    
 
   };
 
@@ -135,7 +145,10 @@ const Form = () => {
         navigate("/home");
     } catch (error) {
         console.error("Something bad happened");
-        console.error(loggedIn.errorMsg);
+        console.error(error.response.data.errorMsg);
+        toast(error.response.data.errorMsg);
+        setEmail("");
+        setPassword("");
         navigate("/");
       }
   };
@@ -146,6 +159,7 @@ const Form = () => {
   };
 
   return (
+    <><ToastContainer></ToastContainer>
     <Formik
       onSubmit={handleFormSubmit}
       initialValues={isLogin ? initialValuesLogin : initialValuesRegister}
@@ -179,6 +193,7 @@ const Form = () => {
                   error={Boolean(touched.fname) && Boolean(errors.fname)}
                   helperText={touched.fname && errors.fname}
                   sx={{ gridColumn: "span 2" }}
+                  required
                 />
                 <TextField
                   label="Last Name"
@@ -189,9 +204,10 @@ const Form = () => {
                   error={Boolean(touched.lname) && Boolean(errors.lname)}
                   helperText={touched.lname && errors.lname}
                   sx={{ gridColumn: "span 2" }}
+                  required
                 />
                 <TextField
-                  label="Location"
+                  label="City"
                   onBlur={handleBlur}
                   onChange={(e) => setLoc(e.target.value)}
                   value={values.loc}
@@ -199,6 +215,7 @@ const Form = () => {
                   error={Boolean(touched.loc) && Boolean(errors.loc)}
                   helperText={touched.loc && errors.loc}
                   sx={{ gridColumn: "span 4" }}
+                  required
                 />
                 <TextField
                   label="Course"
@@ -209,6 +226,7 @@ const Form = () => {
                   error={Boolean(touched.course) && Boolean(errors.course)}
                   helperText={touched.course && errors.course}
                   sx={{ gridColumn: "span 2" }}
+                  required
                 />
                 <TextField
                   label="Student ID"
@@ -219,6 +237,7 @@ const Form = () => {
                   error={Boolean(touched.sid) && Boolean(errors.sid)}
                   helperText={touched.sid && errors.sid}
                   sx={{ gridColumn: "span 2" }}
+                  required
                 />
                 <Box
                   gridColumn="span 4"
@@ -246,7 +265,7 @@ const Form = () => {
                           >
                             <input {...getInputProps()} />
                             {!image ? (
-                              <p>Add Image Here</p>
+                              <p>Add Profile Picture Here</p>
                             ) : (
                               <FlexBetween>
                                 <Typography>{image.name}</Typography>
@@ -279,6 +298,7 @@ const Form = () => {
               error={Boolean(touched.email) && Boolean(errors.email)}
               helperText={touched.email && errors.email}
               sx={{ gridColumn: "span 4" }}
+              required
             />
             <TextField
               label="Password"
@@ -290,6 +310,7 @@ const Form = () => {
               error={Boolean(touched.password) && Boolean(errors.password)}
               helperText={touched.password && errors.password}
               sx={{ gridColumn: "span 4" }}
+              required
             />
           </Box>
 
@@ -331,6 +352,7 @@ const Form = () => {
         </form>
       )}
     </Formik>
+    </>
   );
 };
 

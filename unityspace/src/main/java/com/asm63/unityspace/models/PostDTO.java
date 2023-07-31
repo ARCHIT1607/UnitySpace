@@ -23,6 +23,7 @@ public class PostDTO {
     private String firstname;
     private String lastname;
     private String description;
+    private String course;
     private String location;
 
     private byte[] picture;
