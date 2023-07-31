@@ -58,6 +58,15 @@ const UserWidget = ({ userId, picturePath }) => {
     // getFriends();
     getUser();
     
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (impressions !== 0) {
+      // Perform any necessary actions when the count changes
+      getUser();
+      console.log('impressions has changed:', impressions);
+    }
+    
   }, [friends,impressions]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!user) {

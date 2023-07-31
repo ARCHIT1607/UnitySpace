@@ -22,7 +22,8 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
   const dispatch = useDispatch();
   const { palette } = useTheme();
   // let currentGroupChat = useSelector((state) => state.currentGroupChat);
-  let currentGroup = useSelector((state) => state.currentGroupChat.currentGroupChat);
+  // let currentGroup = useSelector((state) => state.currentGroupChat.currentGroupChat);
+  const [currentGroup, setCurrentGroup] = useState([]);
   const friends = useSelector((state) => state.user.friends);
   const { sid } = useSelector((state) => state.user);
   const [documents, setDocuments] = useState([]);
@@ -47,13 +48,13 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
 
   const getGroupMsg = async ()=>{
     
-  console.log("sid in Group", sid);
+  console.log("sid in GroupListWidget", sid);
   const q = query(collection(db, "roomChats"), where("members", "array-contains", sid));
     const querySnapshot = await getDocs(q);
     const document = querySnapshot.docs.map((doc) => doc.data());
     console.log("setChatDocuments in groupListWidget", document,document.length,sid);
     setDocuments(document);
-    dispatch(setMessages({ messages: document}));
+    dispatch(setMessages({ messages:[document[0]]}));
   let currentGroupChat = document.length!=0?{"id":document[0].id,"name":document[0].groupName,"profilePic":document[0].picture,
   "member":document[0].members.length}:[]
     dispatch(setCurrentGroupChat({ currentGroupChat: currentGroupChat }));
@@ -62,17 +63,30 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
   }
 
   useEffect(() => {
-    console.log("calling getGroupMsg in groupListWidget after change in groupList");
+    // console.log("calling getGroupMsg in groupListWidget after change in groupList");
     getGroupMsg();
-    if (currentGroup.id) {
-          const documentRef = doc(db, "roomChats", currentGroup.id);
-          const unsubscribe = onSnapshot(documentRef, (doc) => {
-            console.log("something got changed");
-            getGroupMsg();
-          });
-          return () => unsubscribe();
-        }
-  }, [currentGroup.id]); // eslint-disable-line react-hooks/exhaustive-deps
+    const q = query(collection(db, 'roomChats'), where('members', 'array-contains', sid));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      console.log("calling unsubscribe in groupListWidget after change in groupList");
+      const document = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setDocuments(document);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+    // if (currentGroup.id) {
+    //   const documentRef = doc(db, "roomChats", currentGroup.id);
+    //   const unsubscribe = onSnapshot(documentRef, (doc) => {
+    //     console.log("something got changed");
+    //     getGroupMsg();
+    //   });
+    //   return () => unsubscribe();
+    // }
+}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;

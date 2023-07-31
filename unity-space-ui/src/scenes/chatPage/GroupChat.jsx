@@ -41,12 +41,12 @@ function GroupChat({ pictureName,name, member, id, size = "60px" }) {
   const getGroupMsg = async ()=>{
 
     
-    console.log("id in Group", id);
+    console.log("id in GroupChat", id);
     const q = query(collection(db, "roomChats"), where("id", "==", id));
       const querySnapshot = await getDocs(q);
       const document = querySnapshot.docs.map((doc) => doc.data());
       console.log("setChatDocuments in Group", document,document.length);
-      dispatch(setMessages({ messages: document}));
+      dispatch(setMessages({ messages: [document[0]]}));
       let currentGroupChat = document.length!=0?{"id":document[0].id,"name":document[0].groupName,"profilePic":document[0].picture,
       "member":document[0].members.length}:[]
       dispatch(setCurrentGroupChat({ currentGroupChat: currentGroupChat }));
@@ -92,16 +92,15 @@ function GroupChat({ pictureName,name, member, id, size = "60px" }) {
     }
   };
 
-  // useEffect(() => {
-  //   if (messages[0].id) {
-  //     const documentRef = doc(db, "chats", messages[0].id);
-  //     const unsubscribe = onSnapshot(documentRef, (doc) => {
-  //       console.log("something got added");
-  //       getChats();
-  //     });
-  //     return () => unsubscribe();
-  //   }
-  // }, [messages[0].id]);
+  useEffect(() => {
+    console.log("id in groupChat ",id)
+    const documentRef = doc(db, "roomChats", id);
+          const unsubscribe = onSnapshot(documentRef, (doc) => {
+            console.log("something got changed");
+            getGroupMsg();
+          });
+          return () => unsubscribe();
+  }, []);
 
   const navigate = useNavigate();
   const medium = palette.neutral.medium;
@@ -138,6 +137,7 @@ function GroupChat({ pictureName,name, member, id, size = "60px" }) {
         </Box>
       </FlexBetween>
       <Divider sx={{ margin: "1.25rem 0",height:"5px",bgcolor:"black" }} />
+      {console.log("messages ",messages)}
       {messages &&
         messages.map((message) => (
           <ChatMessages message={message.messages}></ChatMessages>

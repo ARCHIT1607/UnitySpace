@@ -22,16 +22,17 @@ import DeleteIcon from "@mui/icons-material/Delete";
 const Group = ({ id, name, members, groupImage, size = "40px" }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { sid } = useSelector((state) => state.user);
   const { palette } = useTheme();
   const main = palette.neutral.main;
 
   const getGroupMsg = async () => {
-    console.log("id in Group", id);
-    const q = query(collection(db, "roomChats"), where("id", "==", id));
+    console.log("sid in Group", sid);
+  const q = query(collection(db, "roomChats"), where("members", "array-contains", sid));
     const querySnapshot = await getDocs(q);
     const document = querySnapshot.docs.map((doc) => doc.data());
     console.log("setChatDocuments in Group", document, document.length);
-    dispatch(setMessages({ messages: document }));
+    dispatch(setMessages({ messages: [document[0]] }));
     let currentGroupChat =
       document.length != 0
         ? {
@@ -83,7 +84,7 @@ const Group = ({ id, name, members, groupImage, size = "40px" }) => {
         >
           Members:{members.length}
         </Typography>
-        <IconButton onClick={handleDelete} sx={{ p: "0.6rem" }}>
+        <IconButton onClick={handleDelete} sx={{ p: "0.2rem",bgcolor:"grey" }}>
           <DeleteIcon></DeleteIcon>
         </IconButton>
       </Box>

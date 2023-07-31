@@ -26,6 +26,7 @@ export const authSlice = createSlice({
       state.token = null;
       state.messages = null;
       state.currentChat = [];
+      state.currentGroupChat = [];
     },
     setFriends: (state, action) => {
       if (state.user) {
