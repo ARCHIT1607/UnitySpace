@@ -99,16 +99,16 @@ function Chat({ pictureName,name, course, friendId }) {
     }
   };
 
-  // useEffect(() => {
-  //   if (messages[0].id) {
-  //     const documentRef = doc(db, "chats", messages[0].id);
-  //     const unsubscribe = onSnapshot(documentRef, (doc) => {
-  //       console.log("something got added");
-  //       getChats();
-  //     });
-  //     return () => unsubscribe();
-  //   }
-  // }, [messages[0].id]);
+  useEffect(() => {
+    if (messages[0].id) {
+      const documentRef = doc(db, "chats", messages[0].id);
+      const unsubscribe = onSnapshot(documentRef, (doc) => {
+        console.log("something got added");
+        getChats();
+      });
+      return () => unsubscribe();
+    }
+  }, [messages[0].id]);
 
   const navigate = useNavigate();
   const medium = palette.neutral.medium;
