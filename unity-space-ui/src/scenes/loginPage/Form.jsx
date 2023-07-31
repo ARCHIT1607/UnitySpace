@@ -21,18 +21,24 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from "react-toastify";
 
 const registerSchema = yup.object().shape({
-  fname: yup.string(),
-  lname: yup.string(),
+  fname: yup.string().required("first name is required"),
+  lname: yup.string().required("last name is required"),
   email: yup.string().email("invalid email"),
-  password: yup.string(),
-  loc: yup.string(),
-  course: yup.string(),
-  picId: yup.string(),
+  password: yup.string()
+  .min(6, "Password must be at least 6 characters")
+  .required("Password is required"),
+  loc: yup.string().required("city is required"),
+  course: yup.string().required("course is required"),
+  sid: yup.string().matches(
+    /^[a-z]{3}[0-9]{2}$/)
+  .required("student id is required ex. asm63")
 });
 
 const loginSchema = yup.object().shape({
   email: yup.string().email("invalid email"),
-  password: yup.string(),
+  password: yup.string()
+  .min(6, "Password must be at least 6 characters")
+  .required("Password is required"),
 });
 
 const initialValuesRegister = {
@@ -42,8 +48,7 @@ const initialValuesRegister = {
   password: "",
   loc: "",
   course: "",
-  picture_name: "",
-  picture: "",
+  sid: ""
 };
 
 const initialValuesLogin = {
@@ -60,19 +65,11 @@ const Form = () => {
   const isLogin = pageType === "login";
   const isRegister = pageType === "register";
   const [image, setImage] = useState(null);
-  const [fname, setFname] = useState("");
-  const [lname, setLname] = useState("");
-  const [sid, setSid] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loc, setLoc] = useState("");
-  const [course, setCourse] = useState("");
-
   const register = async (values, onSubmitProps) => {
     // this allows us to send form info with image
     const formData = new FormData();
-    for (const [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
+    for (let value in values) {
+     console.log("values ",value)
     }
     if (image) {
       formData.append("picture", image);
@@ -83,13 +80,13 @@ const Form = () => {
         formData,
         {
           params: {
-            fname: fname,
-            lname: lname,
-            sid: sid,
-            email: email,
-            password: password,
-            loc: loc,
-            course: course
+            fname: values.fname,
+            lname: values.lname,
+            sid: values.sid,
+            email: values.email,
+            password: values.password,
+            loc: values.loc,
+            course: values.course
           },
           headers: {
             "Content-Type": "multipart/form-data",
@@ -101,12 +98,11 @@ const Form = () => {
       console.log("in savedUser", savedUser)
       if (savedUser) {
         console.log("in savedUser")
-        setEmail("");
-        setPassword("");
         setPageType("login");
       }
     } catch (error) {
       console.error("Error fetching data: ", error);
+      toast(error.response.data.errorMsg);
       if(error.code=="ERR_NETWORK"){
         window.alert("Session Expired Please login again")
         navigate("/");
@@ -122,13 +118,14 @@ const Form = () => {
   const login = async (values, onSubmitProps) => {
     console.log("login");
     const loggedIn = "";
+      console.log("values ", values.email)
     try {
       const loggedInResponse = await Axios.post(
         "http://localhost:9000/auth/login",{},
         {
           params: {
-            email: email,
-            password: password,
+            email: values.email,
+            password: values.password,
           },
         }
       );
@@ -147,8 +144,6 @@ const Form = () => {
         console.error("Something bad happened");
         console.error(error.response.data.errorMsg);
         toast(error.response.data.errorMsg);
-        setEmail("");
-        setPassword("");
         navigate("/");
       }
   };
@@ -170,7 +165,9 @@ const Form = () => {
         errors,
         touched,
         handleBlur,
+        handleChange,
         handleSubmit,
+        setFieldValue,
         resetForm,
       }) => (
         <form onSubmit={handleSubmit}>
@@ -187,7 +184,7 @@ const Form = () => {
                 <TextField
                   label="First Name"
                   onBlur={handleBlur}
-                  onChange={(e) => setFname(e.target.value)}
+                  onChange={handleChange}
                   value={values.fname}
                   name="fname"
                   error={Boolean(touched.fname) && Boolean(errors.fname)}
@@ -198,7 +195,7 @@ const Form = () => {
                 <TextField
                   label="Last Name"
                   onBlur={handleBlur}
-                  onChange={(e) => setLname(e.target.value)}
+                  onChange={handleChange}
                   value={values.lname}
                   name="lname"
                   error={Boolean(touched.lname) && Boolean(errors.lname)}
@@ -209,7 +206,7 @@ const Form = () => {
                 <TextField
                   label="City"
                   onBlur={handleBlur}
-                  onChange={(e) => setLoc(e.target.value)}
+                  onChange={handleChange}
                   value={values.loc}
                   name="loc"
                   error={Boolean(touched.loc) && Boolean(errors.loc)}
@@ -220,7 +217,7 @@ const Form = () => {
                 <TextField
                   label="Course"
                   onBlur={handleBlur}
-                  onChange={(e) => setCourse(e.target.value)}
+                  onChange={handleChange}
                   value={values.course}
                   name="course"
                   error={Boolean(touched.course) && Boolean(errors.course)}
@@ -231,7 +228,7 @@ const Form = () => {
                 <TextField
                   label="Student ID"
                   onBlur={handleBlur}
-                  onChange={(e) => setSid(e.target.value)}
+                  onChange={handleChange}
                   value={values.sid}
                   name="sid"
                   error={Boolean(touched.sid) && Boolean(errors.sid)}
@@ -288,29 +285,26 @@ const Form = () => {
                 </Box>
               </>
             )}
-            <TextField
+             <TextField
               label="Email"
               onBlur={handleBlur}
-              onChange={(e) => {
-                setEmail(e.target.value)}}
-              value={email}
+              onChange={handleChange}
+              value={values.email}
               name="email"
               error={Boolean(touched.email) && Boolean(errors.email)}
               helperText={touched.email && errors.email}
               sx={{ gridColumn: "span 4" }}
-              required
             />
             <TextField
               label="Password"
               type="password"
               onBlur={handleBlur}
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
+              onChange={handleChange}
+              value={values.password}
               name="password"
               error={Boolean(touched.password) && Boolean(errors.password)}
               helperText={touched.password && errors.password}
               sx={{ gridColumn: "span 4" }}
-              required
             />
           </Box>
 

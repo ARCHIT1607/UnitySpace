@@ -67,8 +67,8 @@ public class PostService {
                 // Now convert string into ArrayList
                 ArrayList<String> strList = new ArrayList<String>(
                         Arrays.asList(strSplit));
-                System.out.println("strList "+strList);
-                System.out.println("strList size "+strList.size());
+//                System.out.println("strList "+strList);
+//                System.out.println("strList size "+strList.size());
                 likeCount = likeCount + strList.size();
             }
         }
@@ -122,11 +122,9 @@ public class PostService {
     public void postComment(Long postId, String comment) {
         String postComment = postMapper.findCommentByPostId(postId);
         PostDTO post = postMapper.findPostById(postId);
-        System.out.println("post in postcomments: " + postComment );
 
         if(postComment!=null){
             postComment = postComment.replace("{","").replace("}","").replaceAll("\"", "");
-            System.out.println("postComment!=null: " + postComment );
             String[] strSplit = postComment.split(",");
             for(String s : strSplit){
                 System.out.println("postComment.split(\",\") " + s );

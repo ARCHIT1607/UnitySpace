@@ -64,7 +64,7 @@ public class StudentService {
             String fileName = file.getOriginalFilename();
             byte[] data = file.getBytes();
             student.setProfilePic(data);
-            student.setPictureName(fileName);
+            student.setPictureName(fileName+ new Random(3));
         }
         studMapper.register(student);
         var jwtToken = jwtService.generateToken(student);
@@ -118,7 +118,6 @@ public class StudentService {
     public InputStream getResource(String picturePath) {
         System.out.println("picturePath "+picturePath);
         Student stu = studMapper.getUserResource(picturePath);
-        System.out.println("student "+stu);
         return new ByteArrayInputStream(stu.getProfilePic());
     }
 

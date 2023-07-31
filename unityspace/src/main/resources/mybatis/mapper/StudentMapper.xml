@@ -39,7 +39,7 @@
 
     <select id="findByEmail" parameterType="String"
             resultMap="StudentResultMap">
-        select id,sid,email,fname,lname,password,loc,course,role,picture_name from student where email =#{email}
+        select id,sid,email,fname,lname,password,loc,course,role,picture_name from student where UPPER(email) =UPPER(#{email})
     </select>
 
     <select id="findByFriendId" parameterType="String"

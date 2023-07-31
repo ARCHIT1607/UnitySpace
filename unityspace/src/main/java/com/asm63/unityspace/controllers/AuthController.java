@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @CrossOrigin
@@ -46,7 +47,14 @@ public class AuthController {
             student.setLoc(loc);
             student.setCourse(course);
             Student user = studService.findByEmail(student.getEmail());
+            List<HashMap> allStudent = studService.findAllStudent();
             System.out.println("picture" + picture);
+            System.out.println("student id exists " + allStudent.stream()
+                    .anyMatch(studentId -> studentId.containsValue(sid)));
+            if (allStudent.stream()
+                    .anyMatch(studentId -> studentId.containsValue(sid))) {
+                throw new Exception("user with similar student id already exists");
+            }
             if (user != null && user.getEmail().toUpperCase().equals(student.getEmail().toUpperCase())) {
                 throw new Exception("user already exists");
             }
