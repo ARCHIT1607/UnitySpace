@@ -69,6 +69,13 @@ const ChatUser = ({ friendId, name, subtitle, userPicturePath, onlineStatus }) =
 
   useEffect(() => {
     getChats()
+    console.log("id in groupChat ",id)
+    const documentRef = doc(db, "roomChats", id);
+          const unsubscribe = onSnapshot(documentRef, (doc) => {
+            console.log("something got changed");
+            getChats();
+          });
+          return () => unsubscribe();
   }, [])
   
 
