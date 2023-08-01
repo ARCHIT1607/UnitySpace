@@ -138,26 +138,31 @@ console.log("user pic from home page ",userPicturePath)
   const postComment =async(e)=>{
     const formData = new FormData();
     formData.append("comment",comment)
-    try {
-      const response = await Axios.post("http://localhost:9000/postComment", formData, {
-        params: {
-          postId: postId
-        },
-        headers: {
-          Authorization: "Bearer " + jwtToken.token,
-        },
-      });
-      const data = response.data;
-      console.log("data from getPosts ",data)
-      dispatch(setPosts({ posts: data }));
-      setComment("");
-    } catch (error) {
-      console.error("Error fetching data: ", error);
-      if(error.code=="ERR_NETWORK"){
-        window.alert("Session Expired Please login again")
-        navigate("/");
+    if(comment.startsWith(" ")){
+      window.alert("please type something")
+    }else{
+      try {
+        const response = await Axios.post("http://localhost:9000/postComment", formData, {
+          params: {
+            postId: postId
+          },
+          headers: {
+            Authorization: "Bearer " + jwtToken.token,
+          },
+        });
+        const data = response.data;
+        console.log("data from getPosts ",data)
+        dispatch(setPosts({ posts: data }));
+        setComment("");
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+        if(error.code=="ERR_NETWORK"){
+          window.alert("Session Expired Please login again")
+          navigate("/");
+        }
       }
     }
+    
   }
   
   const [open, setOpen] = useState(false);

@@ -29,7 +29,7 @@
     <select id="getPosts"
             resultType="HashMap">
         SELECT id,post_user_id AS "postUserId",description,course,location,picture_path as "picturePath",user_picture_path as "userPicturePath" ,
-               likes,comments,firstname,lastname, created_date from post ORDER BY created_date desc
+               likes,comments,firstname,lastname, created_date from post ORDER BY id desc
     </select>
 
     <select id="getResource" parameterType="String" resultType="Post">
@@ -43,7 +43,7 @@
     <select id="getUserPosts" parameterType="String"
             resultType="HashMap">
         SELECT id,post_user_id as "postUserId",description,course,location,picture_path as "picturePath",user_picture_path as "userPicturePath",likes,comments,firstname,lastname, created_date
-        from post where post_user_id = #{userId} order by created_date desc
+        from post where post_user_id = #{userId} order by id desc
     </select>
 
     <select id="getUserPostLikes" parameterType="String"

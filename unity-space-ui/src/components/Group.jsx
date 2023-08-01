@@ -27,8 +27,8 @@ const Group = ({ id, name, members, groupImage, size = "40px" }) => {
   const main = palette.neutral.main;
 
   const getGroupMsg = async () => {
-    console.log("sid in Group", sid);
-  const q = query(collection(db, "roomChats"), where("members", "array-contains", sid));
+    console.log("id in Group", id);
+  const q = query(collection(db, "roomChats"), where("id", "==", id));
     const querySnapshot = await getDocs(q);
     const document = querySnapshot.docs.map((doc) => doc.data());
     console.log("setChatDocuments in Group", document, document.length);
