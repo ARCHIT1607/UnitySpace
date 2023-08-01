@@ -54,7 +54,7 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
     const document = querySnapshot.docs.map((doc) => doc.data());
     console.log("setChatDocuments in groupListWidget", document,document.length,sid);
     setDocuments(document);
-    dispatch(setMessages({ messages:[document[0]]}));
+    dispatch(setMessages({ messages:document.length!==0?[document[0]]:data}));
   let currentGroupChat = document.length!=0?{"id":document[0].id,"name":document[0].groupName,"profilePic":document[0].picture,
   "member":document[0].members.length}:[]
     dispatch(setCurrentGroupChat({ currentGroupChat: currentGroupChat }));

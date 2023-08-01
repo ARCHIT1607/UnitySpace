@@ -68,8 +68,8 @@ const ChatUser = ({ friendId, name, subtitle, userPicturePath, onlineStatus }) =
 
 
   useEffect(() => {
-    // getChats()
-  }, [currentChat])
+    getChats()
+  }, [])
   
 
   return (
