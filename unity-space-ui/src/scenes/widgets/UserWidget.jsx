@@ -31,6 +31,64 @@ const UserWidget = ({ userId, picturePath }) => {
   const medium = palette.neutral.medium;
   const main = palette.neutral.main;
   console.log("picturePath in UserWidget ",picturePath)
+  const [userFriends, setUserFriends] = useState([])
+
+  const patchFriend = async () => {
+    console.log("calling patchFriend ",userId)
+    try {
+    const response = await Axios.get("http://localhost:9000/patchFriend", {
+      params:{
+        id:userId,
+        friendId:sid
+      },
+      headers: {
+        Authorization: "Bearer " + token.token,
+      },
+    });
+    console.log("patch friend data ",response);
+    const data = await response.data.friend;
+    if(userId!==sid)
+    {
+      dispatch(setFriends({ friends: data }));
+    }
+    
+    getFriends();
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    if(error.code=="ERR_NETWORK"){
+      window.alert("Session Expired Please login again")
+      navigate("/");
+    }
+  }
+  };
+
+
+  const getFriends = async () => {
+    try{const response = await Axios.get("http://localhost:9000/users/friends", {
+      params:{
+        id:sid,
+      },
+      headers: {
+        Authorization: "Bearer " + token.token,
+      },
+    });
+    console.log("resoinsedata ",response.data);
+    const data = await response.data;
+    console.log("from profile in friend",userId===undefined)
+    if(userId===undefined){
+      dispatch(setFriends({ friends: data }));
+    }
+    setUserFriends(data);
+    console.log("userFriends ",data)
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    if(error.code=="ERR_NETWORK"){
+      window.alert("Session Expired Please login again")
+      navigate("/");
+    }
+  }
+  };
+  
   const getUser = async () => {
     try {
       const response = await Axios.get("http://localhost:9000/getUser", {
@@ -80,9 +138,9 @@ const UserWidget = ({ userId, picturePath }) => {
       <FlexBetween
         gap="0.5rem"
         pb="1.1rem"
-        onClick={() => navigate(`/profile/${userId}`)}
+        
       >
-        <FlexBetween gap="1rem">
+        <FlexBetween gap="1rem" onClick={() => navigate(`/profile/${userId}`)}>
           <UserImage image={picturePath!=null?picturePath : ""} />
           <Box>
             <Typography
@@ -101,7 +159,7 @@ const UserWidget = ({ userId, picturePath }) => {
             <Typography color={medium}>{user.friends.length} friends</Typography>
           </Box>
         </FlexBetween>
-        <ManageAccountsOutlined />
+        <ManageAccountsOutlined onClick={() => patchFriend()} />
       </FlexBetween>
 
       <Divider />

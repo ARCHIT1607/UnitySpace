@@ -19,6 +19,7 @@ import { EditOutlined, DeleteOutlined } from "@mui/icons-material";
 import Axios from "axios";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from "react-toastify";
+import detectExplicitContent from "components/detectExplicitContent";
 
 const registerSchema = yup.object().shape({
   fname: yup.string().required("first name is required"),
@@ -75,45 +76,50 @@ const Form = () => {
       formData.append("picture", image);
       formData.append("pictureName", image.name);
       try{
-        const savedUserResponse = await Axios.post(
-        "http://localhost:9000/auth/register",
-        formData,
-        {
-          params: {
-            fname: values.fname,
-            lname: values.lname,
-            sid: values.sid,
-            email: values.email,
-            password: values.password,
-            loc: values.loc,
-            course: values.course
-          },
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+        let isHate = handleImageUpload(image);
+        if(!isHate){
+          const savedUserResponse = await Axios.post(
+            "http://localhost:9000/auth/register",
+            formData,
+            {
+              params: {
+                fname: values.fname,
+                lname: values.lname,
+                sid: values.sid,
+                email: values.email,
+                password: values.password,
+                loc: values.loc,
+                course: values.course
+              },
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          );
+          const savedUser = savedUserResponse;
+          onSubmitProps.resetForm();
+          console.log("in savedUser", savedUser)
+          if (savedUser) {
+            console.log("in savedUser")
+            setPageType("login");
+          }
+        }else{
+          window.alert("inappropriate content detected. Please refrain from spreading negativity")
+          setImage(null)
+        } 
+      }catch (error) {
+          console.error("Error fetching data: ", error);
+          toast(error.response.data.errorMsg);
+          if(error.code=="ERR_NETWORK"){
+            window.alert("Session Expired Please login again")
+            navigate("/");
+          }
         }
-      );
-      const savedUser = savedUserResponse;
-      onSubmitProps.resetForm();
-      console.log("in savedUser", savedUser)
-      if (savedUser) {
-        console.log("in savedUser")
-        setPageType("login");
-      }
-    } catch (error) {
-      console.error("Error fetching data: ", error);
-      toast(error.response.data.errorMsg);
-      if(error.code=="ERR_NETWORK"){
-        window.alert("Session Expired Please login again")
-        navigate("/");
-      }
-    }
-    }else{
-      window.alert("Please add profile picture")
-    }
-    
-
-  };
+        }else{
+          window.alert("Please add profile picture")
+        }
+        };
+        
 
   const login = async (values, onSubmitProps) => {
     console.log("login");
@@ -152,6 +158,16 @@ const Form = () => {
     if (isLogin) await login(values, onSubmitProps);
     if (isRegister) await register(values, onSubmitProps);
   };
+
+  const handleImageUpload = async (image) => {
+    const result = await detectExplicitContent(image);
+    console.log("eden api result ",result);
+    if(result[0].nsfw_likelihood>=5){
+      return true
+    }else{
+      return false
+    }
+  }
 
   return (
     <><ToastContainer></ToastContainer>

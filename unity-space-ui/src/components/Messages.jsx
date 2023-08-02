@@ -27,6 +27,7 @@ function Messages({ message }) {
   let messages = useSelector((state) => state.messages);
   messages = messages !== null && messages.length != 0 ? messages : data;
   const primaryLight = palette.primary.light;
+  
   const getChats = async () => {
     console.log("messages[0].id", messages[0].id);
     const q = query(

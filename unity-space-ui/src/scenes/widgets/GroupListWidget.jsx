@@ -2,20 +2,34 @@ import { Box, TextField, Typography, useTheme } from "@mui/material";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setCurrentChat, setCurrentGroupChat, setFriends, setMessages } from "state";
+import {
+  setCurrentChat,
+  setCurrentGroupChat,
+  setFriends,
+  setMessages,
+} from "state";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemText from "@mui/material/ListItemText";
 import Select from "@mui/material/Select";
 import Checkbox from "@mui/material/Checkbox";
-import { collection, doc, getDocs, onSnapshot, query, setDoc, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  onSnapshot,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import { db } from "components/firebase";
 import Group from "components/Group";
 import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from "uuid";
+import detectExplicitContent from "components/detectExplicitContent";
 
 const GroupListWidget = ({ userId, userPicturePath }) => {
   const [data, setData] = useState([{ id: "" }]);
@@ -46,28 +60,49 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
     p: 4,
   };
 
-  const getGroupMsg = async ()=>{
-    
-  console.log("sid in GroupListWidget", sid);
-  const q = query(collection(db, "roomChats"), where("members", "array-contains", sid));
+  const getGroupMsg = async () => {
+    console.log("sid in GroupListWidget", sid);
+    const q = query(
+      collection(db, "roomChats"),
+      where("members", "array-contains", sid)
+    );
     const querySnapshot = await getDocs(q);
     const document = querySnapshot.docs.map((doc) => doc.data());
-    console.log("setChatDocuments in groupListWidget", document,document.length,sid);
+    console.log(
+      "setChatDocuments in groupListWidget",
+      document,
+      document.length,
+      sid
+    );
     setDocuments(document);
-    dispatch(setMessages({ messages:document.length!==0?[document[0]]:data}));
-  let currentGroupChat = document.length!=0?{"id":document[0].id,"name":document[0].groupName,"profilePic":document[0].picture,
-  "member":document[0].members.length}:[]
+    dispatch(
+      setMessages({ messages: document.length !== 0 ? [document[0]] : data })
+    );
+    let currentGroupChat =
+      document.length != 0
+        ? {
+            id: document[0].id,
+            name: document[0].groupName,
+            profilePic: document[0].picture,
+            member: document[0].members.length,
+          }
+        : [];
     dispatch(setCurrentGroupChat({ currentGroupChat: currentGroupChat }));
     dispatch(setCurrentChat({ currentChat: [] }));
     // getGroupMsg()
-  }
+  };
 
   useEffect(() => {
     // console.log("calling getGroupMsg in groupListWidget after change in groupList");
     getGroupMsg();
-    const q = query(collection(db, 'roomChats'), where('members', 'array-contains', sid));
+    const q = query(
+      collection(db, "roomChats"),
+      where("members", "array-contains", sid)
+    );
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      console.log("calling unsubscribe in groupListWidget after change in groupList");
+      console.log(
+        "calling unsubscribe in groupListWidget after change in groupList"
+      );
       const document = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
@@ -86,7 +121,7 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
     //   });
     //   return () => unsubscribe();
     // }
-}, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
@@ -121,48 +156,63 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    let isHate = handleImageUpload(groupPicture);
+    if (!isHate) {
+      // Get the current user's ID
+      const userId = sid;
 
-    // Get the current user's ID
-    const userId = sid;
+      // Create a reference to the new group collection
+      const groupRef = collection(db, "roomChats");
 
-    // Create a reference to the new group collection
-    const groupRef = collection(db, "roomChats");
+      // Create a new document with an auto-generated ID
+      const docRef = doc(groupRef);
+      const chatRef = doc(db, "roomChats", uuidv4());
 
-    // Create a new document with an auto-generated ID
-    const docRef = doc(groupRef);
-    const chatRef = doc(db, "roomChats", uuidv4());
+      // Upload the group picture to Firebase Storage
+      const storage = getStorage();
+      const storageRef = ref(storage, `groupPictures/${chatRef.id}`);
+      await uploadBytes(storageRef, groupPicture);
+      const downloadURL = await getDownloadURL(storageRef);
+      console.log("Download URL:", downloadURL);
+      setPersonName(typeof sid === "string" ? userId.split(",") : sid);
+      console.log("setPersonName ", personName);
+      // Set the data for the new document
+      await setDoc(chatRef, {
+        id: chatRef.id,
+        groupName: groupName,
+        members: personName,
+        createdBy: userId,
+        picture: downloadURL,
+        messages: [],
+      });
 
-    // Upload the group picture to Firebase Storage
-    const storage = getStorage();
-    const storageRef = ref(storage, `groupPictures/${chatRef.id}`);
-    await uploadBytes(storageRef, groupPicture);
-    const downloadURL = await getDownloadURL(storageRef);
-    console.log("Download URL:", downloadURL);
-    setPersonName(
-      typeof sid === "string" ? userId.split(",") : sid
-    );
- console.log("setPersonName ",personName)
-    // Set the data for the new document
-    await setDoc(chatRef, {
-      id:chatRef.id,
-      groupName: groupName,
-      members: personName,
-      createdBy: userId,
-      picture: downloadURL,
-      messages: [],
-    });
-
-    // Reset the form
-    setGroupName("");
-    setPersonName([sid]);
-    setGroupPicture(null);
-    handleClose(false);
-    getGroupMsg()
+      // Reset the form
+      setGroupName("");
+      setPersonName([sid]);
+      setGroupPicture(null);
+      handleClose(false);
+      getGroupMsg();
+    } else {
+      window.alert(
+        "inappropriate content detected. Please refrain from spreading negativity"
+      );
+      setGroupPicture(null);
+      handleClose(false);
+    }
   };
 
+  const handleImageUpload = async (image) => {
+    const result = await detectExplicitContent(image);
+    console.log("eden api result ", result);
+    if (result[0].nsfw_likelihood >= 5) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   return (
-    <WidgetWrapper  sx={{textAlign:"center",justifyItems:"center"}}>
+    <WidgetWrapper sx={{ textAlign: "center", justifyItems: "center" }}>
       <Typography
         color={palette.neutral.dark}
         variant="h5"
@@ -171,8 +221,10 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
       >
         Group Chats
       </Typography>
-      <Button variant="contained" onClick={handleOpen}>Create Group</Button>
-      <Box m="2rem 0"  />
+      <Button variant="contained" onClick={handleOpen}>
+        Create Group
+      </Button>
+      <Box m="2rem 0" />
       <Modal
         open={open}
         onClose={handleClose}
@@ -223,7 +275,13 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
       <Box display="flex" flexDirection="column" gap="1.5rem">
         {documents &&
           documents.map((group) => (
-            <Group id={group.id} name={group.groupName} members={group.members} groupImage={group.picture} size="55px"/>
+            <Group
+              id={group.id}
+              name={group.groupName}
+              members={group.members}
+              groupImage={group.picture}
+              size="55px"
+            />
           ))}
       </Box>
     </WidgetWrapper>

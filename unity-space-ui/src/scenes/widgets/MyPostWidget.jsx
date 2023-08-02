@@ -29,6 +29,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import badWords from 'bad-words';
+import detectExplicitContent from "components/detectExplicitContent";
 
 const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
   const dispatch = useDispatch();
@@ -49,10 +50,12 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
       formData.append("picture", image);
       formData.append("picturePath", image.name);
     }
-    for (const [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
-    }
     try {
+      let isHate = handleImageUpload(image);
+     if(isHate){
+      for (const [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+      }
       const response = await Axios.post("http://localhost:9000/posts", formData, {
         params: {
           description: description,
@@ -74,8 +77,14 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
       if(fromProfile){
         getUserPosts();
       }
+     }else{
+      window.alert("inappropriate content detected. Please refrain from spreading negativity")
+      setImage(null);
+      setDescription("")
+     }
     } catch (error) {
       console.error("Error fetching data: ", error);
+
       if(error.code=="ERR_NETWORK"){
         window.alert("Session Expired Please login again")
         navigate("/");
@@ -95,6 +104,7 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
       dispatch(setPosts({ posts: data }));
     } catch (error) {
       console.error("Error fetching data: ", error);
+
       if(error.code=="ERR_NETWORK"){
         window.alert("Session Expired Please login again")
         navigate("/");
@@ -113,6 +123,16 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
       setDescription(newText);
     }
   };
+
+  const handleImageUpload = async (image) => {
+    const result = await detectExplicitContent(image);
+    console.log("eden api result ",result);
+    if(result[0].nsfw_likelihood>=5){
+      return true
+    }else{
+      return false
+    }
+  }
 
   return (
     <WidgetWrapper>
