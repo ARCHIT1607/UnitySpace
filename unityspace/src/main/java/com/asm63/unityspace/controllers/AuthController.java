@@ -124,5 +124,13 @@ public class AuthController {
         service.sendEmailWithGoogleMapsUrl(Double.parseDouble(longitude),Double.parseDouble(latitude),from);
     }
 
+    @PostMapping("/auth/send-email")
+    public ResponseEntity<String> sendEmailWithAttachment(@RequestParam("file") MultipartFile file) throws MessagingException, IOException {
+        // Save the file to the server
+        return service.sendEmailWithAttachment(file);
+
+    }
+
+
 
 }

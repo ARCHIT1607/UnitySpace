@@ -86,7 +86,7 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
       console.error("Error fetching data: ", error);
 
       if(error.code=="ERR_NETWORK"){
-        window.alert("Session Expired Please login again")
+        // window.alert("Session Expired Please login again")
         navigate("/");
       }
     }
@@ -106,7 +106,7 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
       console.error("Error fetching data: ", error);
 
       if(error.code=="ERR_NETWORK"){
-        window.alert("Session Expired Please login again")
+        // window.alert("Session Expired Please login again")
         navigate("/");
       }
     }

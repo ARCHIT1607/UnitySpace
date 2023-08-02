@@ -111,7 +111,7 @@ const Form = () => {
           console.error("Error fetching data: ", error);
           toast(error.response.data.errorMsg);
           if(error.code=="ERR_NETWORK"){
-            window.alert("Session Expired Please login again")
+            // window.alert("Session Expired Please login again")
             navigate("/");
           }
         }

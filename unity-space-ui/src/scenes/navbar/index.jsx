@@ -9,6 +9,11 @@ import {
   FormControl,
   useTheme,
   useMediaQuery,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 import {
   Search,
@@ -31,7 +36,8 @@ import Autocomplete from "@mui/material/Autocomplete";
 import Axios from "axios";
 import { useEffect } from "react";
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
-import { Button } from "bootstrap";
+import VoiceNoteRecorder from "components/voiceNoteRecoder";
+import Button from '@mui/material/Button';
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
@@ -49,8 +55,16 @@ const Navbar = () => {
   const token = useSelector((state) => state.token);
   const fullName = `${user.fname} ${user.lname}`;
 
-  const [latitude, setLatitude] = useState(null);
-  const [longitude, setLongitude] = useState(null);
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: "AIzaSyCBHQ2PytqvWuk1RcoWshj57oxZf12l9yM",
   });
@@ -71,7 +85,7 @@ const Navbar = () => {
     } catch (error) {
       console.error("Error fetching data: ", error);
       if(error.code=="ERR_NETWORK"){
-        window.alert("Session Expired Please login again")
+        // window.alert("Session Expired Please login again")
         navigate("/");
       }
     }
@@ -119,7 +133,7 @@ const Navbar = () => {
       } catch (error) {
         console.error("Error fetching data: ", error);
         if(error.code=="ERR_NETWORK"){
-          window.alert("Session Expired Please login again")
+          // window.alert("Session Expired Please login again")
           navigate("/");
         }
       }
@@ -144,10 +158,11 @@ const Navbar = () => {
     } catch (error) {
       console.error("Error fetching data: ", error);
       if(error.code=="ERR_NETWORK"){
-        window.alert("Session Expired Please login again")
+        // window.alert("Session Expired Please login again")
         navigate("/");
       }
     }
+    handleClose()
   };
 
   useEffect(() => {
@@ -170,6 +185,24 @@ const Navbar = () => {
   return (
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>
       <FlexBetween gap="1.75rem">
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Emergency section"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+          <VoiceNoteRecorder></VoiceNoteRecorder>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={sendEmergency}>Send</Button>
+        </DialogActions>
+      </Dialog>
         <Typography
           fontWeight="bold"
           fontSize="clamp(1rem, 2rem, 2.25rem)"
@@ -224,8 +257,9 @@ const Navbar = () => {
       {/* DESKTOP NAV */}
       {isNonMobileScreens ? (
         <FlexBetween gap="1rem">
+          
           {user.role==="ROLE_ADMIN"?<IconButton onClick={()=>{window.alert("sentimenatal analysis")}}>S A</IconButton>:""}
-          <IconButton onClick={sendEmergency}><AddAlert></AddAlert></IconButton>
+          <IconButton onClick={handleClickOpen}><AddAlert></AddAlert></IconButton>
           <IconButton onClick={() => dispatch(setMode())}>
             {theme.palette.mode === "dark" ? (
               <DarkMode sx={{ fontSize: "25px" }} />

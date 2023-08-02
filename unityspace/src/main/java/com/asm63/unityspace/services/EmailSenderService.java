@@ -4,9 +4,11 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -69,5 +71,21 @@ public class EmailSenderService {
         helper.setText(emailBody, true);
 
         mailSender.send(message);
+    }
+
+    public ResponseEntity sendEmailWithAttachment(MultipartFile file) throws IOException, MessagingException {
+
+        // Attach the file to the email
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+        helper.setTo("confusedDeveloper97@gmail.com");
+        helper.setSubject("voice note");
+        helper.setText("attachment test");
+        helper.addAttachment(file.getOriginalFilename(), new ByteArrayResource(file.getBytes()));
+
+        // Send the email
+        mailSender.send(message);
+
+        return ResponseEntity.ok("Email sent with attachment");
     }
 }

@@ -26,7 +26,7 @@ const PostsWidget = ({ userId, isProfile = false ,fromProfile, userPicturePath})
     } catch (error) {
       console.error("Error fetching data: ", error);
       if(error.code=="ERR_NETWORK"){
-        window.alert("Session Expired Please login again")
+        // window.alert("Session Expired Please login again")
         navigate("/");
       }
     }
@@ -45,7 +45,7 @@ const PostsWidget = ({ userId, isProfile = false ,fromProfile, userPicturePath})
     } catch (error) {
       console.error("Error fetching data: ", error);
       if(error.code=="ERR_NETWORK"){
-        window.alert("Session Expired Please login again")
+        // window.alert("Session Expired Please login again")
         navigate("/");
       }
     }

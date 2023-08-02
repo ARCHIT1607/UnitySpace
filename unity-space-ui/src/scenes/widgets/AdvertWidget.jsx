@@ -52,7 +52,7 @@ const AdvertWidget = () => {
     } catch (error) {
       console.error("Error fetching data: ", error);
       if(error.code=="ERR_NETWORK"){
-        window.alert("Session Expired Please login again")
+        // window.alert("Session Expired Please login again")
         navigate("/");
       }
     }
