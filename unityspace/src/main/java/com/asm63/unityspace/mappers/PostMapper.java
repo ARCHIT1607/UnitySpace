@@ -38,4 +38,8 @@ public interface PostMapper {
     void createPostWithoutPicture(PostDTO post);
 
     void deletedUserPost(String userId);
+
+    void inActiveEvent(Long id);
+
+    void updateDaysLeft(Long id, String daysLeft);
 }

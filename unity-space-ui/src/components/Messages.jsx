@@ -1,4 +1,4 @@
-import { Avatar, Box, Divider, IconButton, Typography, useTheme } from "@mui/material";
+import { Avatar, Box, Divider, IconButton, Typography, useMediaQuery, useTheme } from "@mui/material";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
@@ -27,7 +27,12 @@ function Messages({ message }) {
   let messages = useSelector((state) => state.messages);
   messages = messages !== null && messages.length != 0 ? messages : data;
   const primaryLight = palette.primary.light;
-  
+  const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
+
+
+
+
+
   const getChats = async () => {
     console.log("messages[0].id", messages[0].id);
     const q = query(
@@ -75,12 +80,12 @@ function Messages({ message }) {
                       <Typography
                         variant="h2"
                         style={{
-                          fontSize: "20px",
+                          fontSize: isNonMobileScreens?"20px":"15px",
                           color: sid === m.senderId ? "blue" : "",
                         }}
                       >
                         {sid === m.senderId?<IconButton
-                          sx={{ backgroundColor: primaryLight, p: "0.6rem",fontSize:"1rem",color:"grey",textAlign:"right" }}
+                          sx={{ backgroundColor: primaryLight, p: "0.6rem",fontSize: isNonMobileScreens?"1rem":"0.7rem",color:"grey",textAlign:"right" }}
                         >
                           {m.senderId}
                         </IconButton>:""}

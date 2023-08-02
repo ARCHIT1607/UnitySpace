@@ -63,6 +63,20 @@
         WHERE id=#{id}
     </update>
 
+    <update id="inActiveEvent">
+        UPDATE
+            event SET
+            is_active = false
+        WHERE id=#{id}
+    </update>
+
+    <update id="updateDaysLeft">
+        UPDATE
+            event SET
+            days_left = #{daysLeft}
+        WHERE id=#{id}
+    </update>
+
     <select id="findCommentByPostId" parameterType="Post"
             resultType="String">
         SELECT comments  from post where id = #{id}
@@ -125,7 +139,7 @@
 
     <select id="getEvents"
             resultType="Event">
-        SELECT id, event_name as "eventName", created_date as "CreatedDate", event_date as "eventDate", is_active as "active" from event where is_active = TRUE
+        SELECT id, event_name as "eventName", created_date as "CreatedDate", event_date as "eventDate", is_active as "active", days_left as "daysLeft" from event where is_active = TRUE
     </select>
 
 

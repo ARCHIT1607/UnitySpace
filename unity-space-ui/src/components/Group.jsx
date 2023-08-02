@@ -1,4 +1,4 @@
-import { Box, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, IconButton, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "./FlexBetween";
@@ -25,6 +25,8 @@ const Group = ({ id, name, members, groupImage, size = "40px" }) => {
   const { sid } = useSelector((state) => state.user);
   const { palette } = useTheme();
   const main = palette.neutral.main;
+  const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
+
 
   const getGroupMsg = async () => {
     console.log("id in Group", id);
@@ -76,14 +78,14 @@ const Group = ({ id, name, members, groupImage, size = "40px" }) => {
         >
           {name}
         </Typography>
-        <Typography
+        {isNonMobileScreens?<Typography
           color={main}
           variant="p"
           fontWeight="500"
           justifyContent="flex-start"
         >
           Members:{members.length}
-        </Typography>
+        </Typography>:""}
         <IconButton onClick={handleDelete} sx={{ p: "0.2rem",bgcolor:"grey" }}>
           <DeleteIcon></DeleteIcon>
         </IconButton>

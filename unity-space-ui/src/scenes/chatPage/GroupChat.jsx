@@ -38,9 +38,10 @@ function GroupChat({ pictureName,name, member, id, size = "60px" }) {
   const dispatch = useDispatch();
   const [chatDocuments, setChatDocuments] = useState([]);
 
-  const getGroupMsg = async ()=>{
 
-    
+
+  const getGroupMsg = async ()=>{
+  
     console.log("id in GroupChat", id);
     const q = query(collection(db, "roomChats"), where("id", "==", id));
       const querySnapshot = await getDocs(q);

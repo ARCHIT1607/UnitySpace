@@ -25,4 +25,6 @@ public class Events {
     private String eventDate;
 
     private boolean isActive;
+
+    private String daysLeft;
 }

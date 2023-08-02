@@ -159,7 +159,7 @@ const UserWidget = ({ userId, picturePath }) => {
             <Typography color={medium}>{user.friends.length} friends</Typography>
           </Box>
         </FlexBetween>
-        <ManageAccountsOutlined onClick={() => patchFriend()} />
+        {userId!==sid?<ManageAccountsOutlined onClick={() => patchFriend()} />:""}
       </FlexBetween>
 
       <Divider />

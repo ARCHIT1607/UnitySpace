@@ -15,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -112,7 +114,20 @@ public class StudentService {
     }
 
     public ArrayList<Events> getEvents() {
-       return postMapper.getEvents();
+        ArrayList<Events> events = postMapper.getEvents();
+        for(Events event : events){
+            LocalDate inputDate = LocalDate.parse(event.getEventDate());
+            LocalDate currentDate = LocalDate.now();
+            long diffDays = ChronoUnit.DAYS.between(currentDate, inputDate);
+            int days = Math.round((int) diffDays);
+            if(days<0) {
+                postMapper.inActiveEvent(event.getId());
+            }
+            event.setDaysLeft(String.valueOf(days));
+            postMapper.updateDaysLeft(event.getId(),String.valueOf(days));
+        }
+
+        return postMapper.getEvents();
     }
 
     public InputStream getResource(String picturePath) {

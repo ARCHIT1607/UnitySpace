@@ -312,9 +312,10 @@ const Navbar = () => {
             flexDirection="column"
             justifyContent="center"
             alignItems="center"
-            gap="3rem"
+            gap="1rem"
           >
-            <IconButton onClick={sendEmergency}>Emergency Button</IconButton>
+            {user.role==="ROLE_ADMIN"?<IconButton onClick={()=>{window.alert("sentimenatal analysis")}}>S A</IconButton>:""}
+            <IconButton onClick={sendEmergency}><AddAlert></AddAlert></IconButton>
             <IconButton
               onClick={() => dispatch(setMode())}
               sx={{ fontSize: "25px" }}

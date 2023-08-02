@@ -1,4 +1,5 @@
 import {
+  Box,
   ListItem,
   ListItemButton,
   ListItemText,
@@ -61,16 +62,15 @@ const AdvertWidget = () => {
     getEvents();
   }, []);
 
+
   return (
     <WidgetWrapper>
       <FlexBetween>
         <Typography color={dark} variant="h5" fontWeight="500">
           Events
         </Typography>
-        <Typography color={medium}>
-          <a href="">View Events</a>{" "}
-        </Typography>
       </FlexBetween>
+      <Box p="0.5rem 0"></Box>
       {/* <img
         width="100%"
         height="auto"
@@ -82,15 +82,47 @@ const AdvertWidget = () => {
       {/* <h1>My Outlook Calendar</h1> */}
       {/* <Calendar localizer={localizer} events={events} /> */}
 
-      {event&&event.map((ev)=>(
+      {/* {event&&event.map((ev)=>(
        <FlexBetween><Typography color={dark} variant="h6" fontWeight="500">
         {ev.eventName}
         </Typography>
       <Typography color={dark} variant="h6" fontWeight="500">
         {ev.eventDate}
         </Typography>
-      </FlexBetween>))}
-       
+      </FlexBetween>))} */}
+       <FlexBetween>
+       <Box sx={{ width: "100%", overflow: "auto", height:"25vh"}}>
+          {event &&
+            event.map((ev) =>
+              ev.daysLeft == 1 ? (
+                <ListItem
+                  sx={{
+                    width: "100%",
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                    bgcolor: "red",
+                  }}
+                >
+                  <ListItemText
+                    primary={ev.eventName}
+                    secondary={ev.eventDate}
+                  />
+                </ListItem>
+              ) : (
+                <ListItem
+                  sx={{
+                    width: "100%",
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                  }}
+                >
+                  <ListItemText
+                    primary={ev.eventName}
+                    secondary={ev.eventDate}
+                  />
+                </ListItem>
+              )
+            )}
+        </Box>
+    </FlexBetween>
     </WidgetWrapper>
   );
 };
