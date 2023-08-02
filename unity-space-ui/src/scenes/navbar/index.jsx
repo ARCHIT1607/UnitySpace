@@ -77,17 +77,17 @@ const Navbar = () => {
     }
   };
 
-  // const updateOnlineStatus = async (status,userId) => {
-  //   const response = await Axios.post("http://localhost:9000/updateOnlineStatus", null, {
-  //     params: {
-  //       status: status,
-  //       userId:user.sid
-  //     },
-  //     headers: {
-  //       Authorization: "Bearer " +  token.token,
-  //     },
-  //   });
-  // }
+  const updateOnlineStatus = async (status,userId) => {
+    const response = await Axios.post("http://localhost:9000/updateOnlineStatus", null, {
+      params: {
+        status: status,
+        userId:user.sid
+      },
+      headers: {
+        Authorization: "Bearer " +  token.token,
+      },
+    });
+  }
 
   function error() {
     console.log("Unable to retrieve your location");
@@ -268,6 +268,7 @@ const Navbar = () => {
               <MenuItem
                 onClick={() => {
                   dispatch(setLogout());
+                  updateOnlineStatus(false,user.sid)
                   // updateOnlineStatus(false,user.sid)
                   navigate("/");
                 }}

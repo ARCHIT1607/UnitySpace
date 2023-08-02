@@ -15,6 +15,9 @@ const ProfilePage = () => {
   const { sid } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
+  const friends = useSelector((state) => state.user.friends);
+  console.log("friends in index ",friends)
+  const onlineStatus = friends.filt
   const navigate = useNavigate();
 
   const getUser = async () => {
