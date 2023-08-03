@@ -56,7 +56,7 @@ public class EmailSenderService {
     }
 
     public void sendEmailWithGoogleMapsUrl(double longitude,double latitude,String from) throws MessagingException, UnsupportedEncodingException {
-        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessage message = mailSender.createMimeMessage(); // MimeMessage represents a MIME style email message
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
         System.out.println("from "+from);
         helper.setFrom(from);

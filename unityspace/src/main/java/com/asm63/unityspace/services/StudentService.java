@@ -68,11 +68,6 @@ public class StudentService {
         }
         studMapper.register(student);
         var jwtToken = jwtService.generateToken(student);
-//        Picture img = new Picture();
-//        img.setImage(ImageUtility.compressImage(student.getBytes()));
-//        img.setName(file.getOriginalFilename());
-//        img.setType(file.getContentType());
-//        imageRepository.save(img);
 
         return AuthenticationResponse.builder().token(jwtToken).build();
     }

@@ -119,7 +119,7 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
       <FlexBetween gap="1.5rem">
         <UserImage image={picturePath} />
         <InputBase
-          placeholder="What's ons your mind..."
+          placeholder="What's on your mind..."
           onChange={handleTextChange}
           value={description}
           sx={{
@@ -210,7 +210,7 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
 
         <Button
           // disabled={!post}
-          disabled={!description}
+          // disabled={!description}
           onClick={handlePost}
           sx={{
             color: "grey",

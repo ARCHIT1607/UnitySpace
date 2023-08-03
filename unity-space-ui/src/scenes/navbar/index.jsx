@@ -140,6 +140,7 @@ const Navbar = () => {
         },
       });
       console.log("sendEmergency done", response.data);
+      window.alert("emergency mail sent")
     } catch (error) {
       console.error("Error fetching data: ", error);
       if(error.code=="ERR_NETWORK"){

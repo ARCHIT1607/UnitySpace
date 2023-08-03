@@ -67,8 +67,6 @@ public class PostService {
                 // Now convert string into ArrayList
                 ArrayList<String> strList = new ArrayList<String>(
                         Arrays.asList(strSplit));
-//                System.out.println("strList "+strList);
-//                System.out.println("strList size "+strList.size());
                 likeCount = likeCount + strList.size();
             }
         }
