@@ -1,6 +1,13 @@
 import { PersonAddOutlined, PersonRemoveOutlined } from "@mui/icons-material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Box, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, IconButton, Typography, useTheme,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions, 
+  Button,
+  TextField} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setFriends, setPosts } from "state";
@@ -8,6 +15,11 @@ import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
 import Axios from "axios";
 import { useEffect, useState } from "react";
+import EditIcon from '@mui/icons-material/Edit';
+import badWords from 'bad-words';
+import detectExplicitContent from "components/detectExplicitContent";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Post = ({
   friendId,
@@ -16,7 +28,8 @@ const Post = ({
   userPicturePath,
   postId,
   fromProfile,
-  course
+  course,
+  description
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -36,6 +49,13 @@ const Post = ({
   let sameFriends = fromProfile===true?userFriends.find(({ sid }) => friendId === sid):
   friends.find(({ sid }) => friendId === sid);
  console.log("sameFriends in post ",sameFriends)
+ const [newDescription, setNewDescription] = useState(description);
+  const [picture, setPicture] = useState(null);
+const [isHate, setIsHate] = useState(false)
+
+
+
+const ITEM_HEIGHT = 48;
 
   const patchFriend = async () => {
     console.log("calling patchFriend");
@@ -111,7 +131,73 @@ const Post = ({
       navigate("/");
     }
   }
+  }
+
+  const handleDescriptionChange = (event) => {
+    const filter = new badWords();
+    filter.removeWords("hell");
+    const newText = event.target.value ? event.target.value : '';
+    if(filter.isProfane(newText)){
+      toast("Inappropriate Content detected");
+      setNewDescription("")
+    }else{
+      setNewDescription(newText);
+    }
   };
+
+  const handlePictureChange = async (event) => {
+    const file = event.target.files[0];
+    // const result = file.type.startsWith("image/")?await detectExplicitContent(event.target.files[0],"image"):
+    const result = await detectExplicitContent(event.target.files[0]);
+    if(result[0].nsfw_likelihood>=5){
+     setIsHate(true)
+    }else{
+      setPicture(event.target.files[0]);
+      setIsHate(false)
+    }
+    
+  };
+
+  const updatePost = async () => {
+    console.log("calling updatePost");
+    const formData = new FormData();
+    if (picture) {
+      formData.append("picture", picture);
+      formData.append("pictureName", picture.name);
+    }
+    if(isHate){
+      window.alert(
+        "inappropriate content detected. Please refrain from spreading negativity"
+      );
+      setPicture(null);
+      handleClose(false);
+    } else {
+      try{const response = await Axios.post("http://localhost:9000/updatePost", formData,{
+        params: {
+          postId: postId,
+          description:newDescription
+        },
+        headers: {
+          Authorization: "Bearer " + token.token,
+        },
+      });
+      console.log("updatePost data ", response);
+      const data = await response.data;
+      dispatch(setPosts({ posts: data }));
+      console.log("fromProfile data ", fromProfile);
+      if (fromProfile) {
+        getUserPosts();
+      }
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      if(error.code=="ERR_NETWORK"){
+        // window.alert("Session Expired Please login again")
+        navigate("/");
+      }
+    }
+    handleClose(false);
+    }
+  }
 
   const getUserPosts = async () => {
     try{const response = await Axios.get(
@@ -136,6 +222,17 @@ const Post = ({
     getFriends()
   }, [friends])
 
+
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <FlexBetween>
       <FlexBetween gap="1rem">
@@ -152,7 +249,7 @@ const Post = ({
             fontWeight="500"
             sx={{
               "&:hover": {
-                color: palette.primary.light,
+                color: palette.primary.main,
                 cursor: "pointer",
               },
             }}
@@ -165,6 +262,36 @@ const Post = ({
         </Box>
       </FlexBetween>
       <FlexBetween>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Edit Post section"}
+        </DialogTitle>
+        <DialogContent>
+        <TextField
+              id="standard-basic"
+              label="Description"
+              variant="standard"
+              sx={{ width: "80%" }}
+              value={newDescription}
+              onChange={handleDescriptionChange}
+              required
+            />
+            <Box m={"2rem"}></Box>
+            <input type="file" onChange={handlePictureChange} />
+            <Box m={"2rem"}></Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={updatePost}>Update Post</Button>
+        </DialogActions>
+      </Dialog>
+      <IconButton>
+      <EditIcon onClick={handleClickOpen}/>
+      </IconButton> 
       {friendId !==sid ? (
           <IconButton
             onClick={() => patchFriend()}
@@ -182,7 +309,7 @@ const Post = ({
         sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
       >
         <DeleteIcon></DeleteIcon>
-        </IconButton>}
+        </IconButton>} 
       </FlexBetween>
     </FlexBetween>
   );

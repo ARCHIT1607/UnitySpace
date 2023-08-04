@@ -138,7 +138,7 @@ console.log("user pic from home page ",userPicturePath)
   const postComment =async(e)=>{
     const formData = new FormData();
     formData.append("comment",comment)
-    if(comment.startsWith(" ")){
+    if(comment.startsWith(" ") || comment.startsWith("")){
       window.alert("please type something")
     }else{
       try {
@@ -216,6 +216,7 @@ console.log("user pic from home page ",userPicturePath)
         postId={postId}
         course={course}
         fromProfile={fromProfile}
+        description={description}
       />
       <Typography color={main} sx={{ mt: "1rem" }}>
         {description}

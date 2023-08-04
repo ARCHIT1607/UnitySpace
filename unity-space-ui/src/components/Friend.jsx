@@ -103,7 +103,7 @@ const [userFriends, setUserFriends] = useState([])
             fontWeight="500"
             sx={{
               "&:hover": {
-                color: palette.primary.light,
+                color: palette.primary.main,
                 cursor: "pointer",
               },
             }}

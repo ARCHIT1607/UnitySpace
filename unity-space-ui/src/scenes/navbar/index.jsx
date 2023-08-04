@@ -50,7 +50,7 @@ const Navbar = () => {
   const neutralLight = theme.palette.neutral.light;
   const dark = theme.palette.neutral.dark;
   const background = theme.palette.background.default;
-  const primaryLight = theme.palette.primary.light;
+  const primaryLight = theme.palette.primary.main;
   const alt = theme.palette.background.alt;
   const token = useSelector((state) => state.token);
   const fullName = `${user.fname} ${user.lname}`;
@@ -200,7 +200,7 @@ const Navbar = () => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={sendEmergency}>Send</Button>
+          <Button onClick={sendEmergency}>Send Location</Button>
         </DialogActions>
       </Dialog>
         <Typography

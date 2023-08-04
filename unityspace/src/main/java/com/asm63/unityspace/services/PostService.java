@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class PostService {
@@ -51,11 +52,11 @@ public class PostService {
             String convertedString = String.join(",", strList);
             System.out.println("after adding user: " + convertedString);
             post.setLikes(convertedString);
-            postMapper.updatePost(post);
+            postMapper.updatePostLike(post);
         } else {
             post.setLikes(userId);
             System.out.println("post.getLikes when there is no like " + post.getLikes());
-            postMapper.updatePost(post);
+            postMapper.updatePostLike(post);
         }
         Long likeCount = 0L;
         List<String> postLikes = postMapper.getUserPostLikes(userId);
@@ -143,5 +144,24 @@ public class PostService {
             post.setComments(strSplit);
         }
         postMapper.postComment(post);
+    }
+
+    public void updatePost(PostDTO post, MultipartFile picture) throws IOException {
+        System.out.println("description data "+post.getDescription());
+        System.out.println("picture data "+picture + post.getPicturePath());
+        if (picture!=null && !picture.isEmpty()){
+            String fileName = picture.getOriginalFilename();
+            byte[] data = picture.getBytes();
+            System.out.println("picture data "+data);
+
+            if(data!=null) {
+                post.setPicture(data);
+                post.setPicturePath(fileName+ new Random(3));
+                postMapper.updatePost(post);
+            }
+
+        }else{
+            postMapper.updatePost(post);
+        }
     }
 }

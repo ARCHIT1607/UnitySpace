@@ -56,7 +56,7 @@
         SELECT likes from post where id = #{postId}
     </select>
 
-    <update id="updatePost">
+    <update id="updatePostLike">
         UPDATE
             post SET
             LIKES = COALESCE(#{likes}, LIKES)
@@ -74,6 +74,20 @@
         UPDATE
             event SET
             days_left = #{daysLeft}
+        WHERE id=#{id}
+    </update>
+
+    <update id="updatePost">
+        UPDATE
+            post SET
+            description = #{description}
+
+        <if test="picturePath != null">
+            ,picture_path =#{picturePath}
+        </if>
+        <if test="picture != null">
+            ,picture =#{picture}
+        </if>
         WHERE id=#{id}
     </update>
 

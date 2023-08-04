@@ -13,7 +13,7 @@ public interface PostMapper {
 
     PostDTO findPostById(Long id);
 
-    void updatePost(PostDTO post);
+    void updatePostLike(PostDTO post);
 
     void createPost(PostDTO post);
 
@@ -42,4 +42,6 @@ public interface PostMapper {
     void inActiveEvent(Long id);
 
     void updateDaysLeft(Long id, String daysLeft);
+
+    void updatePost(PostDTO post);
 }

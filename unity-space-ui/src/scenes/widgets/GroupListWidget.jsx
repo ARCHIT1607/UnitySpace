@@ -46,7 +46,8 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
   const handleClose = () => setOpen(false);
   const [groupName, setGroupName] = useState("");
   const [groupPicture, setGroupPicture] = useState(null);
-
+ const [isHate, setIsHate] = useState(false)
+ 
   const style = {
     position: "absolute",
     top: "50%",
@@ -156,8 +157,9 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    let isHate = handleImageUpload(groupPicture);
-    if (!isHate) {
+   handleImageUpload(groupPicture);
+    console.log("isHate ", isHate);
+    if (isHate===false) {
       // Get the current user's ID
       const userId = sid;
 
@@ -203,12 +205,8 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
 
   const handleImageUpload = async (image) => {
     const result = await detectExplicitContent(image);
-    console.log("eden api result ", result);
-    if (result[0].nsfw_likelihood >= 5) {
-      return true;
-    } else {
-      return false;
-    }
+    console.log("eden api result ", result, result[0].nsfw_likelihood >= 5);
+    setIsHate(result[0].nsfw_likelihood >= 5) 
   };
 
   return (

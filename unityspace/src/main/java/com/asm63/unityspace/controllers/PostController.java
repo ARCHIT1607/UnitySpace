@@ -140,4 +140,29 @@ public class PostController {
             return new ResponseEntity<Object>(map, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @PostMapping(value = "/updatePost")
+    @Transactional
+    public ResponseEntity<Object> updatePost(@RequestParam("description") String description,@RequestParam("postId") String postId,
+                                             @RequestParam(value = "picture",required = false) MultipartFile picture) throws Exception {
+
+        try {
+            PostDTO post = postService.getPost(Long.parseLong(postId));
+            post.setDescription(description);
+            postService.updatePost(post,picture);
+            System.out.println("post before calling getPost");
+            return new ResponseEntity<Object>(postService.getPosts(), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            HashMap<Object, Object> map = new HashMap<>();
+            if(e.getMessage().equals("user already exists")) {
+                map.put("errorMsg", e.getMessage());
+                map.put("errorType", "user_exists");
+            }else {
+                e.printStackTrace();
+                map.put("errorMsg", e.getMessage());
+            }
+            return new ResponseEntity<Object>(map, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

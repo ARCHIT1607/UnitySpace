@@ -230,7 +230,7 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
 
         <Button
           // disabled={!post}
-          disabled={!description}
+          // disabled={!description}
           onClick={handlePost}
           sx={{
             color: "grey",
