@@ -231,8 +231,8 @@ const Navbar = () => {
                 freeSolo
                 id="free-solo-2-demo"
                 disableClearable
-                // options={data.map((student) => student.fname)}
                 options={data}
+                ListboxProps={{ style: { maxHeight: '100px', overflowY: 'auto' } }}
                 getOptionLabel={(student) => student.fname}
                 getOptionSelected={(student, sid) =>
                   student.value === sid.value

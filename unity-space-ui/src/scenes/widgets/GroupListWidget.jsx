@@ -279,6 +279,7 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
               members={group.members}
               groupImage={group.picture}
               size="55px"
+              friends={friends}
             />
           ))}
       </Box>
