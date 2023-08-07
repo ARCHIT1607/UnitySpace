@@ -1,8 +1,6 @@
 package com.asm63.unityspace.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -16,6 +14,8 @@ import lombok.*;
 public class Events {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "EVENT_SEQ")
+    @SequenceGenerator(initialValue = 1, name = "EVENT_SEQ", sequenceName = "EVENT_SEQ", allocationSize = 1)
     private Long id;
 
     private String eventName;

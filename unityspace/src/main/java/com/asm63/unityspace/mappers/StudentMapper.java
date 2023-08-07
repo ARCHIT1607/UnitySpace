@@ -49,4 +49,6 @@ public interface StudentMapper {
     void deletedUserFriends(String userId);
 
     void deleteUser(String userId);
+
+    ArrayList getAllOnlineStatus();
 }

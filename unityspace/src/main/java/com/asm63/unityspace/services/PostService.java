@@ -11,10 +11,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class PostService {
@@ -163,5 +160,14 @@ public class PostService {
         }else{
             postMapper.updatePost(post);
         }
+    }
+
+    public Object getDashboardData() {
+        HashMap map = new HashMap();
+        map.put("posts",postMapper.getPosts().size());
+        map.put("users",studentMapper.findAllStudent().size());
+        map.put("online",studentMapper.getAllOnlineStatus().size());
+        return map;
+
     }
 }

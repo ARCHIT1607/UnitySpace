@@ -102,8 +102,6 @@ console.log("onlineStatusArray ",onlineStatusArray)
   console.log("user ", sid);
   return (
     <Box>
-      {/* {isIdle ? "Are you still there?" : "Hello there!"} */}
-
       <Navbar />
       <Box
         width="100%"

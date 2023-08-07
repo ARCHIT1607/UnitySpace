@@ -226,4 +226,10 @@
         delete from student where sid = #{userId}
     </delete>
 
+    <select id="getAllOnlineStatus"
+            resultType="HashMap">
+        SELECT is_online_status as "onlineStatus" from student where is_online_status = true
+    </select>
+
+
 </mapper>

@@ -258,8 +258,8 @@ const Navbar = () => {
       {isNonMobileScreens ? (
         <FlexBetween gap="1rem">
           
-          {user.role==="ROLE_ADMIN"?<IconButton onClick={()=>{window.alert("sentimenatal analysis")}}>S A</IconButton>:""}
-          <IconButton onClick={handleClickOpen}><AddAlert></AddAlert></IconButton>
+          {user.role==="ROLE_ADMIN"?<IconButton onClick={()=>{ navigate("/dashboard");}}>Dashboard</IconButton>:""}
+            <IconButton onClick={sendEmergency}><AddAlert></AddAlert></IconButton>
           <IconButton onClick={() => dispatch(setMode())}>
             {theme.palette.mode === "dark" ? (
               <DarkMode sx={{ fontSize: "25px" }} />
@@ -349,7 +349,7 @@ const Navbar = () => {
             alignItems="center"
             gap="1rem"
           >
-            {user.role==="ROLE_ADMIN"?<IconButton onClick={()=>{window.alert("sentimenatal analysis")}}>S A</IconButton>:""}
+            {user.role==="ROLE_ADMIN"?<IconButton onClick={()=>{ navigate("/dashboard");}}>Dashboard</IconButton>:""}
             <IconButton onClick={sendEmergency}><AddAlert></AddAlert></IconButton>
             <IconButton
               onClick={() => dispatch(setMode())}

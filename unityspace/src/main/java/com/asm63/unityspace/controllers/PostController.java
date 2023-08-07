@@ -165,4 +165,14 @@ public class PostController {
         }
     }
 
+    @GetMapping("/dashboard/getDashboardData")
+    public ResponseEntity<Object> getDashboardData() {
+        try {
+            System.out.println("calling getDashboardData");
+            return new ResponseEntity<Object>(postService.getDashboardData(), HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<Object>(e.getMessage(),HttpStatus.OK);
+        }
+    }
+
 }

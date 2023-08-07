@@ -234,6 +234,7 @@ console.log("user pic from home page ",userPicturePath)
         <img
           width="100%"
           height="auto"
+          
           alt="post"
           style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
           src={`http://localhost:9000/post/image/${picturePath}`}

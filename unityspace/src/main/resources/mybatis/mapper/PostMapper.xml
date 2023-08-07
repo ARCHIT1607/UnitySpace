@@ -91,6 +91,19 @@
         WHERE id=#{id}
     </update>
 
+    <insert id="createEvent" parameterType="Event">
+        <selectKey keyProperty="id" resultType="Long" order="BEFORE">
+            select
+            nextval('EVENT_SEQ')
+        </selectKey>
+        INSERT INTO
+        event
+        (id,event_name,event_date,is_active,days_left,created_date)
+        VALUES(#{id},#{eventName},#{eventDate},
+        #{isActive},#{daysLeft},#{createdDate})
+    </insert>
+
+
     <select id="findCommentByPostId" parameterType="Post"
             resultType="String">
         SELECT comments  from post where id = #{id}
@@ -151,9 +164,13 @@
         delete from post where id = #{postId}
     </delete>
 
+    <delete id="deleteEvent" parameterType="Long">
+        delete from event where id = #{id}
+    </delete>
+
     <select id="getEvents"
             resultType="Event">
-        SELECT id, event_name as "eventName", created_date as "CreatedDate", event_date as "eventDate", is_active as "active", days_left as "daysLeft" from event where is_active = TRUE
+        SELECT id, event_name as "eventName", created_date as "CreatedDate", event_date as "eventDate", is_active as "active", days_left as "daysLeft" from event where is_active = TRUE ORDER BY id desc
     </select>
 
 

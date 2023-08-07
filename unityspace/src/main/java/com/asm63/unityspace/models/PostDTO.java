@@ -1,9 +1,6 @@
 package com.asm63.unityspace.models;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.SequenceGenerator;
 import lombok.*;
 
 
@@ -15,8 +12,8 @@ import lombok.*;
 public class PostDTO {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "EVENT_SEQ")
-    @SequenceGenerator(initialValue = 1, name = "EVENT_SEQ", sequenceName = "EVENT_SEQ", allocationSize = 1)
+//    @GeneratedValue(strategy = GenerationType.AUTO, generator = "EVENT_SEQ")
+//    @SequenceGenerator(initialValue = 1, name = "EVENT_SEQ", sequenceName = "EVENT_SEQ", allocationSize = 1)
     private Long id;
     private String postUserId;
 

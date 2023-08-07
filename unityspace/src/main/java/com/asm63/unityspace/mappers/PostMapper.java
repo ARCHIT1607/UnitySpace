@@ -44,4 +44,8 @@ public interface PostMapper {
     void updateDaysLeft(Long id, String daysLeft);
 
     void updatePost(PostDTO post);
+
+    void createEvent(Events event);
+
+    void deleteEvent(Long id);
 }

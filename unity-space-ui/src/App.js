@@ -9,16 +9,13 @@ import { createTheme } from "@mui/material/styles";
 import { themeSettings } from "./theme";
 
 import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import ChatHomePage from "scenes/chatPage";
+import Dashboard from "scenes/Dashboard";
 function App() {
-
   const mode = useSelector((state) => state.mode);
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
   const isAuth = Boolean(useSelector((state) => state.token));
-
-
-  
 
   return (
     <div className="app">
@@ -28,7 +25,7 @@ function App() {
           <CssBaseline />
           <Routes>
             <Route path="/" element={<LoginPage />} />
-            
+
             <Route
               path="/home"
               element={isAuth ? <HomePage /> : <Navigate to="/" />}
@@ -41,7 +38,11 @@ function App() {
               path="/chat"
               element={isAuth ? <ChatHomePage /> : <Navigate to="/" />}
             />
-  
+
+            <Route
+              path="/dashboard"
+              element={isAuth ? <Dashboard /> : <Navigate to="/" />}
+            />
           </Routes>
         </ThemeProvider>
       </BrowserRouter>
