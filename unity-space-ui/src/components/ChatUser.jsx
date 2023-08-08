@@ -97,7 +97,7 @@ const ChatUser = ({ friendId, name, subtitle, userPicturePath, onlineStatus }) =
           fontWeight="500"
           justifyContent="flex-start"
         >
-          {onlineStatus===true?"online":"offline"}
+          {/* {onlineStatus===true?"online":"offline"} */}
         </Typography>
       </Box>
     </FlexBetween>

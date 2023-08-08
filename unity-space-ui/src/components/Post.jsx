@@ -41,8 +41,8 @@ const Post = ({
     console.log("calling patchFriend");
     try{const response = await Axios.get("http://localhost:9000/patchFriend", {
       params: {
-        id: sid,
-        friendId: friendId
+        id: fromProfile===true?friendId:sid,
+        friendId: fromProfile===true?sid:friendId
       },
       headers: {
         Authorization: "Bearer " + token.token,
@@ -50,7 +50,10 @@ const Post = ({
     });
     console.log("patch friend data ", response);
     const data = await response.data.friend;
-    dispatch(setFriends({ friends: data }));
+    if (friendId !== sid) {
+      dispatch(setFriends({ friends: data }));
+    }
+    
     // setUserFriends(data);
     getFriends()
   } catch (error) {

@@ -215,7 +215,7 @@ const UserWidget = ({ userId, picturePath }) => {
           <FlexBetween gap="1rem">
             {/* <img src="../assets/twitter.png" alt="twitter" /> */}
             <a
-              href="https://teams.microsoft.com/l/call/0/0?users=asm63@student.le.ac.uk"
+              href={`https://teams.microsoft.com/l/call/0/0?users=${email}`}
               target="_blank"
             >
               <VideoChatIcon fontSize="large" />

@@ -114,7 +114,7 @@ const [userFriends, setUserFriends] = useState([])
             {subtitle}
           </Typography>
           <Typography color={medium} fontSize="0.75rem">
-          {onlineStatus===true?"online":"offline"}
+          {/* {onlineStatus===true?"online":"offline"} */}
           </Typography>
         </Box>
       </FlexBetween>
