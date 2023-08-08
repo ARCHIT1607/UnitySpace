@@ -211,6 +211,11 @@
         SELECT firebase_token from fb_cloud_message where user_id = #{postUserId}
     </select>
 
+    <select id="getAllTokens"
+            resultType="ArrayList">
+        SELECT firebase_token from fb_cloud_message
+    </select>
+
     <update id="updateOnlineStatus">
         UPDATE
             student SET

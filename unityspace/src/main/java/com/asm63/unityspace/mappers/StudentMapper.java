@@ -51,4 +51,6 @@ public interface StudentMapper {
     void deleteUser(String userId);
 
     ArrayList getAllOnlineStatus();
+
+    ArrayList<String> getAllTokens();
 }

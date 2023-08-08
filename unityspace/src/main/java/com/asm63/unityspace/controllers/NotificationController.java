@@ -5,10 +5,7 @@ import com.asm63.unityspace.models.NotificationDTO;
 import com.asm63.unityspace.models.PostDTO;
 import com.asm63.unityspace.services.FirebaseService;
 import com.asm63.unityspace.services.PostService;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.WebpushConfig;
-import com.google.firebase.messaging.WebpushNotification;
+import com.google.firebase.messaging.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,4 +61,5 @@ public class NotificationController {
 
         return response;
     }
+
 }

@@ -149,7 +149,13 @@ const Form = () => {
     } catch (error) {
         console.error("Something bad happened");
         console.error(error.response.data.errorMsg);
-        toast(error.response.data.errorMsg);
+        
+        if(error.response.data.errorType==="password_not_found"){
+          onSubmitProps.setErrors({ password: "incorrect password" });
+        }else if(error.response.data.errorMsg==="Student doesn't Exist"){
+          onSubmitProps.setErrors({ email: "Email is not found" });
+        }
+        // toast(error.response.data.errorMsg);
         navigate("/");
       }
   };
