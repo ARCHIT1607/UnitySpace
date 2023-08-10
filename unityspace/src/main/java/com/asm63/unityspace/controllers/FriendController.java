@@ -1,5 +1,6 @@
 package com.asm63.unityspace.controllers;
 
+import com.asm63.unityspace.models.FriendRequestDTO;
 import com.asm63.unityspace.models.Student;
 import com.asm63.unityspace.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,55 @@ public class FriendController {
 
     @Autowired
     private StudentService studentService;
+
+    @PostMapping("/users/sendFriendRequest")
+    public ResponseEntity<Object> sendFriendRequest(@RequestParam(name = "senderId") String senderId,
+                                                    @RequestParam(name = "friendId") String friendId) {
+
+        try {
+
+            FriendRequestDTO request = new FriendRequestDTO();
+            request.setFriendId(friendId);
+            request.setSenderId(senderId);
+            request.setStatus("Pending");
+            HashMap friendRequest = studentService.checkFriendRequestExists(request);
+            System.out.println("friendRequest "+friendRequest);
+            if(friendRequest==null){
+                studentService.sendFriendRequest(request);
+                System.out.println("sendFriend Request done");
+                return new ResponseEntity<Object>("Friend Request sent successfully",HttpStatus.OK);
+            }
+
+            return new ResponseEntity<Object>("Friend Request already exists",HttpStatus.OK);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<Object>(e.getMessage(),HttpStatus.OK);
+        }
+
+    }
+
+    @GetMapping("users/checkFriendRequest")
+    public ResponseEntity<Object> checkFriendRequest(@RequestParam(name = "friendId") String friendId) {
+
+        try {
+            return new ResponseEntity<Object>(studentService.checkFriendRequest(friendId),HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<Object>(e.getMessage(),HttpStatus.OK);
+        }
+
+    }
+
+    @PostMapping("/users/deleteFriendRequest")
+    public ResponseEntity<Object> deleteFriendRequest(@RequestParam(name = "friendId") String friendId,
+                                                      @RequestParam(name = "senderId") String senderId     ) {
+
+        try {
+            return new ResponseEntity<Object>(studentService.deleteFriendRequest(friendId,senderId),HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<Object>(e.getMessage(),HttpStatus.OK);
+        }
+
+    }
 
     @GetMapping("/patchFriend")
     public ResponseEntity<Object> patchFriend(@RequestParam(name = "id") String id,
@@ -41,6 +91,7 @@ public class FriendController {
                 } else{
                     System.out.println("before calling  addFriend service ");
                     studentService.addFriend(studentService.findByFriendId(id).getSid(), friendId);
+
                 }
             }
 

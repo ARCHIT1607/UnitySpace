@@ -3,6 +3,8 @@ package com.asm63.unityspace.models;
 import jakarta.persistence.Id;
 import lombok.*;
 
+import java.util.ArrayList;
+
 
 @Getter
 @Setter
@@ -28,7 +30,7 @@ public class PostDTO {
     private String userPicturePath;
     private String likes;
 
-    private String[] comments;
+    private ArrayList<String> comments;
 
     private String createdDate;
 

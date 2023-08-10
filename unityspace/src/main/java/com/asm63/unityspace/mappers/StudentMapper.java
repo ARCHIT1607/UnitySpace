@@ -1,6 +1,7 @@
 package com.asm63.unityspace.mappers;
 
 import com.asm63.unityspace.models.CloudMessageDTO;
+import com.asm63.unityspace.models.FriendRequestDTO;
 import com.asm63.unityspace.models.Student;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -53,4 +54,14 @@ public interface StudentMapper {
     ArrayList getAllOnlineStatus();
 
     ArrayList<String> getAllTokens();
+
+    void sendFriendRequest(FriendRequestDTO request);
+
+    ArrayList checkFriendRequest(String friendId);
+
+    void updateFriendRequestStatus(String friendId);
+
+    HashMap checkFriendRequestExists(FriendRequestDTO request);
+
+    void deleteFriendRequest(String friendId, String senderId);
 }

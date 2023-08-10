@@ -1,11 +1,13 @@
 package com.asm63.unityspace.mappers;
 
 
+import com.asm63.unityspace.models.Comment;
 import com.asm63.unityspace.models.Events;
 import com.asm63.unityspace.models.PostDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Mapper
@@ -17,7 +19,7 @@ public interface PostMapper {
 
     void createPost(PostDTO post);
 
-    ArrayList<PostDTO> getPosts();
+    ArrayList<HashMap> getPosts();
 
     ArrayList<PostDTO> getUserPosts(String userId);
 
@@ -25,9 +27,9 @@ public interface PostMapper {
 
     void deletePost(Long postId);
 
-    void postComment(PostDTO post);
+    void postComment(Comment comment);
 
-    String findCommentByPostId(Long postId);
+    ArrayList<String> findCommentByPostId(Long postId);
 
     List<String> getUserPostLikes(String userId);
 
@@ -48,4 +50,6 @@ public interface PostMapper {
     void createEvent(Events event);
 
     void deleteEvent(Long id);
+
+    ArrayList<Comment> geComment(Long id);
 }

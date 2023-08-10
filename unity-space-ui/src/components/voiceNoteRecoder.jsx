@@ -2,7 +2,7 @@ import { AudioRecorder } from 'react-audio-voice-recorder';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 const VoiceNoteRecorder = () => {
-  const token = useSelector((state) => state.token);
+  const token = useSelector((state) => state.token.token);
   const handleAudioStop = async (data) => {
     console.log("voiceNoteRecorder", data);
     const file = new Blob([data], { type: 'application/octet-stream' });

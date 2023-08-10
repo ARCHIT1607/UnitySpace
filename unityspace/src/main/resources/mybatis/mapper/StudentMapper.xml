@@ -59,6 +59,18 @@
         #{password},#{loc},#{course},#{role},#{profilePic},#{pictureName})
     </insert>
 
+
+    <insert id="sendFriendRequest" parameterType="FriendRequest" >
+        <selectKey keyProperty="id" resultType="Long" order="BEFORE">
+            select
+            nextval('FRIEND_REQ_SEQ')
+        </selectKey>
+        INSERT INTO
+        friend_request
+        (id,sender_id,friend_id,status)
+        VALUES(#{id},#{senderId},#{friendId},#{status})
+    </insert>
+
     <insert id="addFriend" parameterType="Friend" >
         <selectKey keyProperty="id" resultType="Long" order="BEFORE">
         select
@@ -70,6 +82,21 @@
         VALUES(#{id},#{friendId},#{studentId})
     </insert>
 
+    <select id="checkFriendRequest"
+            resultType="HashMap" parameterType="String">
+        SELECT student.fname, student.lname, student.sid
+        FROM friend_request
+                 INNER JOIN student ON student.sid = friend_request.sender_id WHERE friend_request.friend_id =#{friendId}
+                                                                                and friend_request.status ='Pending'
+    </select>
+
+    <select id="checkFriendRequestExists" parameterType="FriendRequest"
+            resultType="HashMap">
+        SELECT friend_id as "friendId ",sender_id as "senderId" from friend_request
+                                                                where sender_id = #{senderId} and
+                                                                      friend_id =#{friendId} and status = 'Pending'
+    </select>
+
     <select id="getFriends"
             resultType="HashMap" parameterType="String">
         SELECT friend_list.id, student.course, student.fname, student.lname,student.sid, student.picture_name, student.is_online_status as "onlineStatus"
@@ -79,6 +106,10 @@
 
     <delete id="deleteFriend" parameterType="String"  >
         delete from friend_list where  student_id = #{id} and friend_id = #{friendId}
+    </delete>
+
+    <delete id="deleteFriendRequest" parameterType="String"  >
+        delete from friend_request where  friend_id = #{friendId} and sender_id = #{senderId} and status = 'Pending'
     </delete>
 
     <select id="findById" parameterType="String"
@@ -146,6 +177,12 @@
         WHERE sid=#{userId}
     </update>
 
+    <update id="updateFriendRequestStatus">
+        UPDATE
+            friend_request SET
+            status = 'Accepted'
+        WHERE sender_id=#{friendId}
+    </update>
 
     <select id="findCommentByPostId" parameterType="Post"
             resultType="String">

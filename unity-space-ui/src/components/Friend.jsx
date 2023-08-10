@@ -1,6 +1,6 @@
 import { PersonAddOutlined, PersonRemoveOutlined } from "@mui/icons-material";
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Box, IconButton, Typography, useTheme } from "@mui/material";
+import { Box, IconButton, Snackbar, Typography, useTheme } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setFriends } from "state";
@@ -27,34 +27,42 @@ const [userFriends, setUserFriends] = useState([])
 
  console.log("userIsSameAsFriend ccheck",sameFriends);
 
-  const patchFriend = async () => {
-    console.log("calling patchFriend")
-    try {
-    const response = await Axios.get("http://localhost:9000/patchFriend", {
-      params:{
-        id:sid,
-        friendId:friendId
-      },
-      headers: {
-        Authorization: "Bearer " + token.token,
-      },
-    });
-    console.log("patch friend data ",response);
-    const data = await response.data.friend;
-    if(profileUser===sid)
-    {
-      dispatch(setFriends({ friends: data }));
-    }
-    
-    getFriends();
-  } catch (error) {
-    console.error("Error fetching data: ", error);
-    if(error.code=="ERR_NETWORK"){
-      // window.alert("Session Expired Please login again")
-      navigate("/");
-    }
+ const [open, setOpen] = useState(false);
+
+ const handleClick = () => {
+   setOpen(true);
+ };
+
+ const handleClose = (event, reason) => {
+   if (reason === 'clickaway') {
+     return;
+   }
+
+   setOpen(false);
+ };
+
+ const sendFriendRequest = async () => {
+  console.log("calling patchFriend")
+  try {
+  const response = await Axios.post("http://localhost:9000/users/sendFriendRequest",null, {
+    params:{
+      senderId:sid,
+      friendId:friendId
+    },
+    headers: {
+      Authorization: "Bearer " + token.token,
+    },
+  });
+  console.log("sendFriendRequest ",response);
+ handleClick();
+} catch (error) {
+  console.error("Error fetching data: ", error);
+  if(error.code=="ERR_NETWORK"){
+    // window.alert("Session Expired Please login again")
+    navigate("/");
   }
-  };
+}
+}
 
   const getFriends = async () => {
     try{const response = await Axios.get("http://localhost:9000/users/friends", {
@@ -73,6 +81,34 @@ const [userFriends, setUserFriends] = useState([])
     }
     setUserFriends(data);
     console.log("userFriends ",data)
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    if(error.code=="ERR_NETWORK"){
+      // window.alert("Session Expired Please login again")
+      navigate("/");
+    }
+  }
+  };
+
+  const patchFriend = async (friendId) => {
+    console.log("calling patchFriend")
+    try {
+    const response = await Axios.get("http://localhost:9000/patchFriend", {
+      params:{
+        id:sid,
+        friendId:friendId
+      },
+      headers: {
+        Authorization: "Bearer " + token.token,
+      },
+    });
+    console.log("patch friend data ",response);
+    const data = await response.data.friend;
+    // if(profileUser===sid)
+    // {
+      dispatch(setFriends({ friends: data }));
+    // }
+    getFriends();
   } catch (error) {
     console.error("Error fetching data: ", error);
     if(error.code=="ERR_NETWORK"){
@@ -121,19 +157,26 @@ const [userFriends, setUserFriends] = useState([])
       <FlexBetween>
 {friendId !==sid ? (
           <IconButton
-            onClick={() => patchFriend()}
+            // onClick={() => patchFriend()}
+            
             sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
           >
             { sameFriends ? (
              
-               <PersonRemoveOutlined sx={{ color: primaryDark }} />
+               <PersonRemoveOutlined sx={{ color: primaryDark }} onClick={() => patchFriend(friendId)} />
             ) : (
-              <PersonAddOutlined sx={{ color: primaryDark }} />
+              <PersonAddOutlined sx={{ color: primaryDark }} onClick={() => sendFriendRequest()} />
             )}
           </IconButton>
         ) : (
           ""
         )}
+        <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        message="Note archived"
+      />
       </FlexBetween>
     </FlexBetween>
   );

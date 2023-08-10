@@ -4,6 +4,7 @@ package com.asm63.unityspace.services;
 import com.asm63.unityspace.mappers.PostMapper;
 import com.asm63.unityspace.mappers.StudentMapper;
 import com.asm63.unityspace.models.Events;
+import com.asm63.unityspace.models.FriendRequestDTO;
 import com.asm63.unityspace.models.Student;
 import com.asm63.unityspace.repositories.ImageRepository;
 import com.asm63.unityspace.security.AuthenticationResponse;
@@ -59,6 +60,7 @@ public class StudentService {
     public void addFriend(String studentId, String friendId){
         studMapper.addFriend(studentId, friendId);
         studMapper.addFriend(friendId, studentId);
+        studMapper.updateFriendRequestStatus(friendId);
     }
 
     public AuthenticationResponse register(Student student, MultipartFile file) throws IOException {
@@ -149,5 +151,22 @@ public class StudentService {
         postMapper.deletedUserPost(userId);
         studMapper.deletedUserFriends(userId);
         studMapper.deleteUser(userId);
+    }
+
+    public void sendFriendRequest(FriendRequestDTO request) {
+        studMapper.sendFriendRequest(request);
+    }
+
+    public ArrayList checkFriendRequest(String friendId) {
+        return studMapper.checkFriendRequest(friendId);
+    }
+
+    public HashMap checkFriendRequestExists(FriendRequestDTO request) {
+        return studMapper.checkFriendRequestExists(request);
+    }
+
+    public String deleteFriendRequest(String friendId, String senderId) {
+        studMapper.deleteFriendRequest(friendId,senderId);
+        return "Friend Request deleted successfully";
     }
 }

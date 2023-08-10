@@ -138,13 +138,14 @@ console.log("user pic from home page ",userPicturePath)
   const postComment =async(e)=>{
     const formData = new FormData();
     formData.append("comment",comment)
-    if(comment.startsWith(" ") || comment.startsWith("")){
+    if(comment.startsWith(" ")){
       window.alert("please type something")
     }else{
       try {
         const response = await Axios.post("http://localhost:9000/postComment", formData, {
           params: {
-            postId: postId
+            postId: postId,
+            userId:loggedInUserId
           },
           headers: {
             Authorization: "Bearer " + jwtToken.token,

@@ -14,6 +14,13 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Badge,
+  ListItemText,
+  ListItemIcon,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemAvatar,
 } from "@mui/material";
 import {
   Search,
@@ -24,10 +31,12 @@ import {
   Help,
   Menu,
   Close,
-  AddAlert
+  AddAlert,
+  PersonAddOutlined,
+  Delete
 } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { setMode, setLogout } from "state";
+import { setMode, setLogout, setFriends } from "state";
 import { Navigate, useNavigate } from "react-router-dom";
 import FlexBetween from "components/FlexBetween";
 import TextField from "@mui/material/TextField";
@@ -54,8 +63,18 @@ const Navbar = () => {
   const alt = theme.palette.background.alt;
   const token = useSelector((state) => state.token);
   const fullName = `${user.fname} ${user.lname}`;
-
+  const [friendRequest, setFriendRequest] = useState([])
+  
   const [open, setOpen] = useState(false);
+  const [openFriendRequestModal, setOpenFriendRequestModal] = useState(false);
+
+  const handleClickOpenFriendRequestModal = () => {
+    setOpenFriendRequestModal(true);
+  };
+
+  const handleFriendRequestModalClose = () => {
+    setOpenFriendRequestModal(false);
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -165,6 +184,33 @@ const Navbar = () => {
     handleClose()
   };
 
+  const checkFriendRequest = async() =>{
+    const response = await Axios.get("http://localhost:9000/users/checkFriendRequest", {
+      params: {
+        friendId:user.sid
+      },
+      headers: {
+        Authorization: "Bearer " +  token.token,
+      },
+    });
+console.log("checkFriendRequest data ",response.data.length)
+    setFriendRequest(response.data);
+  }
+
+  const deleteFriendRequest = async(senderId) =>{
+    const response = await Axios.post("http://localhost:9000/users/deleteFriendRequest",null, {
+      params: {
+        friendId:user.sid,
+        senderId:senderId
+      },
+      headers: {
+        Authorization: "Bearer " +  token.token,
+      },
+    });
+    console.log("deleteFriendRequest data ",response)
+checkFriendRequest();
+  }
+
   useEffect(() => {
     getAllStudents();
     if (navigator.geolocation) {
@@ -172,7 +218,7 @@ const Navbar = () => {
     } else {
       console.log("Geolocation not supported");
     }
-    
+    checkFriendRequest();
     
   }, []);
 
@@ -181,6 +227,61 @@ const Navbar = () => {
     navigate(`/profile/${value.sid}`);
     navigate(0);
   };
+
+  const patchFriend = async (friendId) => {
+    console.log("calling patchFriend")
+    try {
+    const response = await Axios.get("http://localhost:9000/patchFriend", {
+      params:{
+        id:user.sid,
+        friendId:friendId
+      },
+      headers: {
+        Authorization: "Bearer " + token.token,
+      },
+    });
+    console.log("patch friend data ",response);
+    const data = await response.data.friend;
+    // if(profileUser===sid)
+    // {
+      dispatch(setFriends({ friends: data }));
+    // }
+    handleFriendRequestModalClose();
+    checkFriendRequest();
+    getFriends();
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    if(error.code=="ERR_NETWORK"){
+      // window.alert("Session Expired Please login again")
+      navigate("/");
+    }
+  }
+  };
+
+  const getFriends = async () => {
+    try{const response = await Axios.get("http://localhost:9000/users/friends", {
+      params:{
+        id:user.sid,
+      },
+      headers: {
+        Authorization: "Bearer " + token.token,
+      },
+    });
+    console.log("resoinsedata ",response.data);
+    const data = await response.data;
+    // if(fromProfile===undefined){
+      dispatch(setFriends({ friends: data }));
+    // }
+    console.log("userFriends ",data)
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    if(error.code=="ERR_NETWORK"){
+      // window.alert("Session Expired Please login again")
+      navigate("/");
+    }
+  }
+  };
+
 
   return (
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>
@@ -259,7 +360,8 @@ const Navbar = () => {
         <FlexBetween gap="1rem">
           
           {user.role==="ROLE_ADMIN"?<IconButton onClick={()=>{ navigate("/dashboard");}}>Dashboard</IconButton>:""}
-            <IconButton onClick={sendEmergency}><AddAlert></AddAlert></IconButton>
+            {/* <IconButton onClick={sendEmergency}><AddAlert></AddAlert></IconButton> */}
+            <IconButton onClick={handleClickOpen}><AddAlert></AddAlert></IconButton>
           <IconButton onClick={() => dispatch(setMode())}>
             {theme.palette.mode === "dark" ? (
               <DarkMode sx={{ fontSize: "25px" }} />
@@ -267,7 +369,40 @@ const Navbar = () => {
               <LightMode sx={{ color: dark, fontSize: "25px" }} />
             )}
           </IconButton>
-          
+          <Badge badgeContent={friendRequest!==null?friendRequest.length:0} color="primary">
+          <IconButton
+          onClick={handleClickOpenFriendRequestModal}
+          >
+            <PersonAddOutlined></PersonAddOutlined>
+          </IconButton>
+          </Badge>
+          <Dialog
+        open={openFriendRequestModal}
+        onClose={handleFriendRequestModalClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"Friend Requests"}
+        </DialogTitle>
+        <DialogContent sx={{width:"400px"}}>
+              {Array.isArray(friendRequest) && friendRequest.map((friend) => (
+                <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                <ListItem alignItems="flex-start">
+                    
+                  <ListItemText primary={friend.fname +" "+friend.lname}  secondary={friend.sid}/>
+                  <IconButton onClick={()=>{patchFriend(friend.sid)}}>
+                      <PersonAddOutlined />
+                    </IconButton>
+                    <IconButton onClick={()=>{deleteFriendRequest(friend.sid)}}>
+                      <Delete />
+                    </IconButton>
+                </ListItem>
+                </List>         
+              ))}
+        </DialogContent>
+      </Dialog>
           <IconButton
             onClick={() => {
               navigate("/chat");

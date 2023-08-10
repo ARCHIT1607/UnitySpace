@@ -23,13 +23,13 @@
 
     <select id="findPostById" parameterType="Long"
             resultType="Post">
-        SELECT id,post_user_id AS "postUserId",description,course,location,picture_path,user_picture_path,likes,comments,firstname,lastname, created_date  from post where id = #{id}
+        SELECT id,post_user_id AS "postUserId",description,course,location,picture_path,user_picture_path,likes,firstname,lastname, created_date  from post where id = #{id}
     </select>
 
     <select id="getPosts"
             resultType="HashMap">
         SELECT id,post_user_id AS "postUserId",description,course,location,picture_path as "picturePath",user_picture_path as "userPicturePath" ,
-               likes,comments,firstname,lastname, created_date from post ORDER BY id desc
+               likes,firstname,lastname, created_date from post ORDER BY id desc
     </select>
 
     <select id="getResource" parameterType="String" resultType="Post">
@@ -42,7 +42,7 @@
 
     <select id="getUserPosts" parameterType="String"
             resultType="HashMap">
-        SELECT id,post_user_id as "postUserId",description,course,location,picture_path as "picturePath",user_picture_path as "userPicturePath",likes,comments,firstname,lastname, created_date
+        SELECT id,post_user_id as "postUserId",description,course,location,picture_path as "picturePath",user_picture_path as "userPicturePath",likes,firstname,lastname, created_date
         from post where post_user_id = #{userId} order by id desc
     </select>
 
@@ -104,19 +104,31 @@
     </insert>
 
 
-    <select id="findCommentByPostId" parameterType="Post"
+    <select id="findCommentByPostId" parameterType="Long"
             resultType="String">
-        SELECT comments  from post where id = #{id}
+        SELECT comment from comment where post_id = #{postId}
     </select>
 
-    <update id="postComment" parameterType="Post">
-        UPDATE post SET comments = ARRAY[
-        <foreach item="comment" index="index" collection="comments" separator=",">
-            #{comment}
-        </foreach>
-        ]
-        WHERE id=#{id}
-    </update>
+    <insert id="postComment" parameterType="Comment">
+        <selectKey keyProperty="id" resultType="Long" order="BEFORE">
+            select
+            nextval('COMMENT_SEQ')
+        </selectKey>
+        INSERT INTO
+        comment
+        (id,comment,post_id,user_id)
+        VALUES(#{id},#{comment},#{postId},
+        #{userId})
+    </insert>
+
+<!--    <update id="postComment" parameterType="Comment">-->
+<!--        UPDATE post SET comments = ARRAY[-->
+<!--        <foreach item="comment" index="index" collection="comments" separator=",">-->
+<!--            #{comment}-->
+<!--        </foreach>-->
+<!--        ]-->
+<!--        WHERE id=#{id}-->
+<!--    </update>-->
 
     <insert id="createPost" parameterType="Post">
         <selectKey keyProperty="id" resultType="Long" order="BEFORE">

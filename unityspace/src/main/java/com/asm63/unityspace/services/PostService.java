@@ -2,6 +2,7 @@ package com.asm63.unityspace.services;
 
 import com.asm63.unityspace.mappers.PostMapper;
 import com.asm63.unityspace.mappers.StudentMapper;
+import com.asm63.unityspace.models.Comment;
 import com.asm63.unityspace.models.PostDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -100,9 +101,16 @@ public class PostService {
         return postMapper.findPostById(id);
     }
 
-    public ArrayList<PostDTO> getPosts() {
+    public ArrayList<HashMap> getPosts() {
+        ArrayList<HashMap> posts = postMapper.getPosts();
+        System.out.println("posts 1"+posts);
+       for(HashMap post : posts){
+           System.out.println("post.get(\"id\") "+post.get("id"));
+           System.out.println("postMapper.findCommentByPostId(post.getId() "+postMapper.findCommentByPostId((Long) post.get("id")));
 
-        return postMapper.getPosts();
+           post.put("comments",postMapper.findCommentByPostId((Long) post.get("id")));
+       }
+        return posts;
     }
 
     public ArrayList<PostDTO> getUserPosts(String userId) {
@@ -117,30 +125,35 @@ public class PostService {
         postMapper.deletePost(Long.parseLong(postId));
     }
 
-    public void postComment(Long postId, String comment) {
-        String postComment = postMapper.findCommentByPostId(postId);
-        PostDTO post = postMapper.findPostById(postId);
-
-        if(postComment!=null){
-            postComment = postComment.replace("{","").replace("}","").replaceAll("\"", "");
-            String[] strSplit = postComment.split(",");
-            for(String s : strSplit){
-                System.out.println("postComment.split(\",\") " + s );
-            }
-            List<String> arrlist
-                    = new ArrayList<String>(
-                    Arrays.asList(strSplit));
-            arrlist.add(comment);
-            strSplit = arrlist.toArray(strSplit);
-            for(String s : strSplit){
-                System.out.println("strSplit " + s );
-            }
-            post.setComments(strSplit);
-        }else {
-            String[] strSplit = { comment };
-            post.setComments(strSplit);
-        }
-        postMapper.postComment(post);
+    public void postComment(Long postId, String comment, String userId) {
+        Comment com = new Comment();
+        com.setComment(comment);
+        com.setPostId(postId);
+        com.setUserId(userId);
+//        String postComment = postMapper.findCommentByPostId(postId);
+//        PostDTO post = postMapper.findPostById(postId);
+//
+//        if(postComment!=null){
+//            postComment = postComment.replace("{","").replace("}","").replaceAll("\"", "");
+//            String[] strSplit = postComment.split(",");
+//            for(String s : strSplit){
+//                System.out.println("postComment.split(\",\") " + s );
+//            }
+//            List<String> arrlist
+//                    = new ArrayList<String>(
+//                    Arrays.asList(strSplit));
+//            arrlist.add(comment);
+//            strSplit = arrlist.toArray(strSplit);
+//            for(String s : strSplit){
+//                System.out.println("strSplit " + s );
+//            }
+//            post.setComments(strSplit);
+//        }else {
+//            String[] strSplit = { comment };
+//            post.setComments(strSplit);
+//        }
+//        postMapper.postComment(post);
+        postMapper.postComment(com);
     }
 
     public void updatePost(PostDTO post, MultipartFile picture) throws IOException {

@@ -7,7 +7,8 @@ import { Box, IconButton, Typography, useTheme,
   DialogContentText,
   DialogActions, 
   Button,
-  TextField} from "@mui/material";
+  TextField,
+  Snackbar} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setFriends, setPosts } from "state";
@@ -52,7 +53,19 @@ const Post = ({
  const [newDescription, setNewDescription] = useState(description);
   const [picture, setPicture] = useState(null);
 const [isHate, setIsHate] = useState(false)
+const [openSnackbar, setOpenSnackbar] = useState(false);
 
+ const handleSnackbarClick = () => {
+  setOpenSnackbar(true);
+ };
+
+ const handleSnackbarClose = (event, reason) => {
+   if (reason === 'clickaway') {
+     return;
+   }
+
+   setOpenSnackbar(false);
+ };
 
 
 const ITEM_HEIGHT = 48;
@@ -219,6 +232,29 @@ const ITEM_HEIGHT = 48;
   }
   };
 
+  const sendFriendRequest = async () => {
+    console.log("calling patchFriend")
+    try {
+    const response = await Axios.post("http://localhost:9000/users/sendFriendRequest",null, {
+      params:{
+        senderId:sid,
+        friendId:friendId
+      },
+      headers: {
+        Authorization: "Bearer " + token.token,
+      },
+    });
+    console.log("sendFriendRequest ",response);
+    handleSnackbarClick()
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    if(error.code=="ERR_NETWORK"){
+      // window.alert("Session Expired Please login again")
+      navigate("/");
+    }
+  }
+  }
+
   useEffect(() => {
     console.log("getUserFriends in Post")
     getFriends()
@@ -292,18 +328,18 @@ const ITEM_HEIGHT = 48;
         </DialogActions>
       </Dialog>
       <IconButton>
-      <EditIcon onClick={handleClickOpen}/>
+      {friendId ===sid?<EditIcon onClick={handleClickOpen}/>:""}
       </IconButton> 
       {friendId !==sid ? (
           <IconButton
-            onClick={() => patchFriend()}
+            
             sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
           >
             { sameFriends ? (
              
-               <PersonRemoveOutlined sx={{ color: primaryDark }} />
+               <PersonRemoveOutlined sx={{ color: primaryDark }} onClick={() => patchFriend()} />
             ) : (
-              <PersonAddOutlined sx={{ color: primaryDark }} />
+              <PersonAddOutlined sx={{ color: primaryDark }} onClick={() =>sendFriendRequest()} />
             )}
           </IconButton>
         ) : <IconButton
@@ -311,7 +347,13 @@ const ITEM_HEIGHT = 48;
         sx={{ backgroundColor: primaryLight, p: "0.6rem" }}
       >
         <DeleteIcon></DeleteIcon>
-        </IconButton>} 
+        </IconButton>}
+        <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        message="Friend Request Sent"
+      />
       </FlexBetween>
     </FlexBetween>
   );

@@ -37,10 +37,11 @@ public class PostController {
     private StreamingService service;
 
     @PostMapping("/postComment")
-    public ResponseEntity<Object> postComment(@RequestParam("postId") String postId,@RequestParam("comment") String comment) {
+    public ResponseEntity<Object> postComment(@RequestParam("postId") String postId,@RequestParam("comment") String comment,
+                                              @RequestParam("userId") String userId) {
         try {
             System.out.println("calling postComment");
-            postService.postComment(Long.parseLong(postId),comment);
+            postService.postComment(Long.parseLong(postId),comment,userId);
             return new ResponseEntity<Object>(postService.getPosts(), HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<Object>(e.getMessage(),HttpStatus.OK);
@@ -64,6 +65,7 @@ public class PostController {
         try {
             return new ResponseEntity<Object>(postService.getPosts(), HttpStatus.OK);
         }catch (Exception e){
+            e.printStackTrace();
             return new ResponseEntity<Object>(e.getMessage(),HttpStatus.OK);
         }
     }
