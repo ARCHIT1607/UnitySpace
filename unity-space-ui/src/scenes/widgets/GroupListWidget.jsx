@@ -29,7 +29,7 @@ import Modal from "@mui/material/Modal";
 import Button from "@mui/material/Button";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
-import detectExplicitContent from "components/detectExplicitContent";
+import DetectImageExplicitContent from "components/DetectImageExplicitContent";
 
 const GroupListWidget = ({ userId, userPicturePath }) => {
   const [data, setData] = useState([{ id: "" }]);
@@ -204,7 +204,7 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
   };
 
   const handleImageUpload = async (image) => {
-    const result = await detectExplicitContent(image);
+    const result = await DetectImageExplicitContent(image);
     console.log("eden api result ", result, result[0].nsfw_likelihood >= 5);
     setIsHate(result[0].nsfw_likelihood >= 5) 
   };

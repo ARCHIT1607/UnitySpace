@@ -23,13 +23,13 @@ import UserImage from "components/UserImage";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setPosts } from "state";
+import { setLogout, setPosts } from "state";
 import  Axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import badWords from 'bad-words';
-import detectExplicitContent from "components/detectExplicitContent";
+import DetectImageExplicitContent from "components/DetectImageExplicitContent";
 
 const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
   const dispatch = useDispatch();
@@ -51,8 +51,9 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
       formData.append("picturePath", image.name);
     }
     try {
-      let isHate = handleImageUpload(image);
-     if(isHate){
+      let isHate = await handleImageUpload(image);
+      console.log("isHate ",isHate);
+     if(!isHate){
       for (const [key, value] of formData.entries()) {
         console.log(`${key}: ${value}`);
       }
@@ -87,6 +88,7 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
 
       if(error.code=="ERR_NETWORK"){
         // window.alert("Session Expired Please login again")
+        dispatch(setLogout());
         navigate("/");
       }
     }
@@ -107,6 +109,7 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
 
       if(error.code=="ERR_NETWORK"){
         // window.alert("Session Expired Please login again")
+        dispatch(setLogout());
         navigate("/");
       }
     }
@@ -125,9 +128,11 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
   };
 
   const handleImageUpload = async (image) => {
-    const result = await detectExplicitContent(image);
+    console.log("image passing to api result ",image);
+    const result = await DetectImageExplicitContent(image);
     console.log("eden api result ",result);
-    if(result[0].nsfw_likelihood>=5){
+    if(result[0].nsfw_likelihood>=2){
+      console.log("result[1].nsfw_likelihood>=5 ",result[0].nsfw_likelihood>=2);
       return true
     }else{
       return false

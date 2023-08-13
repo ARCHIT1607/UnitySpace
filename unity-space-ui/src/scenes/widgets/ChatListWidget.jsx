@@ -2,7 +2,7 @@ import { Box, TextField, Typography, useTheme } from "@mui/material";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setFriends } from "state";
+import { setFriends, setLogout } from "state";
 import Axios from "axios";
 import ChatUser from "components/ChatUser";
 import OutlinedInput from '@mui/material/OutlinedInput';
@@ -46,6 +46,7 @@ console.log("friends ",friends);
       console.error("Error fetching data: ", error);
       if(error.code=="ERR_NETWORK"){
         // window.alert("Session Expired Please login again")
+        dispatch(setLogout());
         navigate("/");
       }
     }

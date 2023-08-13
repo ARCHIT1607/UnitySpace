@@ -177,4 +177,24 @@ public class PostController {
         }
     }
 
+    @GetMapping("/dashboard/getAllComments")
+    public ResponseEntity<String> getAllComments() {
+        try {
+            return new ResponseEntity<String>(postService.getAllComments(), HttpStatus.OK);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<String>(e.getMessage(),HttpStatus.OK);
+        }
+    }
+
+    @GetMapping("/dashboard/getAllPostDescription")
+    public ResponseEntity<String> getAllPostDescription() {
+        try {
+            return new ResponseEntity<String>(postService.getAllPostDescription(), HttpStatus.OK);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<String>(e.getMessage(),HttpStatus.OK);
+        }
+    }
+
 }

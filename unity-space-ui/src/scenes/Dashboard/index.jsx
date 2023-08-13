@@ -9,6 +9,7 @@ import {
   FormLabel,
   ListItemText,
   RadioGroup,
+  Snackbar,
   Table,
   TableBody,
   TableCell,
@@ -25,6 +26,8 @@ import { useEffect, useState } from "react";
 import Radio from "@mui/material/Radio";
 import Axios from "axios";
 import { useNavigate } from "react-router";
+import { setLogout } from "state";
+import SentimentAnalysis from "components/SentimentAnalysis";
 
 function Dashboard() {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
@@ -43,6 +46,22 @@ function Dashboard() {
   console.log("date ", today);
   const [event, setEvent] = useState();
 
+  const [selectedValue, setSelectedValue] = useState('');
+  const [analysis, setAnalysis] = useState('');
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
+ const handleSnackbarClick = () => {
+  setOpenSnackbar(true);
+ };
+
+ const handleSnackbarClose = (event, reason) => {
+   if (reason === 'clickaway') {
+     return;
+   }
+
+   setOpenSnackbar(false);
+ };
+ 
 
 
   const handleDateChange = (date) => {
@@ -66,10 +85,12 @@ function Dashboard() {
     console.log("getDashboard data ", response.data);
     setData(response.data)
     setEvent(response.data)
+    handleSnackbarClick()
   } catch (error) {
     console.error("Error fetching data: ", error);
     if(error.code=="ERR_NETWORK"){
       // window.alert("Session Expired Please login again")
+      dispatch(setLogout());
       navigate("/");
     }
   }
@@ -88,6 +109,7 @@ function Dashboard() {
     console.error("Error fetching data: ", error);
     if(error.code=="ERR_NETWORK"){
       // window.alert("Session Expired Please login again")
+      dispatch(setLogout());
       navigate("/");
     }
   }
@@ -104,6 +126,7 @@ function Dashboard() {
       console.error("Error fetching data: ", error);
       if(error.code=="ERR_NETWORK"){
         // window.alert("Session Expired Please login again")
+        dispatch(setLogout());
         navigate("/");
       }
     }
@@ -125,17 +148,76 @@ function Dashboard() {
     console.error("Error fetching data: ", error);
     if(error.code=="ERR_NETWORK"){
       // window.alert("Session Expired Please login again")
+      dispatch(setLogout());
       navigate("/");
     }
   }
   }
+
+  const getAllComments = async () => {
+    console.log("calling getAllComments ");
+    try{const response = await Axios.get("http://localhost:9000/dashboard/getAllComments", {
+      headers: {
+        Authorization: "Bearer " + jwtToken,
+      },
+    });
+    console.log("getAllComments data ", response);
+    return response.data
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    if(error.code=="ERR_NETWORK"){
+      // window.alert("Session Expired Please login again")
+      dispatch(setLogout());
+      navigate("/");
+    }
+  }
+  }
+
+  const getAllPostDescription = async () => {
+    console.log("calling getAllPostDescription ");
+    try{const response = await Axios.get("http://localhost:9000/dashboard/getAllPostDescription", {
+      headers: {
+        Authorization: "Bearer " + jwtToken,
+      },
+    });
+    console.log("getAllPostDescription data ", response);
+    return response.data
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    if(error.code=="ERR_NETWORK"){
+      // window.alert("Session Expired Please login again")
+      dispatch(setLogout());
+      navigate("/");
+    }
+  }
+  }
+
+  const handleRadioChange = async (event) => {
+    console.log("setSelectedValue ", event.target.value);
+    setSelectedValue(event.target.value)
+    let input = "";
+    if(event.target.value ==="Comments")
+    {
+      input = await getAllComments();
+    }else if(event.target.value ==="post_description")
+    {
+      input = await getAllPostDescription();
+    }
+    let result = await handleAnalysis(input)
+    setAnalysis(result);
+  };
 
   useEffect(() => {
     getDashboardData()
     getEvents()
   }, [])
   
-
+  const handleAnalysis = async (text) => {
+    console.log("text passing to api ",text);
+    const result = await SentimentAnalysis(text);
+    console.log("eden api result ",result);
+    return result[0].general_sentiment
+  }
 
 
   return (
@@ -276,6 +358,8 @@ function Dashboard() {
                   row
                   aria-labelledby="demo-row-radio-buttons-group-label"
                   name="row-radio-buttons-group"
+                  value={selectedValue}
+                  onChange={handleRadioChange}
                 >
                   <FormControlLabel
                     value="Comments"
@@ -287,16 +371,11 @@ function Dashboard() {
                     control={<Radio />}
                     label="Post Description"
                   />
-                  <FormControlLabel
-                    value="Chats"
-                    control={<Radio />}
-                    label="Chats"
-                  />
                 </RadioGroup>
               </FormControl>
             </Box>
             <Typography variant="h4" component="h4">
-                h1. Heading
+                {analysis}
               </Typography>
           </AccordionDetails>
         </Accordion>
@@ -316,14 +395,14 @@ function Dashboard() {
                 flexWrap: "wrap",
                 "& > :not(style)": {
                   m: 1,
-                  width: "60%",
+                  width: "100%",
                   height: "100%",
                   overflow:"auto"
                 },
               }}
             >
                <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <Table sx={{ border:"1px solid black" }} aria-label="simple table">
         <TableHead>
           <TableRow>
             <TableCell>id</TableCell>
@@ -352,6 +431,12 @@ function Dashboard() {
             </Box>
           </AccordionDetails>
         </Accordion>
+        <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        message="Events Created"
+      />
       </Box>
     </>
   );

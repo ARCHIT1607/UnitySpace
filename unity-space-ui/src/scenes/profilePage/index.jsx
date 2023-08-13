@@ -1,13 +1,14 @@
 import { Box, useMediaQuery } from "@mui/material";
 import  Axios from "axios";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "scenes/navbar";
 import FriendListWidget from "scenes/widgets/FriendListWidget";
 import MyPostWidget from "scenes/widgets/MyPostWidget";
 import PostsWidget from "scenes/widgets/PostsWidget";
 import UserWidget from "scenes/widgets/UserWidget";
+import { setLogout } from "state";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -19,7 +20,9 @@ const ProfilePage = () => {
   console.log("friends in index ",friends)
   const onlineStatus = friends.filt
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
+  
   const getUser = async () => {
     try {
       const response = await Axios.get(
@@ -39,6 +42,7 @@ const ProfilePage = () => {
       console.error("Error fetching data: ", error);
       if(error.code=="ERR_NETWORK"){
         // window.alert("Session Expired Please login again")
+        dispatch(setLogout());
         navigate("/");
       }
     }

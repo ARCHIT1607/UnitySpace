@@ -39,7 +39,7 @@
 
     <select id="findByEmail" parameterType="String"
             resultMap="StudentResultMap">
-        select id,sid,email,fname,lname,password,loc,course,role,picture_name from student where UPPER(email) =UPPER(#{email})
+        select id,sid,email,fname,lname,password,loc,course,role,picture_name, is_online_status as "_online_status" from student where UPPER(email) =UPPER(#{email})
     </select>
 
     <select id="findByFriendId" parameterType="String"
@@ -114,7 +114,7 @@
 
     <select id="findById" parameterType="String"
             resultType="Student">
-        SELECT id,sid,email,fname,lname,password,loc,course,role,impressions,viewed_profile as "viewedProfile", picture_name as "pictureName"   from student where sid = #{id}
+        SELECT id,sid,email,fname,lname,password,loc,course,role,impressions,viewed_profile as "viewedProfile", picture_name as "pictureName",is_online_status  from student where sid = #{id}
     </select>
 
     <select id="findAllStudent"

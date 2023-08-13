@@ -12,11 +12,12 @@ import FlexBetween from "components/FlexBetween";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useEffect } from "react";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useNavigate } from "react-router-dom";
+import { setLogout } from "state";
 
 const AdvertWidget = () => {
   const { palette } = useTheme();
@@ -28,6 +29,7 @@ const AdvertWidget = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const navigate = useNavigate();
   const localizer = momentLocalizer(moment);
+  const dispatch = useDispatch();
 
   const events = [
     {
@@ -53,6 +55,7 @@ const AdvertWidget = () => {
       console.error("Error fetching data: ", error);
       if(error.code=="ERR_NETWORK"){
         // window.alert("Session Expired Please login again")
+        dispatch(setLogout());
         navigate("/");
       }
     }

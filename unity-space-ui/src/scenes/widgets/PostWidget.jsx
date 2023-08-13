@@ -4,7 +4,7 @@ import {
   FavoriteOutlined,
   ShareOutlined,
 } from "@mui/icons-material";
-import { Box, Divider, IconButton, TextField, Typography, useTheme } from "@mui/material";
+import { Box, Divider, IconButton, List, ListItem, ListItemText, TextField, Typography, useTheme } from "@mui/material";
 import  Axios from "axios";
 import FlexBetween from "components/FlexBetween";
 
@@ -13,7 +13,7 @@ import WidgetWrapper from "components/WidgetWrapper";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { setPost, setPosts } from "state";
+import { setLogout, setPost, setPosts } from "state";
 
 import Button from '@mui/material/Button';
 import Dialog, { DialogProps } from '@mui/material/Dialog';
@@ -78,6 +78,7 @@ console.log("user pic from home page ",userPicturePath)
       console.error("Error fetching data: ", error);
       if(error.code=="ERR_NETWORK"){
         // window.alert("Session Expired Please login again")
+        dispatch(setLogout());
         navigate("/");
       }
     }
@@ -97,6 +98,7 @@ console.log("user pic from home page ",userPicturePath)
       console.error("Error fetching data: ", error);
       if(error.code=="ERR_NETWORK"){
         // window.alert("Session Expired Please login again")
+        dispatch(setLogout());
         navigate("/");
       }
     }
@@ -116,6 +118,7 @@ console.log("user pic from home page ",userPicturePath)
       console.error("Error fetching data: ", error);
       if(error.code=="ERR_NETWORK"){
         // window.alert("Session Expired Please login again")
+        dispatch(setLogout());
         navigate("/");
       }
     }
@@ -159,6 +162,7 @@ console.log("user pic from home page ",userPicturePath)
         console.error("Error fetching data: ", error);
         if(error.code=="ERR_NETWORK"){
           // window.alert("Session Expired Please login again")
+          dispatch(setLogout());
           navigate("/");
         }
       }
@@ -201,6 +205,7 @@ console.log("user pic from home page ",userPicturePath)
       console.error("Error fetching data: ", error);
       if(error.code=="ERR_NETWORK"){
         // window.alert("Session Expired Please login again")
+        dispatch(setLogout());
         navigate("/");
       }
     }
@@ -266,7 +271,7 @@ console.log("user pic from home page ",userPicturePath)
         aria-labelledby="scroll-dialog-title"
         aria-describedby="scroll-dialog-description"
       ><DialogTitle id="scroll-dialog-title">Comment Section</DialogTitle>
-      <DialogContent dividers={scroll === 'paper'} style={{ maxHeight: '400px', overflowY: 'auto' }}>
+      <DialogContent dividers={scroll === 'paper'} style={{overflowY: 'auto', width:"400px"}}>
         <DialogContentText
           id="scroll-dialog-description"
           ref={descriptionElementRef}
@@ -277,9 +282,17 @@ console.log("user pic from home page ",userPicturePath)
           {comments.map((comment, i) => (
             <Box key={`${name}-${i}`}>
               <Divider />
-              <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
+              {/* <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
                 {comment}
-              </Typography>
+              </Typography> */}
+              <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+                <ListItem alignItems="flex-start">
+                  <ListItemText primary={
+                    <Typography variant="h5" fontWeight="bold">
+                    {comment.sid}
+                  </Typography>} secondary={comment.comment}/>
+                </ListItem>
+                </List>         
             </Box>
           ))}
           <Divider />

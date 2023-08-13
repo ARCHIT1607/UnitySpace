@@ -3,7 +3,7 @@ import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setFriends } from "state";
+import { setFriends, setLogout } from "state";
 import Axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -35,6 +35,7 @@ const FriendListWidget = ({ userId,userPicturePath,fromProfile }) => {
       console.error("Error fetching data: ", error);
       if(error.code=="ERR_NETWORK"){
         // window.alert("Session Expired Please login again")
+        dispatch(setLogout());
         navigate("/");
       }
     }

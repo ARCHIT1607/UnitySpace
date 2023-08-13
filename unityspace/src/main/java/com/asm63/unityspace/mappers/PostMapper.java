@@ -29,7 +29,7 @@ public interface PostMapper {
 
     void postComment(Comment comment);
 
-    ArrayList<String> findCommentByPostId(Long postId);
+    ArrayList<HashMap> findCommentByPostId(Long postId);
 
     List<String> getUserPostLikes(String userId);
 
@@ -52,4 +52,8 @@ public interface PostMapper {
     void deleteEvent(Long id);
 
     ArrayList<Comment> geComment(Long id);
+
+    ArrayList<String> getAllComments();
+
+    ArrayList<String> getAllPostDescription();
 }

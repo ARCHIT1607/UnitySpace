@@ -3,7 +3,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, IconButton, Snackbar, Typography, useTheme } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setFriends } from "state";
+import { setFriends, setLogout } from "state";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
 import  Axios from "axios";
@@ -59,6 +59,7 @@ const [userFriends, setUserFriends] = useState([])
   console.error("Error fetching data: ", error);
   if(error.code=="ERR_NETWORK"){
     // window.alert("Session Expired Please login again")
+    dispatch(setLogout());
     navigate("/");
   }
 }
@@ -85,6 +86,7 @@ const [userFriends, setUserFriends] = useState([])
     console.error("Error fetching data: ", error);
     if(error.code=="ERR_NETWORK"){
       // window.alert("Session Expired Please login again")
+      dispatch(setLogout());
       navigate("/");
     }
   }
@@ -113,6 +115,7 @@ const [userFriends, setUserFriends] = useState([])
     console.error("Error fetching data: ", error);
     if(error.code=="ERR_NETWORK"){
       // window.alert("Session Expired Please login again")
+      dispatch(setLogout());
       navigate("/");
     }
   }
@@ -120,7 +123,7 @@ const [userFriends, setUserFriends] = useState([])
 
   useEffect(() => {
     console.log("getUserFriends in Friend")
-    getFriends()
+    // getFriends()
   }, [])
   
   return (

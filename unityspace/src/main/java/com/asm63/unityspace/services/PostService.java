@@ -85,7 +85,7 @@ public class PostService {
 
             if(data!=null) {
                 post.setPicture(data);
-                post.setPicturePath(fileName);
+                post.setPicturePath(fileName+ new Random(3));
                 postMapper.createPost(post);
             }
 
@@ -182,5 +182,23 @@ public class PostService {
         map.put("online",studentMapper.getAllOnlineStatus().size());
         return map;
 
+    }
+
+    public String getAllComments() {
+        ArrayList<String> allComments = postMapper.getAllComments();
+        String result = "";
+        for (String str : allComments) {
+            result += str;
+        }
+        return result;
+    }
+
+    public String getAllPostDescription() {
+        ArrayList<String> allPostDescription = postMapper.getAllPostDescription();
+        String result = "";
+        for (String str : allPostDescription) {
+            result += str;
+        }
+        return result;
     }
 }

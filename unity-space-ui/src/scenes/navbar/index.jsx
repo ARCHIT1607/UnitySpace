@@ -105,6 +105,7 @@ const Navbar = () => {
       console.error("Error fetching data: ", error);
       if(error.code=="ERR_NETWORK"){
         // window.alert("Session Expired Please login again")
+        dispatch(setLogout());
         navigate("/");
       }
     }
@@ -153,6 +154,7 @@ const Navbar = () => {
         console.error("Error fetching data: ", error);
         if(error.code=="ERR_NETWORK"){
           // window.alert("Session Expired Please login again")
+          dispatch(setLogout());
           navigate("/");
         }
       }
@@ -178,6 +180,7 @@ const Navbar = () => {
       console.error("Error fetching data: ", error);
       if(error.code=="ERR_NETWORK"){
         // window.alert("Session Expired Please login again")
+        dispatch(setLogout());
         navigate("/");
       }
     }
@@ -253,6 +256,7 @@ checkFriendRequest();
     console.error("Error fetching data: ", error);
     if(error.code=="ERR_NETWORK"){
       // window.alert("Session Expired Please login again")
+      dispatch(setLogout());
       navigate("/");
     }
   }
@@ -277,6 +281,7 @@ checkFriendRequest();
     console.error("Error fetching data: ", error);
     if(error.code=="ERR_NETWORK"){
       // window.alert("Session Expired Please login again")
+      dispatch(setLogout());
       navigate("/");
     }
   }
@@ -485,7 +490,8 @@ checkFriendRequest();
             gap="1rem"
           >
             {user.role==="ROLE_ADMIN"?<IconButton onClick={()=>{ navigate("/dashboard");}}>Dashboard</IconButton>:""}
-            <IconButton onClick={sendEmergency}><AddAlert></AddAlert></IconButton>
+            {/* <IconButton onClick={sendEmergency}><AddAlert></AddAlert></IconButton> */}
+            <IconButton onClick={handleClickOpen}><AddAlert></AddAlert></IconButton>
             <IconButton
               onClick={() => dispatch(setMode())}
               sx={{ fontSize: "25px" }}

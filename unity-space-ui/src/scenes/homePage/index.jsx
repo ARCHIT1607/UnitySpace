@@ -13,7 +13,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Axios from "axios";
 import createActivityDetector from "activity-detector";
-import { setFriends } from "state";
+import { setFriends, setLogout } from "state";
 import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
@@ -88,6 +88,7 @@ console.log("onlineStatusArray ",onlineStatusArray)
     console.error("Error fetching data: ", error);
     if(error.code=="ERR_NETWORK"){
       // window.alert("Session Expired Please login again")
+      dispatch(setLogout());
       navigate("/");
     }
   }

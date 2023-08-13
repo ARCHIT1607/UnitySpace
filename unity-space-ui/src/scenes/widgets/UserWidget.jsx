@@ -23,7 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
-import { setFriends } from "state";
+import { setFriends, setLogout } from "state";
 
 const UserWidget = ({ userId, picturePath }) => {
   const dispatch = useDispatch();
@@ -41,7 +41,7 @@ const UserWidget = ({ userId, picturePath }) => {
   const main = palette.neutral.main;
   console.log("picturePath in UserWidget ", picturePath);
   const [userFriends, setUserFriends] = useState([]);
-
+console.log("_online_status ",_online_status.toString())
   const [checked, setChecked] = useState(_online_status);
 
   const handleChange = (event) => {
@@ -88,6 +88,7 @@ const UserWidget = ({ userId, picturePath }) => {
       console.error("Error fetching data: ", error);
       if (error.code == "ERR_NETWORK") {
         // window.alert("Session Expired Please login again");
+        dispatch(setLogout());
         navigate("/");
       }
     }
@@ -115,6 +116,7 @@ const UserWidget = ({ userId, picturePath }) => {
       console.error("Error fetching data: ", error);
       if (error.code == "ERR_NETWORK") {
         // window.alert("Session Expired Please login again");
+        dispatch(setLogout());
         navigate("/");
       }
     }
@@ -138,6 +140,7 @@ const UserWidget = ({ userId, picturePath }) => {
       console.error("Error fetching data: ", error);
       if (error.code == "ERR_NETWORK") {
         // window.alert("Session Expired Please login again");
+        dispatch(setLogout());
         navigate("/");
       }
     }

@@ -12,14 +12,14 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setLogin } from "state";
+import { setLogin, setLogout } from "state";
 import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
 import { EditOutlined, DeleteOutlined } from "@mui/icons-material";
 import Axios from "axios";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from "react-toastify";
-import detectExplicitContent from "components/detectExplicitContent";
+import DetectImageExplicitContent from "components/DetectImageExplicitContent";
 
 const registerSchema = yup.object().shape({
   fname: yup.string().required("first name is required"),
@@ -112,6 +112,7 @@ const Form = () => {
           toast(error.response.data.errorMsg);
           if(error.code=="ERR_NETWORK"){
             // window.alert("Session Expired Please login again")
+            dispatch(setLogout());
             navigate("/");
           }
         }
@@ -166,7 +167,7 @@ const Form = () => {
   };
 
   const handleImageUpload = async (image) => {
-    const result = await detectExplicitContent(image);
+    const result = await DetectImageExplicitContent(image);
     console.log("eden api result ",result);
     if(result[0].nsfw_likelihood>=5){
       return true

@@ -11,14 +11,14 @@ import { Box, IconButton, Typography, useTheme,
   Snackbar} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setFriends, setPosts } from "state";
+import { setFriends, setLogout, setPosts } from "state";
 import FlexBetween from "./FlexBetween";
 import UserImage from "./UserImage";
 import Axios from "axios";
 import { useEffect, useState } from "react";
 import EditIcon from '@mui/icons-material/Edit';
 import badWords from 'bad-words';
-import detectExplicitContent from "components/detectExplicitContent";
+import DetectImageExplicitContent from "components/DetectImageExplicitContent";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -92,6 +92,7 @@ const ITEM_HEIGHT = 48;
     console.error("Error fetching data: ", error);
     if(error.code=="ERR_NETWORK"){
       // window.alert("Session Expired Please login again")
+      dispatch(setLogout());
       navigate("/");
     }
   }
@@ -116,6 +117,7 @@ const ITEM_HEIGHT = 48;
     console.error("Error fetching data: ", error);
     if(error.code=="ERR_NETWORK"){
       // window.alert("Session Expired Please login again")
+      dispatch(setLogout());
       navigate("/");
     }
   }
@@ -143,6 +145,7 @@ const ITEM_HEIGHT = 48;
     console.error("Error fetching data: ", error);
     if(error.code=="ERR_NETWORK"){
       // window.alert("Session Expired Please login again")
+      dispatch(setLogout());
       navigate("/");
     }
   }
@@ -163,7 +166,7 @@ const ITEM_HEIGHT = 48;
   const handlePictureChange = async (event) => {
     const file = event.target.files[0];
     // const result = file.type.startsWith("image/")?await detectExplicitContent(event.target.files[0],"image"):
-    const result = await detectExplicitContent(event.target.files[0]);
+    const result = await DetectImageExplicitContent(event.target.files[0]);
     if(result[0].nsfw_likelihood>=5){
      setIsHate(true)
     }else{
@@ -207,6 +210,7 @@ const ITEM_HEIGHT = 48;
       console.error("Error fetching data: ", error);
       if(error.code=="ERR_NETWORK"){
         // window.alert("Session Expired Please login again")
+        dispatch(setLogout());
         navigate("/");
       }
     }
@@ -227,6 +231,7 @@ const ITEM_HEIGHT = 48;
     console.error("Error fetching data: ", error);
     if(error.code=="ERR_NETWORK"){
       // window.alert("Session Expired Please login again")
+      dispatch(setLogout());
       navigate("/");
     }
   }
@@ -250,6 +255,7 @@ const ITEM_HEIGHT = 48;
     console.error("Error fetching data: ", error);
     if(error.code=="ERR_NETWORK"){
       // window.alert("Session Expired Please login again")
+      dispatch(setLogout());
       navigate("/");
     }
   }
@@ -257,7 +263,7 @@ const ITEM_HEIGHT = 48;
 
   useEffect(() => {
     console.log("getUserFriends in Post")
-    getFriends()
+    // getFriends()
   }, [friends])
 
 

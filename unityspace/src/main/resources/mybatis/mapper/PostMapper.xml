@@ -105,8 +105,18 @@
 
 
     <select id="findCommentByPostId" parameterType="Long"
+            resultType="HashMap">
+        SELECT comment, user_id as "sid" from comment where post_id = #{postId}
+    </select>
+
+    <select id="getAllComments"
             resultType="String">
-        SELECT comment from comment where post_id = #{postId}
+        SELECT comment from comment
+    </select>
+
+    <select id="getAllPostDescription"
+            resultType="String">
+        SELECT description from post
     </select>
 
     <insert id="postComment" parameterType="Comment">

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setPosts } from "state";
+import { setLogout, setPosts } from "state";
 import PostWidget from "./PostWidget";
 import  Axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -27,6 +27,7 @@ const PostsWidget = ({ userId, isProfile = false ,fromProfile, userPicturePath})
       console.error("Error fetching data: ", error);
       if(error.code=="ERR_NETWORK"){
         // window.alert("Session Expired Please login again")
+        dispatch(setLogout());
         navigate("/");
       }
     }
@@ -46,6 +47,7 @@ const PostsWidget = ({ userId, isProfile = false ,fromProfile, userPicturePath})
       console.error("Error fetching data: ", error);
       if(error.code=="ERR_NETWORK"){
         // window.alert("Session Expired Please login again")
+        dispatch(setLogout());
         navigate("/");
       }
     }
