@@ -7,14 +7,14 @@ import { setFriends, setLogout } from "state";
 import Axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const FriendListWidget = ({ userId,userPicturePath,fromProfile }) => {
+const FriendListWidget = ({ userId,userPicturePath,fromProfile,counter }) => {
   const dispatch = useDispatch();
   const { palette } = useTheme();
   const token = useSelector((state) => state.token);
   const friends = useSelector((state) => state.user.friends);
   const { sid } = useSelector((state) => state.user);
   const navigate = useNavigate();
-
+  console.log("counter value in friendListWidget ",counter)
 
   const getFriends = async () => {
     console.log("token ",token)
@@ -45,7 +45,7 @@ const FriendListWidget = ({ userId,userPicturePath,fromProfile }) => {
     // console.log("calling")
     getFriends();
     // console.log("friends ",friends)
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [counter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <WidgetWrapper>
@@ -68,6 +68,7 @@ const FriendListWidget = ({ userId,userPicturePath,fromProfile }) => {
             onlineStatus={friend.onlineStatus}
             profileUser={userId}
             fromProfile={fromProfile}
+            
           />
         ))}
       </Box>

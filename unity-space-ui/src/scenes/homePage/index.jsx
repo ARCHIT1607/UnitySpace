@@ -23,6 +23,9 @@ const HomePage = () => {
   let friends = useSelector((state) => state.user.friends);
   const onlineStatusArray = friends.map((friend) => friend.onlineStatus);
 console.log("onlineStatusArray ",onlineStatusArray)
+
+  const [counter, setCounter] = useState(1)
+  console.log("counter value ",counter)
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -35,6 +38,7 @@ console.log("onlineStatusArray ",onlineStatusArray)
     console.log(response);
   };
 
+
   async function requestPermission() {
     const permission = await Notification.requestPermission();
     if (permission === "granted") {
@@ -42,7 +46,7 @@ console.log("onlineStatusArray ",onlineStatusArray)
         vapidKey:
           "BBCz-opcNloxx-lcHRMg5OT82peYLYgh7RGZlzHeWRhUH64GqDVh-0bwVLEKzqUQfUncsCrdjZdEpufJrdui1L0",
       });
-      console.log(token);
+      console.log("firebase token ",token);
       addFirebaseToken(token);
     } else if (permission === "denied") {
       alert("You denied for the notification");
@@ -50,7 +54,19 @@ console.log("onlineStatusArray ",onlineStatusArray)
 
     const unsubscribe = onMessage(messaging, (payload) => {
       console.log("Message received", payload);
-      toast(`${payload.notification.body} ${payload.notification.title} `);
+      if(payload.notification.title === "Sent you a friend Request"){
+        toast(`${payload.notification.body} ${payload.notification.title}   `);
+      }else{
+        toast(`${payload.notification.title} ${payload.notification.body}  `);
+      }
+      if(payload.notification.title === "Friend Request accepted by "){
+        setCounter(counter+1)
+      }else if (payload.notification.title === "Unfriended by "){
+        setCounter(counter+2)
+      }else{
+        setCounter(counter+3)
+      }
+      console.log("counter value 1",counter)
     });
     return () => {
       unsubscribe();
@@ -103,7 +119,7 @@ console.log("onlineStatusArray ",onlineStatusArray)
   console.log("user ", sid);
   return (
     <Box>
-      <Navbar />
+      <Navbar counter={counter} />
       <Box
         width="100%"
         padding="2rem 6%"
@@ -128,7 +144,7 @@ console.log("onlineStatusArray ",onlineStatusArray)
           <Box flexBasis="26%">
             <AdvertWidget />
             <Box m="2rem 0" />
-            <FriendListWidget userId={sid} userPicturePath={pictureName} />
+            <FriendListWidget userId={sid} userPicturePath={pictureName} counter={counter}/>
           </Box>
         )}
       </Box>

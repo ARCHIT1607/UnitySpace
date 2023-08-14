@@ -92,6 +92,23 @@ const [userFriends, setUserFriends] = useState([])
   }
   };
 
+  const sendNotification = (sid) => {
+    try {
+      Axios.post("http://localhost:9000/firebase/send-friend-request-notification", {"title":"Unfriended by ","userId":sid}, {
+        headers: {
+          Authorization: "Bearer " + token.token,
+        },
+      });
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      if(error.code=="ERR_NETWORK"){
+        // window.alert("Session Expired Please login again")
+        dispatch(setLogout());
+        navigate("/");
+      }
+    }
+  };
+
   const patchFriend = async (friendId) => {
     console.log("calling patchFriend")
     try {
@@ -111,6 +128,7 @@ const [userFriends, setUserFriends] = useState([])
       dispatch(setFriends({ friends: data }));
     // }
     getFriends();
+    sendNotification(sid)
   } catch (error) {
     console.error("Error fetching data: ", error);
     if(error.code=="ERR_NETWORK"){

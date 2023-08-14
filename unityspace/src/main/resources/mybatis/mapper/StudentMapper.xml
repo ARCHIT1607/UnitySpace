@@ -54,9 +54,9 @@
         </selectKey>
         INSERT INTO
         student
-        (id,sid,email,fname,lname,password,loc,course,role,profile_pic,picture_name)
+        (id,sid,email,fname,lname,password,loc,course,role,profile_pic,picture_name,is_online_status)
         VALUES(#{id},#{sid},#{email},#{fname},#{lname},
-        #{password},#{loc},#{course},#{role},#{profilePic},#{pictureName})
+        #{password},#{loc},#{course},#{role},#{profilePic},#{pictureName},#{is_online_status})
     </insert>
 
 

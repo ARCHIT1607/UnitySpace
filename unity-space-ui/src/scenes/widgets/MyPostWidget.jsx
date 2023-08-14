@@ -46,12 +46,14 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
 
   const handlePost = async () => {
     const formData = new FormData();
+    let isHate = "";
     if (image) {
       formData.append("picture", image);
       formData.append("picturePath", image.name);
+      isHate  = await handleImageUpload(image);
     }
     try {
-      let isHate = await handleImageUpload(image);
+     
       console.log("isHate ",isHate);
      if(!isHate){
       for (const [key, value] of formData.entries()) {

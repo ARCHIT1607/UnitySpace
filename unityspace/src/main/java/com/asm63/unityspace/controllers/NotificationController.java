@@ -62,4 +62,29 @@ public class NotificationController {
         return response;
     }
 
+    @PostMapping("/firebase/send-friend-request-notification")
+    public String sendFriendRequestNotification(@RequestBody NotificationDTO request)
+            throws ExecutionException, InterruptedException {
+        String token = firebaseService.getToken(request.getUserId());
+        System.out.println("request.getUserId() "+request.getUserId());
+        System.out.println("token "+token);
+        WebpushNotification webpushNotification = new WebpushNotification(request.getTitle(), request.getUserId());
+        WebpushConfig webpushConfig = WebpushConfig.builder().setNotification(webpushNotification).build();
+        Message message = Message.builder()
+                .setWebpushConfig(webpushConfig)
+                .setToken(token)
+//                .putData("userId", request.getUserId())
+                .build();
+
+        String response = "";
+        try {
+            response = FirebaseMessaging.getInstance().send(message);
+            System.out.println("response for send-friend-request-notification "+response);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return response;
+    }
+
 }

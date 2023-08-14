@@ -76,7 +76,8 @@ const Form = () => {
       formData.append("picture", image);
       formData.append("pictureName", image.name);
       try{
-        let isHate = handleImageUpload(image);
+        let isHate = await handleImageUpload(image);
+        console.log("isHate in form",isHate);
         if(!isHate){
           const savedUserResponse = await Axios.post(
             "http://localhost:9000/auth/register",
@@ -169,7 +170,7 @@ const Form = () => {
   const handleImageUpload = async (image) => {
     const result = await DetectImageExplicitContent(image);
     console.log("eden api result ",result);
-    if(result[0].nsfw_likelihood>=5){
+    if(result[0].nsfw_likelihood>2){
       return true
     }else{
       return false
@@ -267,7 +268,7 @@ const Form = () => {
                 >
                   {
                     <Dropzone
-                      acceptedFiles=".jpg,.jpeg,.png"
+                    accept={{ "image/jpeg": [".jpg", ".jpeg"], "image/png": [".png"] }}
                       multiple={false}
                       onDrop={(acceptedFiles) => {
                         console.log("acceptedFiles[0])", acceptedFiles[0]);

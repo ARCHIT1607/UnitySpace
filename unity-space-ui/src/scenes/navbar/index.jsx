@@ -48,7 +48,7 @@ import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import VoiceNoteRecorder from "components/voiceNoteRecoder";
 import Button from '@mui/material/Button';
 
-const Navbar = () => {
+const Navbar = ({counter}) => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -64,6 +64,8 @@ const Navbar = () => {
   const token = useSelector((state) => state.token);
   const fullName = `${user.fname} ${user.lname}`;
   const [friendRequest, setFriendRequest] = useState([])
+
+  console.log("counter value in navbar ",counter)
   
   const [open, setOpen] = useState(false);
   const [openFriendRequestModal, setOpenFriendRequestModal] = useState(false);
@@ -223,12 +225,29 @@ checkFriendRequest();
     }
     checkFriendRequest();
     
-  }, []);
+  }, [counter]);
 
   const handleOptionChange = (event, value) => {
     console.log(`Selected option: ${value.fname}`);
     navigate(`/profile/${value.sid}`);
     navigate(0);
+  };
+
+  const sendNotification = (sid) => {
+    try {
+      Axios.post("http://localhost:9000/firebase/send-friend-request-notification", {"title":"Friend Request accepted by ","userId":sid}, {
+        headers: {
+          Authorization: "Bearer " + token.token,
+        },
+      });
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      if(error.code=="ERR_NETWORK"){
+        // window.alert("Session Expired Please login again")
+        dispatch(setLogout());
+        navigate("/");
+      }
+    }
   };
 
   const patchFriend = async (friendId) => {
@@ -251,6 +270,7 @@ checkFriendRequest();
     // }
     handleFriendRequestModalClose();
     checkFriendRequest();
+    sendNotification(user.sid)
     getFriends();
   } catch (error) {
     console.error("Error fetching data: ", error);

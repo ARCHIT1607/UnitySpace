@@ -97,7 +97,7 @@ const AdvertWidget = () => {
        <Box sx={{ width: "100%", overflow: "auto", height:"25vh"}}>
           {event &&
             event.map((ev) =>
-              ev.daysLeft == 1 ? (
+              ev.daysLeft <= 1 ? (
                 <ListItem
                   sx={{
                     width: "100%",

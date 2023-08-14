@@ -1,11 +1,13 @@
 package com.asm63.unityspace.models;
 
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
 
-
+@Entity
+@Table(name = "post"
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,8 +16,8 @@ import java.util.ArrayList;
 public class PostDTO {
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO, generator = "EVENT_SEQ")
-//    @SequenceGenerator(initialValue = 1, name = "EVENT_SEQ", sequenceName = "EVENT_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "POST_SEQ")
+    @SequenceGenerator(initialValue = 1, name = "POST_SEQ", sequenceName = "POST_SEQ", allocationSize = 1)
     private Long id;
     private String postUserId;
 

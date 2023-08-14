@@ -70,6 +70,24 @@ const [openSnackbar, setOpenSnackbar] = useState(false);
 
 const ITEM_HEIGHT = 48;
 
+const sendNotification = async (sid) => {
+  try {
+    const response = await Axios.post("http://localhost:9000/firebase/send-friend-request-notification", {"title":"Sent you a friend Request","userId":sid}, {
+      headers: {
+        Authorization: "Bearer " + token.token,
+      },
+    });
+    console.log("send notification for send friend request notification ", response)
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    if(error.code=="ERR_NETWORK"){
+      // window.alert("Session Expired Please login again")
+      dispatch(setLogout());
+      navigate("/");
+    }
+  }
+};
+
   const patchFriend = async () => {
     console.log("calling patchFriend");
     try{const response = await Axios.get("http://localhost:9000/patchFriend", {
@@ -87,6 +105,7 @@ const ITEM_HEIGHT = 48;
       dispatch(setFriends({ friends: data }));
     }
     // setUserFriends(data);
+
     getFriends()
   } catch (error) {
     console.error("Error fetching data: ", error);
@@ -250,6 +269,7 @@ const ITEM_HEIGHT = 48;
       },
     });
     console.log("sendFriendRequest ",response);
+    sendNotification(fromProfile===true?friendId:sid)
     handleSnackbarClick()
   } catch (error) {
     console.error("Error fetching data: ", error);

@@ -192,7 +192,7 @@
 
     <select id="getEvents"
             resultType="Event">
-        SELECT id, event_name as "eventName", created_date as "CreatedDate", event_date as "eventDate", is_active as "active", days_left as "daysLeft" from event where is_active = TRUE ORDER BY id desc
+        SELECT id, event_name as "eventName", created_date as "CreatedDate", event_date as "eventDate", is_active as "active", days_left as "daysLeft" from event where is_active = TRUE ORDER BY event_date desc
     </select>
 
 
