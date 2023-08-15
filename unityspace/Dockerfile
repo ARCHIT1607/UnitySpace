@@ -1,4 +1,6 @@
 FROM openjdk:17-jdk-alpine
-MAINTAINER Archit Maniyath
-ADD  target/unityspace-0.0.1-SNAPSHOT.jar unityspace-0.1.jar
-ENTRYPOINT ["java","-jar","/unityspace-0.1.jar"]
+RUN apk update && apk add --no-cache maven
+WORKDIR /app
+COPY . .
+RUN mvn package clean -DskipTests
+ENTRYPOINT ["java", "-jar", "target/unityspace-0.0.1-SNAPSHOT.jar"]
