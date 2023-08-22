@@ -44,7 +44,7 @@ const [userFriends, setUserFriends] = useState([])
  const sendFriendRequest = async () => {
   console.log("calling patchFriend")
   try {
-  const response = await Axios.post("http://localhost:9000/users/sendFriendRequest",null, {
+  const response = await Axios.post(window.API_URL+"/users/sendFriendRequest",null, {
     params:{
       senderId:sid,
       friendId:friendId
@@ -66,7 +66,7 @@ const [userFriends, setUserFriends] = useState([])
 }
 
   const getFriends = async () => {
-    try{const response = await Axios.get("http://localhost:9000/users/friends", {
+    try{const response = await Axios.get(window.API_URL+"/users/friends", {
       params:{
         id:sid,
       },
@@ -94,7 +94,7 @@ const [userFriends, setUserFriends] = useState([])
 
   const sendNotification = (sid) => {
     try {
-      Axios.post("http://localhost:9000/firebase/send-friend-request-notification", {"title":"Unfriended by ","userId":sid}, {
+      Axios.post(window.API_URL+"/firebase/send-friend-request-notification", {"title":"Unfriended by ","userId":sid}, {
         headers: {
           Authorization: "Bearer " + token.token,
         },

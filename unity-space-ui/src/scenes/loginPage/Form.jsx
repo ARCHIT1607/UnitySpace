@@ -80,7 +80,7 @@ const Form = () => {
         console.log("isHate in form",isHate);
         if(!isHate){
           const savedUserResponse = await Axios.post(
-            "http://localhost:9000/auth/register",
+            window.API_URL+"/auth/register",
             formData,
             {
               params: {
@@ -129,7 +129,7 @@ const Form = () => {
       console.log("values ", values.email)
     try {
       const loggedInResponse = await Axios.post(
-        "http://localhost:9000/auth/login",{},
+        window.API_URL+"/auth/login",{},
         {
           params: {
             email: values.email,

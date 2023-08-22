@@ -15,7 +15,7 @@ const PostsWidget = ({ userId, isProfile = false ,fromProfile, userPicturePath})
 
   const getPosts = async () => {
     try {
-      const response = await Axios.get("http://localhost:9000/getPosts",{
+      const response = await Axios.get(window.API_URL+"/getPosts",{
         headers: {
           Authorization: "Bearer " + token.token,
         },
@@ -36,7 +36,7 @@ const PostsWidget = ({ userId, isProfile = false ,fromProfile, userPicturePath})
   const getUserPosts = async () => {
     try {
       const response = await Axios.get(
-        `http://localhost:9000/posts/${userId}/posts`,
+        window.API_URL+`/posts/${userId}/posts`,
         {
           headers: { Authorization: "Bearer " + token.token},
         }

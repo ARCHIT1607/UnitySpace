@@ -8,7 +8,7 @@ import FriendListWidget from "scenes/widgets/FriendListWidget";
 import MyPostWidget from "scenes/widgets/MyPostWidget";
 import PostsWidget from "scenes/widgets/PostsWidget";
 import UserWidget from "scenes/widgets/UserWidget";
-import { setLogout } from "state";
+import { setLogout, setOnlineStatus } from "state";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -26,7 +26,7 @@ const ProfilePage = () => {
   const getUser = async () => {
     try {
       const response = await Axios.get(
-        "http://localhost:9000/user", {
+        window.API_URL+"/user", {
           params:{
             userId:userId,
             sid:sid
@@ -37,6 +37,7 @@ const ProfilePage = () => {
         });
       const data = response.data;
       setUser(data);
+      dispatch(setOnlineStatus(response.data._online_status));
       console.log("picturePath in ProfilePage ",user)
     } catch (error) {
       console.error("Error fetching data: ", error);
@@ -65,7 +66,7 @@ const ProfilePage = () => {
         justifyContent="center"
       >
         <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
-          <UserWidget userId={userId} picturePath={user.pictureName} />
+          <UserWidget userId={userId} picturePath={user.pictureName} fromProfile={true}/>
           <Box m="2rem 0" />
           <FriendListWidget userId={userId} fromProfile={true}/>
         </Box>

@@ -6,15 +6,13 @@ import lombok.*;
 import java.util.ArrayList;
 
 @Entity
-@Table(name = "student"
-)
+@Table(name = "student")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 public class Student {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "STUDENT_SEQ")
     @SequenceGenerator(initialValue = 1, name = "STUDENT_SEQ", sequenceName = "STUDENT_SEQ", allocationSize = 1)
@@ -28,13 +26,10 @@ public class Student {
     private String course;
     private byte[] profilePic;
     private String pictureName;
-
     @Transient
     private ArrayList<FriendDTO> friends;
     private String role = "ROLE_USER";
-
     private String viewedProfile;
     private Long impressions;
-
     private boolean is_online_status = true;
 }

@@ -90,11 +90,9 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
         : [];
     dispatch(setCurrentGroupChat({ currentGroupChat: currentGroupChat }));
     dispatch(setCurrentChat({ currentChat: [] }));
-    // getGroupMsg()
   };
 
   useEffect(() => {
-    // console.log("calling getGroupMsg in groupListWidget after change in groupList");
     getGroupMsg();
     const q = query(
       collection(db, "roomChats"),
@@ -114,15 +112,7 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
     return () => {
       unsubscribe();
     };
-    // if (currentGroup.id) {
-    //   const documentRef = doc(db, "roomChats", currentGroup.id);
-    //   const unsubscribe = onSnapshot(documentRef, (doc) => {
-    //     console.log("something got changed");
-    //     getGroupMsg();
-    //   });
-    //   return () => unsubscribe();
-    // }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;

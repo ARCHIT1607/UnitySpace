@@ -32,7 +32,7 @@ console.log("onlineStatusArray ",onlineStatusArray)
   const addFirebaseToken = async (token) => {
     const response = await fetch("http://localhost:9000/firebase/token", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", Authorization: "Bearer " + jwtToken, },
       body: JSON.stringify({ userId: sid, firebase_token: token }),
     });
     console.log(response);
@@ -73,22 +73,10 @@ console.log("onlineStatusArray ",onlineStatusArray)
     };
   }
 
-  function useIdle(options) {
-    const [isIdle, setIsIdle] = useState(false);
-    useEffect(() => {
-      const activityDetector = createActivityDetector(options);
-      activityDetector.on("idle", () => setIsIdle(true));
-      activityDetector.on("active", () => setIsIdle(false));
-      return () => activityDetector.stop();
-    }, []);
-    return isIdle;
-  }
-  const isIdle = useIdle({ timeToIdle: 20000 });
-
   const getFriends = async () => {
     console.log("token ",jwtToken)
     try{
-      const response = await Axios.get("http://localhost:9000/users/friends", {
+      const response = await Axios.get(window.API_URL+"/users/friends", {
       params:{
         id:sid,
       },

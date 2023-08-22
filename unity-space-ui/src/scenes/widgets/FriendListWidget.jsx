@@ -19,7 +19,7 @@ const FriendListWidget = ({ userId,userPicturePath,fromProfile,counter }) => {
   const getFriends = async () => {
     console.log("token ",token)
     try {
-      const response = await Axios.get("http://localhost:9000/users/friends", {
+      const response = await Axios.get(window.API_URL+"/users/friends", {
         params:{
           id:userId,
         },

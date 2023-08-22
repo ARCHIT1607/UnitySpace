@@ -30,6 +30,16 @@ const store = configureStore({
     }),
 });
 
+if(process.env.NODE_ENV ==="production"){
+  console.log("inside production",process.env)
+  window.API_URL = process.env.REACT_APP_PUBLIC_URL
+  console.log("api url ",window.API_URL)
+}else{
+  console.log("dev",process.env)
+  window.API_URL = process.env.REACT_APP_PUBLIC_URL
+  console.log("api url ",window.API_URL)
+}
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
 

@@ -72,7 +72,7 @@ const ITEM_HEIGHT = 48;
 
 const sendNotification = async (sid) => {
   try {
-    const response = await Axios.post("http://localhost:9000/firebase/send-friend-request-notification", {"title":"Sent you a friend Request","userId":sid}, {
+    const response = await Axios.post(window.API_URL+"/firebase/send-friend-request-notification", {"title":"Sent you a friend Request","userId":sid}, {
       headers: {
         Authorization: "Bearer " + token.token,
       },
@@ -90,7 +90,7 @@ const sendNotification = async (sid) => {
 
   const patchFriend = async () => {
     console.log("calling patchFriend");
-    try{const response = await Axios.get("http://localhost:9000/patchFriend", {
+    try{const response = await Axios.get(window.API_URL+"/patchFriend", {
       params: {
         id: fromProfile===true?friendId:sid,
         friendId: fromProfile===true?sid:friendId
@@ -119,7 +119,7 @@ const sendNotification = async (sid) => {
 
   const getFriends = async () => {
     try{
-      const response = await Axios.get("http://localhost:9000/users/friends", {
+      const response = await Axios.get(window.API_URL+"/users/friends", {
       params:{
         id:sid,
       },
@@ -145,7 +145,7 @@ const sendNotification = async (sid) => {
 
   const deletePost = async () => {
     console.log("calling deletePost");
-    try{const response = await Axios.get("http://localhost:9000/delete/post", {
+    try{const response = await Axios.get(window.API_URL+"/delete/post", {
       params: {
         postId: postId,
       },
@@ -209,7 +209,7 @@ const sendNotification = async (sid) => {
       setPicture(null);
       handleClose(false);
     } else {
-      try{const response = await Axios.post("http://localhost:9000/updatePost", formData,{
+      try{const response = await Axios.post(window.API_URL+"/updatePost", formData,{
         params: {
           postId: postId,
           description:newDescription
@@ -239,7 +239,7 @@ const sendNotification = async (sid) => {
 
   const getUserPosts = async () => {
     try{const response = await Axios.get(
-      `http://localhost:9000/posts/${sid}/posts`,
+      window.API_URL+`/posts/${sid}/posts`,
       {
         headers: { Authorization: "Bearer " + token.token },
       }
@@ -259,7 +259,7 @@ const sendNotification = async (sid) => {
   const sendFriendRequest = async () => {
     console.log("calling patchFriend")
     try {
-    const response = await Axios.post("http://localhost:9000/users/sendFriendRequest",null, {
+    const response = await Axios.post(window.API_URL+"/users/sendFriendRequest",null, {
       params:{
         senderId:sid,
         friendId:friendId
@@ -283,7 +283,7 @@ const sendNotification = async (sid) => {
 
   useEffect(() => {
     console.log("getUserFriends in Post")
-    // getFriends()
+    getFriends()
   }, [friends])
 
 

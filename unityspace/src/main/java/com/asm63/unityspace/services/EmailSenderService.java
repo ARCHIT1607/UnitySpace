@@ -3,6 +3,7 @@ package com.asm63.unityspace.services;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -18,6 +19,9 @@ import java.net.URL;
 public class EmailSenderService {
     @Autowired
     private JavaMailSender mailSender;
+
+    @Value("${spring.mail.username}")
+    private String to;
 
     public void sendEmailWithGoogleMaps(String recipientEmail) throws MessagingException, IOException {
         MimeMessage message = mailSender.createMimeMessage();
@@ -47,11 +51,7 @@ public class EmailSenderService {
     }
 
     public String getGoogleMapsUrl(double longitude,double latitude) {
-//        String encodedLocation = URLEncoder.encode(location, StandardCharsets.UTF_8);
-//        String marker = String.format("markers=color:red%%7Clabel:S%%7C%s,%s", "52.6346", "-1.1317");
-//        return String.format("https://www.google.com/maps/place/%s?%s&key=%s", encodedLocation,
-//                marker, "AIzaSyCBHQ2PytqvWuk1RcoWshj57oxZf12l9yM");
-        String marker = String.format("markers=color:red%%7Clabel:S%%7C%s,%s", "52.6346", "-1.1317");
+        String marker = String.format("markers=color:red%%7Clabel:S%%7C%s,%s", latitude, longitude);
         return String.format("https://www.google.com/maps?q=%f,%f&key=%s", latitude,longitude,
                 marker, "AIzaSyCBHQ2PytqvWuk1RcoWshj57oxZf12l9yM");
 
@@ -62,9 +62,8 @@ public class EmailSenderService {
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
         System.out.println("from "+from);
         helper.setFrom(from);
-        helper.setTo("confusedDeveloper97@gmail.com");
-        helper.setSubject(from+" Emergency Location");
-//        String location = "LE15SP";
+        helper.setTo(to);
+        helper.setSubject(to+" Emergency Location");
         String googleMapsUrl = getGoogleMapsUrl(longitude,latitude);
 
         String emailBody = String.format("<h1>Google Maps URL</h1><a href=\"%s\">Click here to view the location on Google Maps</a>", googleMapsUrl);
@@ -73,14 +72,15 @@ public class EmailSenderService {
         mailSender.send(message);
     }
 
-    public ResponseEntity sendEmailWithAttachment(MultipartFile file) throws IOException, MessagingException {
+    public ResponseEntity sendEmailWithAttachment(MultipartFile file,String from) throws IOException, MessagingException {
 
         // Attach the file to the email
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
-        helper.setTo("confusedDeveloper97@gmail.com");
+        helper.setFrom(from);
+        helper.setTo(to);
         helper.setSubject("voice note");
-        helper.setText("attachment test");
+        helper.setText("attachment");
         helper.addAttachment(file.getOriginalFilename(), new ByteArrayResource(file.getBytes()));
 
         // Send the email

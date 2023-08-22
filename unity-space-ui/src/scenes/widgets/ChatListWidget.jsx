@@ -5,15 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { setFriends, setLogout } from "state";
 import Axios from "axios";
 import ChatUser from "components/ChatUser";
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import ListItemText from '@mui/material/ListItemText';
-import Select from '@mui/material/Select';
-import Checkbox from '@mui/material/Checkbox';
-import { collection, doc, getDocs, query, setDoc } from "firebase/firestore";
-import { db } from "components/firebase";
 import FlexBetween from "components/FlexBetween";
 import { useNavigate } from "react-router-dom";
 
@@ -30,7 +21,7 @@ console.log("friends ",friends);
   const getFriends = async () => {
     try {
       console.log("token ",token)
-      const response = await Axios.get("http://localhost:9000/users/friends", {
+      const response = await Axios.get(window.API_URL+"/users/friends", {
         params:{
           id:sid,
         },

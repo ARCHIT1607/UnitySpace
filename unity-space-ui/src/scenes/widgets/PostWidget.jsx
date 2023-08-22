@@ -55,7 +55,7 @@ console.log("user pic from home page ",userPicturePath)
 
   const patchLike = async () => {
     try {
-      const response = await Axios.post("http://localhost:9000/posts/like", null, {
+      const response = await Axios.post(window.API_URL+"/posts/like", null, {
       params: {
         postId: postId,
         userId:loggedInUserId
@@ -87,7 +87,7 @@ console.log("user pic from home page ",userPicturePath)
   const getUserPosts = async () => {
     try {
       const response = await Axios.get(
-        `http://localhost:9000/posts/${userId}/posts`,
+        window.API_URL+`/posts/${userId}/posts`,
         {
           headers: { Authorization: "Bearer " + jwtToken.token},
         }
@@ -106,7 +106,7 @@ console.log("user pic from home page ",userPicturePath)
 
   const getPosts = async () => {
     try {
-      const response = await Axios.get("http://localhost:9000/getPosts",{
+      const response = await Axios.get(window.API_URL+"/getPosts",{
         headers: {
           Authorization: "Bearer " + jwtToken.token,
         },
@@ -145,7 +145,7 @@ console.log("user pic from home page ",userPicturePath)
       window.alert("please type something")
     }else{
       try {
-        const response = await Axios.post("http://localhost:9000/postComment", formData, {
+        const response = await Axios.post(window.API_URL+"/postComment", formData, {
           params: {
             postId: postId,
             userId:loggedInUserId
@@ -193,7 +193,7 @@ console.log("user pic from home page ",userPicturePath)
 
   const sendNotification = (postId) => {
     try {
-      Axios.post("http://localhost:9000/firebase/send-notification", {"title":"Liked your post","userId":loggedInUserId}, {
+      Axios.post(window.API_URL+"/firebase/send-notification", {"title":"Liked your post","userId":loggedInUserId}, {
         params: {
           postId: postId
         },

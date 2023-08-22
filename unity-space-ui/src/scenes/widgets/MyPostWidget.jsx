@@ -59,7 +59,7 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
       for (const [key, value] of formData.entries()) {
         console.log(`${key}: ${value}`);
       }
-      const response = await Axios.post("http://localhost:9000/posts", formData, {
+      const response = await Axios.post(window.API_URL+"/posts", formData, {
         params: {
           description: description,
           userId:sid,
@@ -99,7 +99,7 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
   const getUserPosts = async () => {
     try {
       const response = await Axios.get(
-        `http://localhost:9000/posts/${sid}/posts`,
+        window.API_URL+`/posts/${sid}/posts`,
         {
           headers: { Authorization: "Bearer " + token.token},
         }

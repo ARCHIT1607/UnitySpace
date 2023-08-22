@@ -36,7 +36,7 @@ import {
   Delete
 } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
-import { setMode, setLogout, setFriends } from "state";
+import { setMode, setLogout, setFriends, setOnlineStatus } from "state";
 import { Navigate, useNavigate } from "react-router-dom";
 import FlexBetween from "components/FlexBetween";
 import TextField from "@mui/material/TextField";
@@ -95,7 +95,7 @@ const Navbar = ({counter}) => {
   const [data, setData] = useState([]);
   const getAllStudents = async () => {
     try {
-      const response = await Axios.get("http://localhost:9000/allStudents", {
+      const response = await Axios.get(window.API_URL+"/allStudents", {
         headers: {
           Authorization: "Bearer " + token.token,
         },
@@ -114,7 +114,7 @@ const Navbar = ({counter}) => {
   };
 
   const updateOnlineStatus = async (status,userId) => {
-    const response = await Axios.post("http://localhost:9000/updateOnlineStatus", null, {
+    const response = await Axios.post(window.API_URL+"/updateOnlineStatus", null, {
       params: {
         status: status,
         userId:user.sid
@@ -123,6 +123,8 @@ const Navbar = ({counter}) => {
         Authorization: "Bearer " +  token.token,
       },
     });
+    console.log("response in updateOnlineStatus response", response.data)
+    dispatch(setOnlineStatus(response.data._online_status))
   }
 
   function error() {
@@ -140,7 +142,7 @@ const Navbar = ({counter}) => {
     let confirm = window.confirm("Are you sure");
     if(confirm){
       try {
-        const response = await Axios.post("http://localhost:9000/user/deleteAccount",
+        const response = await Axios.post(window.API_URL+"/user/deleteAccount",
         null,
         {
           params: {
@@ -165,7 +167,7 @@ const Navbar = ({counter}) => {
 
   const sendEmergency = async () => {
     try {
-      const response = await Axios.post("http://localhost:9000/auth/emergencyCall",
+      const response = await Axios.post(window.API_URL+"/auth/emergencyCall",
       null,
       {
         params: {
@@ -190,7 +192,7 @@ const Navbar = ({counter}) => {
   };
 
   const checkFriendRequest = async() =>{
-    const response = await Axios.get("http://localhost:9000/users/checkFriendRequest", {
+    const response = await Axios.get(window.API_URL+"/users/checkFriendRequest", {
       params: {
         friendId:user.sid
       },
@@ -203,7 +205,7 @@ console.log("checkFriendRequest data ",response.data.length)
   }
 
   const deleteFriendRequest = async(senderId) =>{
-    const response = await Axios.post("http://localhost:9000/users/deleteFriendRequest",null, {
+    const response = await Axios.post(window.API_URL+"/users/deleteFriendRequest",null, {
       params: {
         friendId:user.sid,
         senderId:senderId
@@ -235,7 +237,7 @@ checkFriendRequest();
 
   const sendNotification = (sid) => {
     try {
-      Axios.post("http://localhost:9000/firebase/send-friend-request-notification", {"title":"Friend Request accepted by ","userId":sid}, {
+      Axios.post(window.API_URL+"/firebase/send-friend-request-notification", {"title":"Friend Request accepted by ","userId":sid}, {
         headers: {
           Authorization: "Bearer " + token.token,
         },
@@ -253,7 +255,7 @@ checkFriendRequest();
   const patchFriend = async (friendId) => {
     console.log("calling patchFriend")
     try {
-    const response = await Axios.get("http://localhost:9000/patchFriend", {
+    const response = await Axios.get(window.API_URL+"/patchFriend", {
       params:{
         id:user.sid,
         friendId:friendId
@@ -283,7 +285,7 @@ checkFriendRequest();
   };
 
   const getFriends = async () => {
-    try{const response = await Axios.get("http://localhost:9000/users/friends", {
+    try{const response = await Axios.get(window.API_URL+"/users/friends", {
       params:{
         id:user.sid,
       },

@@ -28,6 +28,11 @@ export const authSlice = createSlice({
       state.currentChat = [];
       state.currentGroupChat = [];
     },
+    setOnlineStatus: (state, action) => {
+      console.log("payload in setOnlineStatus",action.payload)
+      state.user._online_status =action.payload;
+      console.log("state.user._online_status ",state.user._online_status)
+    },
     setFriends: (state, action) => {
       if (state.user) {
         console.log("payload ",action.payload)
@@ -63,6 +68,6 @@ export const authSlice = createSlice({
   },
 });
 
-export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost, setMessages,setCurrentChat,setCurrentGroupChat} =
+export const { setMode, setLogin, setLogout, setFriends, setPosts, setPost, setMessages,setCurrentChat,setCurrentGroupChat,setOnlineStatus} =
   authSlice.actions;
 export default authSlice.reducer;

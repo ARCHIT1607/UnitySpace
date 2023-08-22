@@ -119,15 +119,15 @@ public class AuthController {
     }
 
     @PostMapping("/auth/emergencyCall")
-    public void test2(@RequestParam("longitude") String longitude,
+    public void emergencyCall(@RequestParam("longitude") String longitude,
                       @RequestParam("latitude") String latitude,@RequestParam("from") String from) throws MessagingException, IOException {
         service.sendEmailWithGoogleMapsUrl(Double.parseDouble(longitude),Double.parseDouble(latitude),from);
     }
 
     @PostMapping("/auth/send-email")
-    public ResponseEntity<String> sendEmailWithAttachment(@RequestParam("file") MultipartFile file) throws MessagingException, IOException {
+    public ResponseEntity<String> sendEmailWithAttachment(@RequestParam("file") MultipartFile file,String from) throws MessagingException, IOException {
         // Save the file to the server
-        return service.sendEmailWithAttachment(file);
+        return service.sendEmailWithAttachment(file,from);
 
     }
 

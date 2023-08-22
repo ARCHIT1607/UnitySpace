@@ -73,7 +73,7 @@ function Dashboard() {
     console.log("handleSubmitEvent ",eventName,selectedDate)
 
     try{
-        const response = await Axios.post("http://localhost:9000/dashboard/createEvent",null, {
+        const response = await Axios.post(window.API_URL+"/dashboard/createEvent",null, {
             params: {
               eventName: eventName,
               eventDate:selectedDate
@@ -98,7 +98,7 @@ function Dashboard() {
 
   const getDashboardData = async () => {
     console.log("calling patchFriend");
-    try{const response = await Axios.get("http://localhost:9000/dashboard/getDashboardData", {
+    try{const response = await Axios.get(window.API_URL+"/dashboard/getDashboardData", {
       headers: {
         Authorization: "Bearer " + jwtToken,
       },
@@ -117,7 +117,7 @@ function Dashboard() {
 
   const getEvents = async () => {
     try {
-      const response = await Axios.get(`http://localhost:9000/events`, {
+      const response = await Axios.get(window.API_URL+"/events", {
         headers: { Authorization: "Bearer " + jwtToken },
       });
       setEvent(response.data);
@@ -134,7 +134,7 @@ function Dashboard() {
 
   const deleteEvent = async (id) => {
     console.log("calling deleteEvent ",id);
-    try{const response = await Axios.post("http://localhost:9000/dashboard/deleteEvent",null, {
+    try{const response = await Axios.post(window.API_URL+"/dashboard/deleteEvent",null, {
       params: {
         eventId: id,
       },
@@ -156,7 +156,7 @@ function Dashboard() {
 
   const getAllComments = async () => {
     console.log("calling getAllComments ");
-    try{const response = await Axios.get("http://localhost:9000/dashboard/getAllComments", {
+    try{const response = await Axios.get(window.API_URL+"/dashboard/getAllComments", {
       headers: {
         Authorization: "Bearer " + jwtToken,
       },
@@ -175,7 +175,7 @@ function Dashboard() {
 
   const getAllPostDescription = async () => {
     console.log("calling getAllPostDescription ");
-    try{const response = await Axios.get("http://localhost:9000/dashboard/getAllPostDescription", {
+    try{const response = await Axios.get(window.API_URL+"/dashboard/getAllPostDescription", {
       headers: {
         Authorization: "Bearer " + jwtToken,
       },

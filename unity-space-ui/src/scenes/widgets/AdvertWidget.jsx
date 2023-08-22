@@ -46,7 +46,7 @@ const AdvertWidget = () => {
 
   const getEvents = async () => {
     try {
-      const response = await Axios.get(`http://localhost:9000/events`, {
+      const response = await Axios.get(window.API_URL+"/events", {
         headers: { Authorization: "Bearer " + token.token },
       });
       setEvent(response.data);

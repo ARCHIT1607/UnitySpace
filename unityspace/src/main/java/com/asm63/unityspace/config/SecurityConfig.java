@@ -4,6 +4,7 @@ package com.asm63.unityspace.config;
 import com.asm63.unityspace.security.JwtAuthenticationEntryPoint;
 import com.asm63.unityspace.security.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -31,15 +32,17 @@ public class SecurityConfig {
 
     @Autowired
     private AuthenticationProvider authenticationProvider;
+
+    @Value("${allowedOrigins}")
+    private String allowedOrigins;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http.csrf(csrf -> csrf.disable()).cors(cors -> cors.disable())
                 .authorizeHttpRequests(requests -> requests.requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/post/image/**").permitAll()
-                        .requestMatchers("/users/**").permitAll()
                         .requestMatchers("/user/image/**").permitAll()
-                        .requestMatchers("/video/**").permitAll().requestMatchers("/firebase/**").permitAll()
+                        .requestMatchers("/video/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                 .anyRequest().authenticated())
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -55,8 +58,7 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000,https://igse-ui-production.up.railway.app," +
-                "http://127.0.0.1:5000"));
+        configuration.setAllowedOrigins(Collections.singletonList(allowedOrigins));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS"));
         configuration.setAllowCredentials(true);

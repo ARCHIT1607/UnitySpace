@@ -23,9 +23,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
-import { setFriends, setLogout } from "state";
+import { setFriends, setLogout, setOnlineStatus } from "state";
 
-const UserWidget = ({ userId, picturePath }) => {
+const UserWidget = ({ userId, picturePath, fromProfile }) => {
   const dispatch = useDispatch();
   const [user, setUser] = useState();
   const { palette } = useTheme();
@@ -42,8 +42,10 @@ const UserWidget = ({ userId, picturePath }) => {
   console.log("picturePath in UserWidget ", picturePath);
   const [userFriends, setUserFriends] = useState([]);
 console.log("_online_status ",_online_status.toString())
-  const [checked, setChecked] = useState(_online_status);
 
+  const [checked, setChecked] = useState(_online_status);
+  // setChecked(_online_status)
+  console.log("checked ",checked)
   const handleChange = (event) => {
     setChecked(event.target.checked);
     if(checked){
@@ -54,7 +56,7 @@ console.log("_online_status ",_online_status.toString())
   }
 
     const updateOnlineStatus = async (status,sid) => {
-    await Axios.post("http://localhost:9000/updateOnlineStatus", null, {
+      const response = await Axios.post(window.API_URL+"/updateOnlineStatus", null, {
       params: {
         status: status,
         userId:sid
@@ -63,12 +65,15 @@ console.log("_online_status ",_online_status.toString())
         Authorization: "Bearer " +  token.token,
       },
     });
+    console.log("response in updateOnlineStatus response", response.data)
+    dispatch(setOnlineStatus(response.data._online_status))
+    setChecked(response.data._online_status)
   }
 
   const patchFriend = async () => {
     console.log("calling patchFriend ", userId);
     try {
-      const response = await Axios.get("http://localhost:9000/patchFriend", {
+      const response = await Axios.get(window.API_URL+"/patchFriend", {
         params: {
           id: userId,
           friendId: sid,
@@ -96,7 +101,7 @@ console.log("_online_status ",_online_status.toString())
 
   const getFriends = async () => {
     try {
-      const response = await Axios.get("http://localhost:9000/users/friends", {
+      const response = await Axios.get(window.API_URL+"/users/friends", {
         params: {
           id: sid,
         },
@@ -124,7 +129,7 @@ console.log("_online_status ",_online_status.toString())
 
   const getUser = async () => {
     try {
-      const response = await Axios.get("http://localhost:9000/getUser", {
+      const response = await Axios.get(window.API_URL+"/getUser", {
         params: {
           userId: userId,
         },
@@ -135,6 +140,7 @@ console.log("_online_status ",_online_status.toString())
       console.log("response in getUser ", response.data);
       const data = response;
       setUser(response.data);
+      dispatch(setOnlineStatus(response.data._online_status));
       console.log("user in userWidget ", user);
     } catch (error) {
       console.error("Error fetching data: ", error);
@@ -145,6 +151,48 @@ console.log("_online_status ",_online_status.toString())
       }
     }
   };
+
+  const sendNotification = async (sid) => {
+    try {
+      const response = await Axios.post(window.API_URL+"/firebase/send-friend-request-notification", {"title":"Sent you a friend Request","userId":sid}, {
+        headers: {
+          Authorization: "Bearer " + token.token,
+        },
+      });
+      console.log("send notification for send friend request notification ", response)
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      if(error.code=="ERR_NETWORK"){
+        // window.alert("Session Expired Please login again")
+        dispatch(setLogout());
+        navigate("/");
+      }
+    }
+  };
+
+  const sendFriendRequest = async () => {
+    console.log("calling sendFriendRequest from userWIdget")
+    try {
+    const response = await Axios.post(window.API_URL+"/users/sendFriendRequest",null, {
+      params:{
+        senderId:sid,
+        friendId:userId
+      },
+      headers: {
+        Authorization: "Bearer " + token.token,
+      },
+    });
+    console.log("sendFriendRequest ",response);
+    sendNotification(sid)
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    if(error.code=="ERR_NETWORK"){
+      // window.alert("Session Expired Please login again")
+      dispatch(setLogout());
+      navigate("/");
+    }
+  }
+  }
 
   useEffect(() => {
     // getFriends();
@@ -203,7 +251,7 @@ console.log("_online_status ",_online_status.toString())
           </Box>
         </FlexBetween>
         {userId !== sid ? (
-          <ManageAccountsOutlined onClick={() => patchFriend()} />
+          <ManageAccountsOutlined onClick={() => sendFriendRequest()} />
         ) : (
           ""
         )}
@@ -265,19 +313,6 @@ console.log("_online_status ",_online_status.toString())
             </Box>
           </FlexBetween>
         </FlexBetween>
-
-        {/* <FlexBetween gap="1rem">
-          <FlexBetween gap="1rem">
-            <img src="../assets/linkedin.png" alt="linkedin" />
-            <Box>
-              <Typography color={main} fontWeight="500">
-                Linkedin
-              </Typography>
-              <Typography color={medium}>Network Platform</Typography>
-            </Box>
-          </FlexBetween>
-          <EditOutlined sx={{ color: main }} />
-        </FlexBetween> */}
       </Box>
     </WidgetWrapper>
   );

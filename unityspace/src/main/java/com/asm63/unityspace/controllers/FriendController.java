@@ -166,7 +166,7 @@ public class FriendController {
     public ResponseEntity<?> updateOnlineStatus(@RequestParam(name = "status") String status, @RequestParam(name = "userId") String userId) {
         try {
             studentService.updateOnlineStatus(Boolean.parseBoolean(status), userId);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(studentService.findById(userId),HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<Object>(e.getMessage(),HttpStatus.OK);
         }
