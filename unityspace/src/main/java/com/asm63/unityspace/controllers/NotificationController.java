@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.concurrent.ExecutionException;
 
 @RestController
-@CrossOrigin(origins ="http://localhost:3000")
+@CrossOrigin
 public class NotificationController {
 
     @Autowired
@@ -23,7 +23,7 @@ public class NotificationController {
     @Autowired
     private PostService postService;
 
-    @PostMapping("/firebase/token")
+    @PostMapping("/auth/firebase/token")
     public ResponseEntity<Object> addFirebaseToken(@RequestBody CloudMessageDTO message ) {
         System.out.println("calling addFirebaseToken");
         String token = firebaseService.getToken(message.getUserId());

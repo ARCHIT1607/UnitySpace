@@ -18,7 +18,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,7 +42,6 @@ public class SecurityConfig {
                         .requestMatchers("/post/image/**").permitAll()
                         .requestMatchers("/user/image/**").permitAll()
                         .requestMatchers("/video/**").permitAll()
-                        .requestMatchers("/firebase/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                 .anyRequest().authenticated())
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -61,9 +59,8 @@ public class SecurityConfig {
 
         configuration.setAllowedOrigins(Collections.singletonList(allowedOrigins));
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS"));
+        configuration.addAllowedMethod("*"); // Allow all HTTP methods
         configuration.setAllowCredentials(true);
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
 

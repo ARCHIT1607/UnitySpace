@@ -29,9 +29,13 @@ export const authSlice = createSlice({
       state.currentGroupChat = [];
     },
     setOnlineStatus: (state, action) => {
+      if (state.user) {
       console.log("payload in setOnlineStatus",action.payload)
       state.user._online_status =action.payload;
       console.log("state.user._online_status ",state.user._online_status)
+      }else{
+        console.error("user non-existent :(");
+      }
     },
     setFriends: (state, action) => {
       if (state.user) {

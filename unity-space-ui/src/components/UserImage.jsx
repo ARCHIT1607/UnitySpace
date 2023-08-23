@@ -8,7 +8,7 @@ const UserImage = ({ image, size = "60px" }) => {
         width={size}
         height={size}
         alt="user"
-        src={`http://localhost:9000/user/image/${image}`}
+        src={window.API_URL +`/user/image/${image}`}
       />
     </Box>
   );

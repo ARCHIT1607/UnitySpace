@@ -30,9 +30,10 @@ console.log("onlineStatusArray ",onlineStatusArray)
   const navigate = useNavigate();
 
   const addFirebaseToken = async (token) => {
-    const response = await fetch("http://localhost:9000/firebase/token", {
+    const response = await fetch(window.API_URL+"/auth/firebase/token", {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: "Bearer " + jwtToken, },
+      // headers: { "Content-Type": "application/json", Authorization: "Bearer " + jwtToken, },
+      headers: { "Content-Type": "application/json"},
       body: JSON.stringify({ userId: sid, firebase_token: token }),
     });
     console.log(response);
