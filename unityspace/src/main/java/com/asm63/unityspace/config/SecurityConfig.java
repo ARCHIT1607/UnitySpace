@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/post/image/**").permitAll()
                         .requestMatchers("/user/image/**").permitAll()
                         .requestMatchers("/video/**").permitAll()
+                        .requestMatchers("/firebase/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS).permitAll()
                 .anyRequest().authenticated())
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
