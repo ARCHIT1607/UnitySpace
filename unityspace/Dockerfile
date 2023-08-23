@@ -4,7 +4,7 @@ WORKDIR /app
 COPY pom.xml .
 RUN mvn clean package -DskipTests
 COPY src ./src
-RUN mvn package
+RUN mvn package -DskipTests
 
 # Stage 2: Create the final image
 FROM openjdk:17-jdk-slim
