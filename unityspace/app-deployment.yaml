@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unityspace-api-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unityspace-api
+  template:
+    metadata:
+      labels:
+        app: unityspace-api
+    spec:
+      containers:
+        - name: unityspace-api
+          image: architdev/unityspace:1.3
+          ports:
+            - containerPort: 9000
+          env:
+            - name: DB_USER
+              value: archit
+            - name: DB_PASSWORD
+              value: ntbKQavWpayA0y8d1YILkWDZ30WXE0KX

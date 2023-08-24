@@ -74,25 +74,6 @@ const AdvertWidget = () => {
         </Typography>
       </FlexBetween>
       <Box p="0.5rem 0"></Box>
-      {/* <img
-        width="100%"
-        height="auto"
-        alt="advert"
-        src="http://localhost:3001/assets/info4.jpeg"
-        style={{ borderRadius: "0.75rem", margin: "0.75rem 0" }}
-      /> */}
-
-      {/* <h1>My Outlook Calendar</h1> */}
-      {/* <Calendar localizer={localizer} events={events} /> */}
-
-      {/* {event&&event.map((ev)=>(
-       <FlexBetween><Typography color={dark} variant="h6" fontWeight="500">
-        {ev.eventName}
-        </Typography>
-      <Typography color={dark} variant="h6" fontWeight="500">
-        {ev.eventDate}
-        </Typography>
-      </FlexBetween>))} */}
        <FlexBetween>
        <Box sx={{ width: "100%", overflow: "auto", height:"25vh"}}>
           {event &&

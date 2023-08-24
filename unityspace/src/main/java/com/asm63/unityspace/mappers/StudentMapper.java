@@ -64,4 +64,6 @@ public interface StudentMapper {
     HashMap checkFriendRequestExists(FriendRequestDTO request);
 
     void deleteFriendRequest(String friendId, String senderId);
+
+    ArrayList getRecommendation( String course);
 }

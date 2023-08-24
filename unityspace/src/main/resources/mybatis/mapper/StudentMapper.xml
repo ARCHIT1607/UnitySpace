@@ -273,5 +273,11 @@
         SELECT is_online_status as "onlineStatus" from student where is_online_status = true
     </select>
 
+    <select id="getRecommendation"
+            resultType="HashMap" parameterType="String">
+        SELECT id, fname, lname, course,sid, is_online_status as "onlineStatus",picture_name  from student where
+         course =#{course}
+    </select>
+
 
 </mapper>

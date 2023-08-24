@@ -183,4 +183,16 @@ public class FriendController {
         }
 
     }
+
+    @GetMapping("/users/recommendation")
+        public ResponseEntity<Object> getRecommendation(
+                                                        @RequestParam(name = "course") String course) {
+        try {
+            return new ResponseEntity<Object>(studentService.getRecommendation(course),HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<Object>(e.getMessage(),HttpStatus.OK);
+        }
+
+    }
+
 }

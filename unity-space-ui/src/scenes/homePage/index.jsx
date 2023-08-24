@@ -15,6 +15,7 @@ import Axios from "axios";
 import createActivityDetector from "activity-detector";
 import { setFriends, setLogout } from "state";
 import { useNavigate } from "react-router-dom";
+import RecommendFriend from "scenes/widgets/RecommendFriend";
 
 const HomePage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
@@ -118,6 +119,8 @@ console.log("onlineStatusArray ",onlineStatusArray)
       >
         <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
           <UserWidget userId={sid} picturePath={pictureName} />
+          <Box m="2rem 0" />
+          <RecommendFriend counter={counter} />
         </Box>
         <Box
           flexBasis={isNonMobileScreens ? "42%" : undefined}

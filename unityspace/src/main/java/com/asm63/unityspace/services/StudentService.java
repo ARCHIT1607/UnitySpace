@@ -165,4 +165,8 @@ public class StudentService {
         studMapper.deleteFriendRequest(friendId,senderId);
         return "Friend Request deleted successfully";
     }
+
+    public ArrayList getRecommendation(String course) {
+        return studMapper.getRecommendation(course);
+    }
 }
