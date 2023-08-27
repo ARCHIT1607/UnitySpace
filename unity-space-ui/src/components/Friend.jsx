@@ -112,7 +112,7 @@ const [userFriends, setUserFriends] = useState([])
   const patchFriend = async (friendId) => {
     console.log("calling patchFriend")
     try {
-    const response = await Axios.get("http://localhost:9000/patchFriend", {
+    const response = await Axios.get(window.API_URL+"/patchFriend", {
       params:{
         id:sid,
         friendId:friendId

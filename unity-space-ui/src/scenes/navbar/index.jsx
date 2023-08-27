@@ -33,7 +33,7 @@ import {
   Close,
   AddAlert,
   PersonAddOutlined,
-  Delete
+  Delete,
 } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { setMode, setLogout, setFriends, setOnlineStatus } from "state";
@@ -46,9 +46,9 @@ import Axios from "axios";
 import { useEffect } from "react";
 import { GoogleMap, useLoadScript, Marker } from "@react-google-maps/api";
 import VoiceNoteRecorder from "components/voiceNoteRecoder";
-import Button from '@mui/material/Button';
+import Button from "@mui/material/Button";
 
-const Navbar = ({counter}) => {
+const Navbar = ({ counter }) => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -63,10 +63,10 @@ const Navbar = ({counter}) => {
   const alt = theme.palette.background.alt;
   const token = useSelector((state) => state.token);
   const fullName = `${user.fname} ${user.lname}`;
-  const [friendRequest, setFriendRequest] = useState([])
+  const [friendRequest, setFriendRequest] = useState([]);
 
-  console.log("counter value in navbar ",counter)
-  
+  console.log("counter value in navbar ", counter);
+
   const [open, setOpen] = useState(false);
   const [openFriendRequestModal, setOpenFriendRequestModal] = useState(false);
 
@@ -95,7 +95,7 @@ const Navbar = ({counter}) => {
   const [data, setData] = useState([]);
   const getAllStudents = async () => {
     try {
-      const response = await Axios.get(window.API_URL+"/allStudents", {
+      const response = await Axios.get(window.API_URL + "/allStudents", {
         headers: {
           Authorization: "Bearer " + token.token,
         },
@@ -105,7 +105,7 @@ const Navbar = ({counter}) => {
       setData(data.data);
     } catch (error) {
       console.error("Error fetching data: ", error);
-      if(error.code=="ERR_NETWORK"){
+      if (error.code == "ERR_NETWORK") {
         // window.alert("Session Expired Please login again")
         dispatch(setLogout());
         navigate("/");
@@ -113,19 +113,23 @@ const Navbar = ({counter}) => {
     }
   };
 
-  const updateOnlineStatus = async (status,userId) => {
-    const response = await Axios.post(window.API_URL+"/updateOnlineStatus", null, {
-      params: {
-        status: status,
-        userId:user.sid
-      },
-      headers: {
-        Authorization: "Bearer " +  token.token,
-      },
-    });
-    console.log("response in updateOnlineStatus response", response.data)
-    dispatch(setOnlineStatus(response.data._online_status))
-  }
+  const updateOnlineStatus = async (status, userId) => {
+    const response = await Axios.post(
+      window.API_URL + "/updateOnlineStatus",
+      null,
+      {
+        params: {
+          status: status,
+          userId: user.sid,
+        },
+        headers: {
+          Authorization: "Bearer " + token.token,
+        },
+      }
+    );
+    console.log("response in updateOnlineStatus response", response.data);
+    dispatch(setOnlineStatus(response.data._online_status));
+  };
 
   function error() {
     console.log("Unable to retrieve your location");
@@ -140,83 +144,94 @@ const Navbar = ({counter}) => {
 
   const deleteAccount = async () => {
     let confirm = window.confirm("Are you sure");
-    if(confirm){
+    if (confirm) {
       try {
-        const response = await Axios.post(window.API_URL+"/user/deleteAccount",
-        null,
-        {
-          params: {
-            user:user.sid
-          },
-          headers: {
-            Authorization: "Bearer " + token.token,
-          },
-        });
+        const response = await Axios.post(
+          window.API_URL + "/user/deleteAccount",
+          null,
+          {
+            params: {
+              user: user.sid,
+            },
+            headers: {
+              Authorization: "Bearer " + token.token,
+            },
+          }
+        );
         console.log("deleteAccount done", response.data);
         navigate("/");
       } catch (error) {
         console.error("Error fetching data: ", error);
-        if(error.code=="ERR_NETWORK"){
+        if (error.code == "ERR_NETWORK") {
           // window.alert("Session Expired Please login again")
           dispatch(setLogout());
           navigate("/");
         }
       }
     }
-  }
+  };
 
   const sendEmergency = async () => {
     try {
-      const response = await Axios.post(window.API_URL+"/auth/emergencyCall",
-      null,
-      {
-        params: {
-          longitude: userLocation.longitude,
-          latitude: userLocation.latitude,
-          from:user.email
-        },
-        headers: {
-          Authorization: "Bearer " + token.token,
-        },
-      });
+      const response = await Axios.post(
+        window.API_URL + "/auth/emergencyCall",
+        null,
+        {
+          params: {
+            longitude: userLocation.longitude,
+            latitude: userLocation.latitude,
+            from: user.email,
+          },
+          headers: {
+            Authorization: "Bearer " + token.token,
+          },
+        }
+      );
       console.log("sendEmergency done", response.data);
     } catch (error) {
       console.error("Error fetching data: ", error);
-      if(error.code=="ERR_NETWORK"){
+      if (error.code == "ERR_NETWORK") {
         // window.alert("Session Expired Please login again")
         dispatch(setLogout());
         navigate("/");
       }
     }
-    handleClose()
+    handleClose();
   };
 
-  const checkFriendRequest = async() =>{
-    const response = await Axios.get(window.API_URL+"/users/checkFriendRequest", {
-      params: {
-        friendId:user.sid
-      },
-      headers: {
-        Authorization: "Bearer " +  token.token,
-      },
-    });
-console.log("checkFriendRequest data ",response.data.length)
+  const checkFriendRequest = async () => {
+    const response = await Axios.get(
+      window.API_URL + "/users/checkFriendRequest",
+      {
+        params: {
+          friendId: user.sid,
+        },
+        headers: {
+          Authorization: "Bearer " + token.token,
+        },
+      }
+    );
+    console.log("checkFriendRequest data ", response.data.length);
     setFriendRequest(response.data);
-  }
+  };
 
-  const deleteFriendRequest = async(senderId) =>{
-    const response = await Axios.post(window.API_URL+"/users/deleteFriendRequest",null, {
-      params: {
-        friendId:user.sid,
-        senderId:senderId
-      },
-      headers: {
-        Authorization: "Bearer " +  token.token,
-      },
-    });
-    console.log("deleteFriendRequest data ",response)
-checkFriendRequest();
-  }
+  const deleteFriendRequest = async (senderId) => {
+    const response = await Axios.post(
+      window.API_URL + "/users/deleteFriendRequest",
+      null,
+      {
+        params: {
+          friendId: user.sid,
+          senderId: senderId,
+        },
+        headers: {
+          Authorization: "Bearer " + token.token,
+        },
+      }
+    );
+    console.log("deleteFriendRequest data ", response);
+    checkFriendRequest();
+  };
 
   useEffect(() => {
     getAllStudents();
@@ -226,7 +241,6 @@ checkFriendRequest();
       console.log("Geolocation not supported");
     }
     checkFriendRequest();
-    
   }, [counter]);
 
   const handleOptionChange = (event, value) => {
@@ -237,14 +251,18 @@ checkFriendRequest();
 
   const sendNotification = (sid) => {
     try {
-      Axios.post(window.API_URL+"/firebase/send-friend-request-notification", {"title":"Friend Request accepted by ","userId":sid}, {
-        headers: {
-          Authorization: "Bearer " + token.token,
-        },
-      });
+      Axios.post(
+        window.API_URL + "/firebase/send-friend-request-notification",
+        { title: "Friend Request accepted by ", userId: sid },
+        {
+          headers: {
+            Authorization: "Bearer " + token.token,
+          },
+        }
+      );
     } catch (error) {
       console.error("Error fetching data: ", error);
-      if(error.code=="ERR_NETWORK"){
+      if (error.code == "ERR_NETWORK") {
         // window.alert("Session Expired Please login again")
         dispatch(setLogout());
         navigate("/");
@@ -253,84 +271,84 @@ checkFriendRequest();
   };
 
   const patchFriend = async (friendId) => {
-    console.log("calling patchFriend")
+    console.log("calling patchFriend");
     try {
-    const response = await Axios.get(window.API_URL+"/patchFriend", {
-      params:{
-        id:user.sid,
-        friendId:friendId
-      },
-      headers: {
-        Authorization: "Bearer " + token.token,
-      },
-    });
-    console.log("patch friend data ",response);
-    const data = await response.data.friend;
-    // if(profileUser===sid)
-    // {
+      const response = await Axios.get(window.API_URL + "/patchFriend", {
+        params: {
+          id: user.sid,
+          friendId: friendId,
+        },
+        headers: {
+          Authorization: "Bearer " + token.token,
+        },
+      });
+      console.log("patch friend data ", response);
+      const data = await response.data.friend;
+      // if(profileUser===sid)
+      // {
       dispatch(setFriends({ friends: data }));
-    // }
-    handleFriendRequestModalClose();
-    checkFriendRequest();
-    sendNotification(user.sid)
-    getFriends();
-  } catch (error) {
-    console.error("Error fetching data: ", error);
-    if(error.code=="ERR_NETWORK"){
-      // window.alert("Session Expired Please login again")
-      dispatch(setLogout());
-      navigate("/");
+      // }
+      handleFriendRequestModalClose();
+      checkFriendRequest();
+      sendNotification(user.sid);
+      getFriends();
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      if (error.code == "ERR_NETWORK") {
+        // window.alert("Session Expired Please login again")
+        dispatch(setLogout());
+        navigate("/");
+      }
     }
-  }
   };
 
   const getFriends = async () => {
-    try{const response = await Axios.get(window.API_URL+"/users/friends", {
-      params:{
-        id:user.sid,
-      },
-      headers: {
-        Authorization: "Bearer " + token.token,
-      },
-    });
-    console.log("resoinsedata ",response.data);
-    const data = await response.data;
-    // if(fromProfile===undefined){
+    try {
+      const response = await Axios.get(window.API_URL + "/users/friends", {
+        params: {
+          id: user.sid,
+        },
+        headers: {
+          Authorization: "Bearer " + token.token,
+        },
+      });
+      console.log("resoinsedata ", response.data);
+      const data = await response.data;
+      // if(fromProfile===undefined){
       dispatch(setFriends({ friends: data }));
-    // }
-    console.log("userFriends ",data)
-  } catch (error) {
-    console.error("Error fetching data: ", error);
-    if(error.code=="ERR_NETWORK"){
-      // window.alert("Session Expired Please login again")
-      dispatch(setLogout());
-      navigate("/");
+      // }
+      console.log("userFriends ", data);
+    } catch (error) {
+      console.error("Error fetching data: ", error);
+      if (error.code == "ERR_NETWORK") {
+        // window.alert("Session Expired Please login again")
+        dispatch(setLogout());
+        navigate("/");
+      }
     }
-  }
   };
-
 
   return (
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>
       <FlexBetween gap="1.75rem">
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Emergency section"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-          <VoiceNoteRecorder></VoiceNoteRecorder>
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={sendEmergency}>Send Location</Button>
-        </DialogActions>
-      </Dialog>
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Emergency section"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              <VoiceNoteRecorder></VoiceNoteRecorder>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={sendEmergency}>Send Location</Button>
+          </DialogActions>
+        </Dialog>
         <Typography
           fontWeight="bold"
           fontSize="clamp(1rem, 2rem, 2.25rem)"
@@ -343,24 +361,21 @@ checkFriendRequest();
             },
           }}
         >
-          UnitySpace 
+          UnitySpace
         </Typography>
         {isNonMobileScreens && (
-          <FlexBetween
-            
-            borderRadius="9px"
-            gap="3rem"
-            padding="0.1rem 1.5rem"
-          >
+          <FlexBetween borderRadius="9px" gap="3rem" padding="0.1rem 1.5rem">
             {/* <InputBase placeholder="Search..." /> */}
-            <Stack spacing={2} sx={{ width: 300, border:"none" }}>
+            <Stack spacing={2} sx={{ width: 300, border: "none" }}>
               <Autocomplete
-              sx={{backgroundColor:{neutralLight}}}
+                sx={{ backgroundColor: { neutralLight } }}
                 freeSolo
                 id="free-solo-2-demo"
                 disableClearable
                 options={data}
-                ListboxProps={{ style: { maxHeight: '100px', overflowY: 'auto' } }}
+                ListboxProps={{
+                  style: { maxHeight: "100px", overflowY: "auto" },
+                }}
                 getOptionLabel={(student) => student.fname}
                 getOptionSelected={(student, sid) =>
                   student.value === sid.value
@@ -385,10 +400,21 @@ checkFriendRequest();
       {/* DESKTOP NAV */}
       {isNonMobileScreens ? (
         <FlexBetween gap="1rem">
-          
-          {user.role==="ROLE_ADMIN"?<IconButton onClick={()=>{ navigate("/dashboard");}}>Dashboard</IconButton>:""}
-            {/* <IconButton onClick={sendEmergency}><AddAlert></AddAlert></IconButton> */}
-            <IconButton onClick={handleClickOpen}><AddAlert></AddAlert></IconButton>
+          {user.role === "ROLE_ADMIN" ? (
+            <IconButton
+              onClick={() => {
+                navigate("/dashboard");
+              }}
+            >
+              Dashboard
+            </IconButton>
+          ) : (
+            ""
+          )}
+          {/* <IconButton onClick={sendEmergency}><AddAlert></AddAlert></IconButton> */}
+          <IconButton onClick={handleClickOpen}>
+            <AddAlert></AddAlert>
+          </IconButton>
           <IconButton onClick={() => dispatch(setMode())}>
             {theme.palette.mode === "dark" ? (
               <DarkMode sx={{ fontSize: "25px" }} />
@@ -396,40 +422,57 @@ checkFriendRequest();
               <LightMode sx={{ color: dark, fontSize: "25px" }} />
             )}
           </IconButton>
-          <Badge badgeContent={friendRequest!==null?friendRequest.length:0} color="primary">
-          <IconButton
-          onClick={handleClickOpenFriendRequestModal}
+          <Badge
+            badgeContent={friendRequest !== null ? friendRequest.length : 0}
+            color="primary"
           >
-            <PersonAddOutlined></PersonAddOutlined>
-          </IconButton>
+            <IconButton onClick={handleClickOpenFriendRequestModal}>
+              <PersonAddOutlined></PersonAddOutlined>
+            </IconButton>
           </Badge>
           <Dialog
-        open={openFriendRequestModal}
-        onClose={handleFriendRequestModalClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-        
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"Friend Requests"}
-        </DialogTitle>
-        <DialogContent sx={{width:"400px"}}>
-              {Array.isArray(friendRequest) && friendRequest.map((friend) => (
-                <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                <ListItem alignItems="flex-start">
-                    
-                  <ListItemText primary={friend.fname +" "+friend.lname}  secondary={friend.sid}/>
-                  <IconButton onClick={()=>{patchFriend(friend.sid)}}>
-                      <PersonAddOutlined />
-                    </IconButton>
-                    <IconButton onClick={()=>{deleteFriendRequest(friend.sid)}}>
-                      <Delete />
-                    </IconButton>
-                </ListItem>
-                </List>         
-              ))}
-        </DialogContent>
-      </Dialog>
+            open={openFriendRequestModal}
+            onClose={handleFriendRequestModalClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Friend Requests"}
+            </DialogTitle>
+            <DialogContent sx={{ width: "400px" }}>
+              {Array.isArray(friendRequest) &&
+                friendRequest.map((friend) => (
+                  <List
+                    sx={{
+                      width: "100%",
+                      maxWidth: 360,
+                      bgcolor: "background.paper",
+                    }}
+                  >
+                    <ListItem alignItems="flex-start">
+                      <ListItemText
+                        primary={friend.fname + " " + friend.lname}
+                        secondary={friend.sid}
+                      />
+                      <IconButton
+                        onClick={() => {
+                          patchFriend(friend.sid);
+                        }}
+                      >
+                        <PersonAddOutlined />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => {
+                          deleteFriendRequest(friend.sid);
+                        }}
+                      >
+                        <Delete />
+                      </IconButton>
+                    </ListItem>
+                  </List>
+                ))}
+            </DialogContent>
+          </Dialog>
           <IconButton
             onClick={() => {
               navigate("/chat");
@@ -458,13 +501,11 @@ checkFriendRequest();
               <MenuItem value={fullName}>
                 <Typography>{fullName}</Typography>
               </MenuItem>
-              <MenuItem onClick={deleteAccount }>
-                  Delete Account
-                </MenuItem>
+              <MenuItem onClick={deleteAccount}>Delete Account</MenuItem>
               <MenuItem
                 onClick={() => {
                   dispatch(setLogout());
-                  updateOnlineStatus(false,user.sid)
+                  updateOnlineStatus(false, user.sid);
                   // updateOnlineStatus(false,user.sid)
                   navigate("/");
                 }}
@@ -511,9 +552,21 @@ checkFriendRequest();
             alignItems="center"
             gap="1rem"
           >
-            {user.role==="ROLE_ADMIN"?<IconButton onClick={()=>{ navigate("/dashboard");}}>Dashboard</IconButton>:""}
+            {user.role === "ROLE_ADMIN" ? (
+              <IconButton
+                onClick={() => {
+                  navigate("/dashboard");
+                }}
+              >
+                Dashboard
+              </IconButton>
+            ) : (
+              ""
+            )}
             {/* <IconButton onClick={sendEmergency}><AddAlert></AddAlert></IconButton> */}
-            <IconButton onClick={handleClickOpen}><AddAlert></AddAlert></IconButton>
+            <IconButton onClick={handleClickOpen}>
+              <AddAlert></AddAlert>
+            </IconButton>
             <IconButton
               onClick={() => dispatch(setMode())}
               sx={{ fontSize: "25px" }}
@@ -524,14 +577,64 @@ checkFriendRequest();
                 <LightMode sx={{ color: dark, fontSize: "25px" }} />
               )}
             </IconButton>
-            <
-            IconButton
-            onClick={() => {
-              navigate("/chat");
-            }}
-          >
-           <Message sx={{ fontSize: "25px" }} />
-          </IconButton>
+            <Badge
+              badgeContent={friendRequest !== null ? friendRequest.length : 0}
+              color="primary"
+            >
+              <IconButton onClick={handleClickOpenFriendRequestModal}>
+                <PersonAddOutlined></PersonAddOutlined>
+              </IconButton>
+            </Badge>
+            <Dialog
+              open={openFriendRequestModal}
+              onClose={handleFriendRequestModalClose}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">
+                {"Friend Requests"}
+              </DialogTitle>
+              <DialogContent sx={{ width: "400px" }}>
+                {Array.isArray(friendRequest) &&
+                  friendRequest.map((friend) => (
+                    <List
+                      sx={{
+                        width: "100%",
+                        maxWidth: 360,
+                        bgcolor: "background.paper",
+                      }}
+                    >
+                      <ListItem alignItems="flex-start">
+                        <ListItemText
+                          primary={friend.fname + " " + friend.lname}
+                          secondary={friend.sid}
+                        />
+                        <IconButton
+                          onClick={() => {
+                            patchFriend(friend.sid);
+                          }}
+                        >
+                          <PersonAddOutlined />
+                        </IconButton>
+                        <IconButton
+                          onClick={() => {
+                            deleteFriendRequest(friend.sid);
+                          }}
+                        >
+                          <Delete />
+                        </IconButton>
+                      </ListItem>
+                    </List>
+                  ))}
+              </DialogContent>
+            </Dialog>
+            <IconButton
+              onClick={() => {
+                navigate("/chat");
+              }}
+            >
+              <Message sx={{ fontSize: "25px" }} />
+            </IconButton>
             <Help sx={{ fontSize: "25px" }} />
             <FormControl variant="standard" value={fullName}>
               <Select
@@ -554,9 +657,7 @@ checkFriendRequest();
                 <MenuItem value={fullName}>
                   <Typography>{fullName}</Typography>
                 </MenuItem>
-                <MenuItem onClick={deleteAccount }>
-                  Delete Account
-                </MenuItem>
+                <MenuItem onClick={deleteAccount}>Delete Account</MenuItem>
                 <MenuItem onClick={() => dispatch(setLogout())}>
                   Log Out
                 </MenuItem>

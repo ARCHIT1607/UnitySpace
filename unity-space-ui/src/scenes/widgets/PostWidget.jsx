@@ -234,7 +234,7 @@ console.log("user pic from home page ",userPicturePath)
           alt="post"
           style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
           controls
-          src={`http://localhost:9000/post/image/${picturePath}`}
+          src={window.API_URL+`/post/image/${picturePath}`}
         />
       ):picturePath?(
         <img
@@ -243,7 +243,7 @@ console.log("user pic from home page ",userPicturePath)
           
           alt="post"
           style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
-          src={`http://localhost:9000/post/image/${picturePath}`}
+          src={window.API_URL+`/post/image/${picturePath}`}
         />):picturePath
       } 
       <FlexBetween mt="0.25rem">

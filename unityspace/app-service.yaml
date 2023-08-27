@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: unityspace-api-service
+spec:
+  selector:
+    app: unityspace-api
+  ports:
+    - port: 9000
+      targetPort: 9000
+  type: NodePort
