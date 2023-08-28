@@ -8,7 +8,7 @@ ARG DB_USER
 ARG DB_PASSWORD
 RUN mvn clean package -DskipTests
 COPY src ./src
-RUN mvn package -DskipTests --build-arg DB_URL=$DB_URL --build-arg DB_NAME=$DB_NAME --build-arg DB_USER=$DB_USER --build-arg DB_PASSWORD=$DB_PASSWORD
+RUN mvn package -DskipTests -DDB_URL=DB_URL -DDB_NAME=DB_NAME -DDB_USER=DB_USER -DDB_PASSWORD=DB_PASSWORD
 
 # Stage 2: Create the final image
 FROM openjdk:17-jdk-slim
