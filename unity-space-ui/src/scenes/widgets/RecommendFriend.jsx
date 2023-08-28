@@ -33,7 +33,7 @@ function RecommendFriend(counter) {
         console.log("getRecommendation ",response.data);
         const data = await response.data;
         const filteredData = data.filter(item => {
-            return !friends.some(obj => obj.fname === item.fname && obj.lname === item.lname || item.fname === fname);
+            return item.fname !== fname && !friends.some(obj => obj.fname === item.fname && obj.lname === item.lname || obj.fname == fname);
           });
           
           console.log(filteredData);

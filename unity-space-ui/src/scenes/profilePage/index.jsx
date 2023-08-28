@@ -21,7 +21,7 @@ const ProfilePage = () => {
   const onlineStatus = friends.filt
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const [counter, setCounter] = useState(1)
   
   const getUser = async () => {
     try {
@@ -57,7 +57,7 @@ const ProfilePage = () => {
 
   return (
     <Box>
-      <Navbar />
+      <Navbar counter={counter} />
       <Box
         width="100%"
         padding="2rem 6%"

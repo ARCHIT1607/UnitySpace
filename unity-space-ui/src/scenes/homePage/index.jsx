@@ -19,7 +19,7 @@ import RecommendFriend from "scenes/widgets/RecommendFriend";
 
 const HomePage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
-  const { sid, pictureName } = useSelector((state) => state.user);
+  const { sid, pictureName, _online_status } = useSelector((state) => state.user);
   const jwtToken = useSelector((state) => state.token.token);
   let friends = useSelector((state) => state.user.friends);
   const onlineStatusArray = friends.map((friend) => friend.onlineStatus);
@@ -118,7 +118,7 @@ console.log("onlineStatusArray ",onlineStatusArray)
         justifyContent="space-between"
       >
         <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
-          <UserWidget userId={sid} picturePath={pictureName} />
+          <UserWidget userId={sid} picturePath={pictureName} _online_status={_online_status}/>
           <Box m="2rem 0" />
           <RecommendFriend counter={counter} />
         </Box>

@@ -17,6 +17,7 @@ function ChatHomePage() {
   currentGroupChat = typeof currentGroupChat !== "undefined"?currentGroupChat:data;
   const token = useSelector((state) => state.token);
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
+  const [counter, setCounter] = useState(1)
   console.log("currentChat in chathomepage ",currentChat)
   console.log("currentChat.friendId ",currentChat!=null&&currentChat.friendId)
 
@@ -24,7 +25,7 @@ function ChatHomePage() {
   console.log("currentGroupChat.member ",currentGroupChat!=null&&currentGroupChat.member)
   return (
     <Box>
-      <Navbar />
+      <Navbar counter={counter}/>
       <Box
         width="100%"
         padding="2rem 6%"

@@ -55,6 +55,8 @@ const [userFriends, setUserFriends] = useState([])
   });
   console.log("sendFriendRequest ",response);
  handleClick();
+ sendNotification(fromProfile===true?friendId:sid)
+ handleClick()
 } catch (error) {
   console.error("Error fetching data: ", error);
   if(error.code=="ERR_NETWORK"){
@@ -196,7 +198,7 @@ const [userFriends, setUserFriends] = useState([])
         open={open}
         autoHideDuration={6000}
         onClose={handleClose}
-        message="Note archived"
+        message="Friend Request sent"
       />
       </FlexBetween>
     </FlexBetween>

@@ -25,13 +25,13 @@ import { useNavigate } from "react-router-dom";
 import Axios from "axios";
 import { setFriends, setLogout, setOnlineStatus } from "state";
 
-const UserWidget = ({ userId, picturePath, fromProfile }) => {
+const UserWidget = ({ userId, picturePath, _online_status }) => {
   const dispatch = useDispatch();
   const [user, setUser] = useState();
   const { palette } = useTheme();
   const navigate = useNavigate();
   const token = useSelector((state) => state.token);
-  const { email, _online_status } = useSelector((state) => state.user);
+  const { email } = useSelector((state) => state.user);
   const sid = useSelector((state) => state.user.sid);
   const friends = useSelector((state) => state.user.friends);
   let impressions = useSelector((state) => state.posts);
@@ -41,7 +41,7 @@ const UserWidget = ({ userId, picturePath, fromProfile }) => {
   const main = palette.neutral.main;
   console.log("picturePath in UserWidget ", picturePath);
   const [userFriends, setUserFriends] = useState([]);
-console.log("_online_status ",_online_status.toString())
+console.log("_online_status ",_online_status)
 
   const [checked, setChecked] = useState(_online_status);
   // setChecked(_online_status)
@@ -193,7 +193,10 @@ console.log("_online_status ",_online_status.toString())
     }
   }
   }
-
+  useEffect(() => {
+    setChecked(_online_status);
+  }, [_online_status]);
+  
   useEffect(() => {
     // getFriends();
     getUser();
@@ -210,6 +213,8 @@ console.log("_online_status ",_online_status.toString())
   if (!user) {
     return null;
   }
+
+  
 
 
   return (
