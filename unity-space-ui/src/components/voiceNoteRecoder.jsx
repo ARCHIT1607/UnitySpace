@@ -12,7 +12,7 @@ const VoiceNoteRecorder = () => {
     try {
       const response = await axios.post(window.API_URL+"/auth/send-email", formData, {
         params:{
-          from:sid
+          to:sid
         },
         headers: {
           'Authorization': `Bearer ${token}`,

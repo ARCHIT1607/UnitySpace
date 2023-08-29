@@ -180,7 +180,7 @@ const Navbar = ({ counter }) => {
           params: {
             longitude: userLocation.longitude,
             latitude: userLocation.latitude,
-            from: user.email,
+            to: user.email,
           },
           headers: {
             Authorization: "Bearer " + token.token,

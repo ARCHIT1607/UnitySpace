@@ -21,7 +21,7 @@ public class EmailSenderService {
     private JavaMailSender mailSender;
 
     @Value("${spring.mail.username}")
-    private String to;
+    private String from;
 
     public void sendEmailWithGoogleMaps(String recipientEmail) throws MessagingException, IOException {
         MimeMessage message = mailSender.createMimeMessage();
@@ -57,7 +57,7 @@ public class EmailSenderService {
 
     }
 
-    public void sendEmailWithGoogleMapsUrl(double longitude,double latitude,String from) throws MessagingException, UnsupportedEncodingException {
+    public void sendEmailWithGoogleMapsUrl(double longitude,double latitude,String to) throws MessagingException, UnsupportedEncodingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
         System.out.println("from "+from);
@@ -72,7 +72,7 @@ public class EmailSenderService {
         mailSender.send(message);
     }
 
-    public ResponseEntity sendEmailWithAttachment(MultipartFile file,String from) throws IOException, MessagingException {
+    public ResponseEntity sendEmailWithAttachment(MultipartFile file,String to) throws IOException, MessagingException {
 
         // Attach the file to the email
         MimeMessage message = mailSender.createMimeMessage();
