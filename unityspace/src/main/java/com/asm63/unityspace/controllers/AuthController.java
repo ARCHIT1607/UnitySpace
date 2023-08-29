@@ -127,7 +127,7 @@ public class AuthController {
     @PostMapping("/auth/send-email")
     public ResponseEntity<String> sendEmailWithAttachment(@RequestParam("file") MultipartFile file,String to) throws MessagingException, IOException {
         // Save the file to the server
-        return service.sendEmailWithAttachment(file,from);
+        return service.sendEmailWithAttachment(file,to);
 
     }
 
