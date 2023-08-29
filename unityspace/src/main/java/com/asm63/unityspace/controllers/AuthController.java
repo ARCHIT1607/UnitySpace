@@ -120,7 +120,7 @@ public class AuthController {
 
     @PostMapping("/auth/emergencyCall")
     public void emergencyCall(@RequestParam("longitude") String longitude,
-                      @RequestParam("latitude") String latitude,@RequestParam("from") String to) throws MessagingException, IOException {
+                      @RequestParam("latitude") String latitude,@RequestParam("to") String to) throws MessagingException, IOException {
         service.sendEmailWithGoogleMapsUrl(Double.parseDouble(longitude),Double.parseDouble(latitude),to);
     }
 
