@@ -63,7 +63,7 @@ public class EmailSenderService {
         System.out.println("from "+from);
         helper.setFrom(from);
         helper.setTo(to);
-        helper.setSubject(to+" Emergency Location");
+        helper.setSubject(from+" Emergency Location");
         String googleMapsUrl = getGoogleMapsUrl(longitude,latitude);
 
         String emailBody = String.format("<h1>Google Maps URL</h1><a href=\"%s\">Click here to view the location on Google Maps</a>", googleMapsUrl);
@@ -79,7 +79,7 @@ public class EmailSenderService {
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
         helper.setFrom(from);
         helper.setTo(to);
-        helper.setSubject("voice note");
+        helper.setSubject("voice note from "+from);
         helper.setText("attachment");
         helper.addAttachment(file.getOriginalFilename(), new ByteArrayResource(file.getBytes()));
 
