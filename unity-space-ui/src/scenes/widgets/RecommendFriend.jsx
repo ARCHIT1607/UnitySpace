@@ -64,7 +64,8 @@ function RecommendFriend(counter) {
     >
       Recommendation
     </Typography>
-    <Box display="flex" flexDirection="column" gap="1.5rem">
+    <Box display="flex" flexDirection="column" gap="1.5rem" sx={{ width: "100%", overflow: 'auto', height:"20vh"}}>
+      
       {data && data.map((friend) => (
         <Friend
           key={friend.sid}

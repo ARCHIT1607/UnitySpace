@@ -73,6 +73,9 @@ const ITEM_HEIGHT = 48;
 const sendNotification = async (sid) => {
   try {
     const response = await Axios.post(window.API_URL+"/firebase/send-friend-request-notification", {"title":"Sent you a friend Request","userId":sid}, {
+      params: {
+        friendId: friendId
+      },
       headers: {
         Authorization: "Bearer " + token.token,
       },
@@ -185,13 +188,18 @@ const sendNotification = async (sid) => {
   const handlePictureChange = async (event) => {
     const file = event.target.files[0];
     // const result = file.type.startsWith("image/")?await detectExplicitContent(event.target.files[0],"image"):
-    const result = await DetectImageExplicitContent(event.target.files[0]);
-    if(result[0].nsfw_likelihood>=5){
-     setIsHate(true)
+    if(file.type.startsWith("image/")){
+      const result = await DetectImageExplicitContent(event.target.files[0]);
+      if(result[0].nsfw_likelihood>=5){
+       setIsHate(true)
+      }else{
+        setPicture(event.target.files[0]);
+        setIsHate(false)
+      }
     }else{
       setPicture(event.target.files[0]);
-      setIsHate(false)
     }
+    
     
   };
 
@@ -269,7 +277,7 @@ const sendNotification = async (sid) => {
       },
     });
     console.log("sendFriendRequest ",response);
-    sendNotification(fromProfile===true?friendId:sid)
+    sendNotification(sid)
     handleSnackbarClick()
   } catch (error) {
     console.error("Error fetching data: ", error);

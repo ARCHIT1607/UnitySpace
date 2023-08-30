@@ -97,6 +97,9 @@ const [userFriends, setUserFriends] = useState([])
   const sendNotification = (sid) => {
     try {
       Axios.post(window.API_URL+"/firebase/send-friend-request-notification", {"title":"Unfriended by ","userId":sid}, {
+        params: {
+          friendId: friendId
+        },
         headers: {
           Authorization: "Bearer " + token.token,
         },

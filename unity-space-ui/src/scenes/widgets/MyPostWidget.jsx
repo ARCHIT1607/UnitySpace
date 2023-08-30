@@ -131,13 +131,18 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
 
   const handleImageUpload = async (image) => {
     console.log("image passing to api result ",image);
-    const result = await DetectImageExplicitContent(image);
+   
+    if(image['type'].startsWith("image/")){
+      const result = await DetectImageExplicitContent(image);
     console.log("eden api result ",result);
     if(result[0].nsfw_likelihood>=2){
       console.log("result[1].nsfw_likelihood>=5 ",result[0].nsfw_likelihood>=2);
       return true
     }else{
       return false
+    }
+    }else{
+      return false;
     }
   }
 
@@ -215,7 +220,7 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
           </Typography>
         </FlexBetween>
 
-        {isNonMobileScreens ? (
+        {/* {isNonMobileScreens ? (
           <>
             <FlexBetween gap="0.25rem">
             <FlexBetween gap="0.25rem" onClick={() => setIsImage(!isImage)}>
@@ -233,7 +238,8 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
           <FlexBetween gap="0.25rem">
             <MoreHorizOutlined sx={{ color: mediumMain }} />
           </FlexBetween>
-        )}
+        ) */}
+        {/* } */}
 
         <Button
           // disabled={!post}

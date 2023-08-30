@@ -1,0 +1,65 @@
+pipeline {
+    agent any
+
+    environment {
+        // Update this with your GitHub Personal Access Token
+        GITHUB_TOKEN = credentials('github_jenkins')
+        RENDER_TOKEN = credentials('renderpwd')
+        DOCKER_IMAGE_TAG = '1.7'
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                script {
+                    def repoUrl = 'https://github.com/ARCHIT1607/UnitySpace.git'
+                    def branchName = 'version-3'
+
+                    // Clone the repository with authentication
+                    git credentialsId: env.GITHUB_TOKEN,
+                        url: repoUrl,
+                        branch: branchName,
+                        credentialsProvider: [
+                            $class: 'UsernamePasswordCredentialsProvider'
+                        ]
+                }
+            }
+        }
+
+     stage('Docker Build') {
+            steps {
+                dir('unityspace') {
+                    // Navigate to the UnitySpace folder
+                    bat 'docker build -t architdev/unityspace:1.6 .'
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                   withCredentials([string(credentialsId: 'dockerhubpwd', variable: 'dockerhubpwd')]) {
+                        bat 'docker login -u architdev -p Bluestar@16'
+                        bat 'docker push architdev/unityspace:1.6'
+                    }
+                }
+            }
+        }
+        stage('Deploy to Render') {
+            steps {
+                script {
+                    // https://api.render.com/deploy/srv-cjmb6iocfp5c73b0smn0?key=6aGObVFR8xw&imgURL=docker.io/architdev/unityspace:1.6
+                                        // curl -X GET -H "Authorization: Bearer $renderToken" ^
+                        //  -H "Content-Type: application/json" ^
+                    def renderToken = env.RENDER_TOKEN
+                    def serviceName = 'unityspace-api'
+            def imgURL = " https://api.render.com/deploy/srv-cjmb6iocfp5c73b0smn0?key=6aGObVFR8xw&imgURL=docker.io/my-username/my-image:${env.BUILD_NUMBER}"
+                    bat """
+                         curl -X GET -H "Authorization: Bearer  $renderToken" "https://api.render.com/deploy/srv-cjmb6iocfp5c73b0smn0?key=6aGObVFR8xw&imgURL=docker.io/architdev/unityspace:1.5"
+                    """
+                }
+            }
+        }
+        // Add more stages as needed for your build and deployment process
+    }
+}

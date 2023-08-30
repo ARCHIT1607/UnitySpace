@@ -57,6 +57,7 @@ console.log("onlineStatusArray ",onlineStatusArray)
     const unsubscribe = onMessage(messaging, (payload) => {
       console.log("Message received", payload);
       if(payload.notification.title === "Sent you a friend Request"){
+        console.log("inside Sent you a friend Request")
         toast(`${payload.notification.body} ${payload.notification.title}   `);
       }else{
         toast(`${payload.notification.title} ${payload.notification.body}  `);

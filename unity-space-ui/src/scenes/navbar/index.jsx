@@ -249,12 +249,15 @@ const Navbar = ({ counter }) => {
     navigate(0);
   };
 
-  const sendNotification = (sid) => {
+  const sendNotification = (sid,friendId) => {
     try {
       Axios.post(
         window.API_URL + "/firebase/send-friend-request-notification",
         { title: "Friend Request accepted by ", userId: sid },
         {
+          params: {
+            friendId: friendId
+          },
           headers: {
             Authorization: "Bearer " + token.token,
           },
@@ -290,7 +293,7 @@ const Navbar = ({ counter }) => {
       // }
       handleFriendRequestModalClose();
       checkFriendRequest();
-      sendNotification(user.sid);
+      sendNotification(user.sid,friendId);
       getFriends();
     } catch (error) {
       console.error("Error fetching data: ", error);

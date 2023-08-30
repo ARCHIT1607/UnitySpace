@@ -30,6 +30,7 @@ import Button from "@mui/material/Button";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import DetectImageExplicitContent from "components/DetectImageExplicitContent";
+import { toast } from "react-toastify";
 
 const GroupListWidget = ({ userId, userPicturePath }) => {
   const [data, setData] = useState([{ id: "" }]);
@@ -47,6 +48,8 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
   const [groupName, setGroupName] = useState("");
   const [groupPicture, setGroupPicture] = useState(null);
  const [isHate, setIsHate] = useState(false)
+ const [errorMsg, setErrorMsg] = useState("")
+ 
  
   const style = {
     position: "absolute",
@@ -147,8 +150,10 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-   handleImageUpload(groupPicture);
-    console.log("isHate ", isHate);
+    const response = await handleImageUpload(groupPicture);
+    console.log("response in groupListWidget ",response)
+    if(response!==undefined &&response===true){
+      console.log("isHate ", isHate);
     if (isHate===false) {
       // Get the current user's ID
       const userId = sid;
@@ -191,13 +196,34 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
       setGroupPicture(null);
       handleClose(false);
     }
+    }else{
+      window.alert(
+        "Please use an image"
+      );
+      setGroupPicture(null);
+      handleClose(false);
+    }
+
   };
 
   const handleImageUpload = async (image) => {
-    const result = await DetectImageExplicitContent(image);
-    console.log("eden api result ", result, result[0].nsfw_likelihood >= 5);
-    setIsHate(result[0].nsfw_likelihood >= 5) 
-  };
+    console.log("image in  handleImageUpload of groupChatListWidget ", image);
+    try{
+      if(image['type'].startsWith("image/")){
+        const result = await DetectImageExplicitContent(image);
+      console.log("eden api result ", result, result[0].nsfw_likelihood >= 5);
+      setIsHate(result[0].nsfw_likelihood >= 5)
+      return true; 
+      }else{
+        console.log("inside error");
+        throw new Error('Please pass an image');
+      }
+    }catch(error){
+      console.log("inside catch");
+      setErrorMsg(error)
+      return false;
+    }
+  }
 
   return (
     <WidgetWrapper sx={{ textAlign: "center", justifyItems: "center" }}>

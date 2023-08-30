@@ -15,6 +15,7 @@ import {
   Switch,
   FormGroup,
   FormControlLabel,
+  Snackbar,
 } from "@mui/material";
 import UserImage from "components/UserImage";
 import FlexBetween from "components/FlexBetween";
@@ -42,6 +43,20 @@ const UserWidget = ({ userId, picturePath, _online_status }) => {
   console.log("picturePath in UserWidget ", picturePath);
   const [userFriends, setUserFriends] = useState([]);
 console.log("_online_status ",_online_status)
+
+const [openSnackbar, setOpenSnackbar] = useState(false);
+
+ const handleSnackbarClick = () => {
+  setOpenSnackbar(true);
+ };
+
+ const handleSnackbarClose = (event, reason) => {
+   if (reason === 'clickaway') {
+     return;
+   }
+
+   setOpenSnackbar(false);
+ };
 
   const [checked, setChecked] = useState(_online_status);
   // setChecked(_online_status)
@@ -155,6 +170,9 @@ console.log("_online_status ",_online_status)
   const sendNotification = async (sid) => {
     try {
       const response = await Axios.post(window.API_URL+"/firebase/send-friend-request-notification", {"title":"Sent you a friend Request","userId":sid}, {
+         params: {
+        friendId: userId
+      },
         headers: {
           Authorization: "Bearer " + token.token,
         },
@@ -184,6 +202,7 @@ console.log("_online_status ",_online_status)
     });
     console.log("sendFriendRequest ",response);
     sendNotification(sid)
+    handleSnackbarClick()
   } catch (error) {
     console.error("Error fetching data: ", error);
     if(error.code=="ERR_NETWORK"){
@@ -306,7 +325,7 @@ console.log("_online_status ",_online_status)
           <FlexBetween gap="1rem">
             {/* <img src="../assets/twitter.png" alt="twitter" /> */}
             <a
-              href="https://teams.microsoft.com/l/call/0/0?users=asm63@student.le.ac.uk"
+              href={"https://teams.microsoft.com/l/call/0/0?users="+email}
               target="_blank"
             >
               <VideoChatIcon fontSize="large" />
@@ -316,6 +335,12 @@ console.log("_online_status ",_online_status)
                 <EmailIcon fontSize="large" />
               </a>
             </Box>
+            <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        message="Friend Request Sent"
+      />
           </FlexBetween>
         </FlexBetween>
       </Box>
