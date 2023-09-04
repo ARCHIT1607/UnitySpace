@@ -18,7 +18,6 @@ const ProfilePage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
   const friends = useSelector((state) => state.user.friends);
   console.log("friends in index ",friends)
-  const onlineStatus = friends.filt
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [counter, setCounter] = useState(1)
@@ -66,7 +65,7 @@ const ProfilePage = () => {
         justifyContent="center"
       >
         <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
-          <UserWidget userId={userId} picturePath={user.pictureName} fromProfile={true}/>
+          <UserWidget userId={userId} picturePath={user.pictureName} fromProfile={true} _online_status={user._online_status}/>
           <Box m="2rem 0" />
           <FriendListWidget userId={userId} fromProfile={true}/>
         </Box>

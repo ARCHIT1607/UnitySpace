@@ -355,7 +355,7 @@ const Navbar = ({ counter }) => {
         <Typography
           fontWeight="bold"
           fontSize="clamp(1rem, 2rem, 2.25rem)"
-          color="primary"
+          color="rgb(205,126,217)"
           onClick={() => navigate("/home")}
           sx={{
             "&:hover": {

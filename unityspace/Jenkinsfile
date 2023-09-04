@@ -5,7 +5,7 @@ pipeline {
         // Update this with your GitHub Personal Access Token
         GITHUB_TOKEN = credentials('github_jenkins')
         RENDER_TOKEN = credentials('renderpwd')
-        DOCKER_IMAGE_TAG = '1.7'
+        DOCKER_IMAGE_TAG = '1.9'
     }
 
     stages {
@@ -30,7 +30,7 @@ pipeline {
             steps {
                 dir('unityspace') {
                     // Navigate to the UnitySpace folder
-                    bat 'docker build -t architdev/unityspace:1.6 .'
+                    bat 'docker build -t architdev/unityspace:1.9 .'
                 }
             }
         }
@@ -40,7 +40,7 @@ pipeline {
                 script {
                    withCredentials([string(credentialsId: 'dockerhubpwd', variable: 'dockerhubpwd')]) {
                         bat 'docker login -u architdev -p Bluestar@16'
-                        bat 'docker push architdev/unityspace:1.6'
+                        bat 'docker push architdev/unityspace:1.9'
                     }
                 }
             }
@@ -48,14 +48,11 @@ pipeline {
         stage('Deploy to Render') {
             steps {
                 script {
-                    // https://api.render.com/deploy/srv-cjmb6iocfp5c73b0smn0?key=6aGObVFR8xw&imgURL=docker.io/architdev/unityspace:1.6
-                                        // curl -X GET -H "Authorization: Bearer $renderToken" ^
-                        //  -H "Content-Type: application/json" ^
+
                     def renderToken = env.RENDER_TOKEN
                     def serviceName = 'unityspace-api'
-            def imgURL = " https://api.render.com/deploy/srv-cjmb6iocfp5c73b0smn0?key=6aGObVFR8xw&imgURL=docker.io/my-username/my-image:${env.BUILD_NUMBER}"
                     bat """
-                         curl -X GET -H "Authorization: Bearer  $renderToken" "https://api.render.com/deploy/srv-cjmb6iocfp5c73b0smn0?key=6aGObVFR8xw&imgURL=docker.io/architdev/unityspace:1.5"
+                         curl -X GET -H "Authorization: Bearer  $renderToken" "https://api.render.com/deploy/srv-cjmb6iocfp5c73b0smn0?key=6aGObVFR8xw&imgURL=docker.io/architdev/unityspace:1.9"
                     """
                 }
             }

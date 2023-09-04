@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -112,12 +113,6 @@ public class AuthController {
         StreamUtils.copy(resource, response.getOutputStream());
 
     }
-
-    @GetMapping("/auth/test")
-    public void test() throws MessagingException, IOException {
-        service.sendEmailWithGoogleMaps("");
-    }
-
 
     @PostMapping("/auth/emergencyCall")
     public void emergencyCall(@RequestParam("longitude") String longitude,

@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 
 @Service
 public class EmailSenderService {
@@ -22,33 +21,6 @@ public class EmailSenderService {
 
     @Value("${spring.mail.username}")
     private String to;
-
-    public void sendEmailWithGoogleMaps(String recipientEmail) throws MessagingException, IOException {
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true);
-
-        helper.setFrom("confusedDeveloper97@gmail.com");
-        helper.setTo("confusedDeveloper97@gmail.com");
-        helper.setSubject("Google Maps Image");
-
-        // Use the Google Maps Static API to retrieve a map image
-        String location = "LE15SP";
-        String apiKey = "AIzaSyCBHQ2PytqvWuk1RcoWshj57oxZf12l9yM";
-        String imageUrl = String.format("https://maps.googleapis.com/maps/api/staticmap?center=%s&zoom=15&size=600x400&maptype=roadmap&markers=color:red%%7C%s&key=%s", location, location, apiKey);
-        URL url = new URL(imageUrl);
-
-        // Create the email body with the map image
-        String emailBody = "<h1>Google Maps Image</h1><img src=\"cid:mapImage\">";
-        helper.setText(emailBody, true);
-        helper.setSubject(String.format("https://maps.googleapis.com/maps/api/staticmap" +
-                "?center=%s&zoom=30&size=600x400&maptype=roadmap&markers=color:red%%7C%s&key=%s", location, location, apiKey));
-        byte[] imageData = url.openStream().readAllBytes();
-        // Create a ByteArrayResource with the image data
-        ByteArrayResource imageResource = new ByteArrayResource(imageData);
-        // Add the map image as an inline attachment
-        helper.addInline("mapImage", imageResource, "image/png");
-        mailSender.send(message);
-    }
 
     public String getGoogleMapsUrl(double longitude,double latitude) {
         String marker = String.format("markers=color:red%%7Clabel:S%%7C%s,%s", latitude, longitude);
@@ -82,7 +54,6 @@ public class EmailSenderService {
         helper.setSubject("voice note from "+from);
         helper.setText("attachment");
         helper.addAttachment(file.getOriginalFilename(), new ByteArrayResource(file.getBytes()));
-
         // Send the email
         mailSender.send(message);
 

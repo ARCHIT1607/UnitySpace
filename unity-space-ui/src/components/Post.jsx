@@ -70,9 +70,9 @@ const [openSnackbar, setOpenSnackbar] = useState(false);
 
 const ITEM_HEIGHT = 48;
 
-const sendNotification = async (sid) => {
+const sendNotification = async (sid,title) => {
   try {
-    const response = await Axios.post(window.API_URL+"/firebase/send-friend-request-notification", {"title":"Sent you a friend Request","userId":sid}, {
+    const response = await Axios.post(window.API_URL+"/firebase/send-friend-request-notification", {"title":title,"userId":sid}, {
       params: {
         friendId: friendId
       },
@@ -108,7 +108,7 @@ const sendNotification = async (sid) => {
       dispatch(setFriends({ friends: data }));
     }
     // setUserFriends(data);
-
+    sendNotification(sid,"Unfriended by ")
     getFriends()
   } catch (error) {
     console.error("Error fetching data: ", error);
@@ -265,7 +265,7 @@ const sendNotification = async (sid) => {
   };
 
   const sendFriendRequest = async () => {
-    console.log("calling patchFriend")
+    console.log("calling sendFriendRequest")
     try {
     const response = await Axios.post(window.API_URL+"/users/sendFriendRequest",null, {
       params:{
@@ -277,7 +277,7 @@ const sendNotification = async (sid) => {
       },
     });
     console.log("sendFriendRequest ",response);
-    sendNotification(sid)
+    sendNotification(sid,"Sent you a friend Request")
     handleSnackbarClick()
   } catch (error) {
     console.error("Error fetching data: ", error);

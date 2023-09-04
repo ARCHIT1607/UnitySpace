@@ -76,7 +76,6 @@ public class NotificationController {
         Message message = Message.builder()
                 .setWebpushConfig(webpushConfig)
                 .setToken(token)
-//                .putData("userId", request.getUserId())
                 .build();
 
         String response = "";

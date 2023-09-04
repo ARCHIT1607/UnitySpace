@@ -42,7 +42,7 @@ function Dashboard() {
   const [data, setData] = useState("")
   const [eventName, setEventName] = useState("")
   console.log("data ",data)
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(today);
   console.log("date ", today);
   const [event, setEvent] = useState();
 

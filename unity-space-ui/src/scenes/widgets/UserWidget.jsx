@@ -177,7 +177,7 @@ const [openSnackbar, setOpenSnackbar] = useState(false);
           Authorization: "Bearer " + token.token,
         },
       });
-      console.log("send notification for send friend request notification ", response)
+      console.log("send notification for friend request notification ", response)
     } catch (error) {
       console.error("Error fetching data: ", error);
       if(error.code=="ERR_NETWORK"){

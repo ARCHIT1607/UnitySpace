@@ -119,7 +119,7 @@
 
     <select id="findAllStudent"
             resultType="HashMap">
-        SELECT fname, sid from student
+        SELECT fname, sid from student ORDER BY fname ASC
     </select>
 
 
@@ -278,6 +278,4 @@
         SELECT id, fname, lname, course,sid, is_online_status as "onlineStatus",picture_name  from student where
          UPPER(course) = UPPER(#{course})
     </select>
-
-
 </mapper>

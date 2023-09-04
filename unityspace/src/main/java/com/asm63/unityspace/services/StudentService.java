@@ -6,7 +6,6 @@ import com.asm63.unityspace.mappers.StudentMapper;
 import com.asm63.unityspace.models.Events;
 import com.asm63.unityspace.models.FriendRequestDTO;
 import com.asm63.unityspace.models.Student;
-import com.asm63.unityspace.repositories.ImageRepository;
 import com.asm63.unityspace.security.AuthenticationResponse;
 import com.asm63.unityspace.security.JwtHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +27,6 @@ public class StudentService {
 
     @Autowired
     private PostMapper postMapper;
-
-    @Autowired
-    ImageRepository imageRepository;
 
     @Autowired
     private JwtHelper jwtService;

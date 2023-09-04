@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin
-public class FriendController {
+public class StudentController {
 
     @Autowired
     private StudentService studentService;

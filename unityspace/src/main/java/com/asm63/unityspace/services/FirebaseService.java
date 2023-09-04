@@ -5,8 +5,6 @@ import com.asm63.unityspace.models.CloudMessageDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-
 @Service
 public class FirebaseService {
 
@@ -21,7 +19,4 @@ public class FirebaseService {
         return studentMapper.getToken(postUserId);
     }
 
-    public ArrayList<String> getAllTokens() {
-        return studentMapper.getAllTokens();
-    }
 }

@@ -42,7 +42,7 @@ const [userFriends, setUserFriends] = useState([])
  };
 
  const sendFriendRequest = async () => {
-  console.log("calling patchFriend")
+  console.log("calling sendFriendRequest")
   try {
   const response = await Axios.post(window.API_URL+"/users/sendFriendRequest",null, {
     params:{
@@ -55,7 +55,7 @@ const [userFriends, setUserFriends] = useState([])
   });
   console.log("sendFriendRequest ",response);
  handleClick();
- sendNotification(fromProfile===true?friendId:sid)
+ sendNotification(fromProfile===true?friendId:sid,"Sent you a friend Request")
  handleClick()
 } catch (error) {
   console.error("Error fetching data: ", error);
@@ -94,9 +94,9 @@ const [userFriends, setUserFriends] = useState([])
   }
   };
 
-  const sendNotification = (sid) => {
+  const sendNotification = (sid,title) => {
     try {
-      Axios.post(window.API_URL+"/firebase/send-friend-request-notification", {"title":"Unfriended by ","userId":sid}, {
+      Axios.post(window.API_URL+"/firebase/send-friend-request-notification", {"title":title,"userId":sid}, {
         params: {
           friendId: friendId
         },
@@ -133,7 +133,7 @@ const [userFriends, setUserFriends] = useState([])
       dispatch(setFriends({ friends: data }));
     // }
     getFriends();
-    sendNotification(sid)
+    sendNotification(sid,"Unfriended By")
   } catch (error) {
     console.error("Error fetching data: ", error);
     if(error.code=="ERR_NETWORK"){
@@ -189,9 +189,9 @@ const [userFriends, setUserFriends] = useState([])
           >
             { sameFriends ? (
              
-               <PersonRemoveOutlined sx={{ color: primaryDark }} onClick={() => patchFriend(friendId)} />
+               <PersonRemoveOutlined sx={{ color: primaryDark }} onClick={() =>patchFriend(friendId)  } />
             ) : (
-              <PersonAddOutlined sx={{ color: primaryDark }} onClick={() => sendFriendRequest()} />
+              <PersonAddOutlined sx={{ color: primaryDark }} onClick={() =>sendFriendRequest()} />
             )}
           </IconButton>
         ) : (

@@ -123,11 +123,7 @@ public class PostController {
             post.setLastname(student.getLname());
             post.setLocation(student.getLoc());
             post.setCourse(student.getCourse());
-            System.out.println("post.getFirstname()" +post.getFirstname());
-            System.out.println("post.getLastname()" +post.getLastname());
-            System.out.println("picture" +picture);
             postService.createPost(post,picture);
-            System.out.println("post before calling getPost");
             return new ResponseEntity<Object>(postService.getPosts(), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
