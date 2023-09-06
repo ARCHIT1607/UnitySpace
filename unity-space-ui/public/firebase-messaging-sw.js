@@ -1,6 +1,6 @@
 importScripts('https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compat.js');
-
+require('dotenv').config();
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_APIKEY,
     authDomain: process.env.REACT_APP_AUTH_DOMAIN,
