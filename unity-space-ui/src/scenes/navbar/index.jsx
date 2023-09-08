@@ -317,9 +317,7 @@ const Navbar = ({ counter }) => {
       });
       console.log("resoinsedata ", response.data);
       const data = await response.data;
-      // if(fromProfile===undefined){
       dispatch(setFriends({ friends: data }));
-      // }
       console.log("userFriends ", data);
     } catch (error) {
       console.error("Error fetching data: ", error);

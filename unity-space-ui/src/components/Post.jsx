@@ -107,7 +107,6 @@ const sendNotification = async (sid,title) => {
     if (friendId !== sid) {
       dispatch(setFriends({ friends: data }));
     }
-    // setUserFriends(data);
     sendNotification(sid,"Unfriended by ")
     getFriends()
   } catch (error) {

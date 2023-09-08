@@ -91,12 +91,11 @@ const Group = ({ id, name, members, groupImage, size = "40px",friends }) => {
         : [];
     dispatch(setCurrentGroupChat({ currentGroupChat: currentGroupChat }));
     dispatch(setCurrentChat({ currentChat: [] }));
-    // getGroupMsg()
   };
 
   const handleDelete = async () => {
     await deleteDoc(doc(db, "roomChats", id));
-    getGroupMsg();
+    window.location.reload(false);
   };
 
   const [personName, setPersonName] = useState(members);

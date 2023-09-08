@@ -49,6 +49,9 @@ const ProfilePage = () => {
   };
 
   useEffect(() => {
+    if(sid==null){
+      navigate("/");
+    }
     getUser();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

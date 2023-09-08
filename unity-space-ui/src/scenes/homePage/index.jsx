@@ -102,6 +102,9 @@ console.log("onlineStatusArray ",onlineStatusArray)
   };
 
   useEffect(() => {
+    if(sid==null){
+      navigate("/");
+    }
     requestPermission();
     getFriends();
   }, []);

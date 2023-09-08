@@ -47,13 +47,13 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
   const handlePost = async () => {
     const formData = new FormData();
     let isHate = "";
-    if (image) {
-      formData.append("picture", image);
-      formData.append("picturePath", image.name);
-      isHate  = await handleImageUpload(image);
-    }
+    
     try {
-     
+      if (image) {
+        formData.append("picture", image);
+        formData.append("picturePath", image.name);
+        isHate  = await handleImageUpload(image);
+      }
       console.log("isHate ",isHate);
      if(!isHate){
       for (const [key, value] of formData.entries()) {
@@ -74,24 +74,20 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
       dispatch(setPosts({ posts }));
       console.log("after creating post ",posts)
       setImage(null);
-      // setPost("");
       setDescription("");
       console.log("fromProfile ",fromProfile)
       if(fromProfile){
         getUserPosts();
       }
+      toast("Post created successfully")
      }else{
       window.alert("inappropriate content detected. Please refrain from spreading negativity")
       setImage(null);
       setDescription("")
      }
     } catch (error) {
-      console.error("Error fetching data: ", error);
-
       if(error.code=="ERR_NETWORK"){
-        // window.alert("Session Expired Please login again")
-        dispatch(setLogout());
-        navigate("/");
+        window.alert("something went wrong, Please try again later")
       }
     }
   };
@@ -220,30 +216,7 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
           </Typography>
         </FlexBetween>
 
-        {/* {isNonMobileScreens ? (
-          <>
-            <FlexBetween gap="0.25rem">
-            <FlexBetween gap="0.25rem" onClick={() => setIsImage(!isImage)}>
-          <ImageOutlined sx={{ color: mediumMain }} />
-          <Typography
-            color={mediumMain}
-            sx={{ "&:hover": { cursor: "pointer", color: medium } }}
-          >
-            Clip
-          </Typography>
-        </FlexBetween>
-            </FlexBetween>
-          </>
-        ) : (
-          <FlexBetween gap="0.25rem">
-            <MoreHorizOutlined sx={{ color: mediumMain }} />
-          </FlexBetween>
-        ) */}
-        {/* } */}
-
         <Button
-          // disabled={!post}
-          // disabled={!description}
           onClick={handlePost}
           sx={{
             color: "grey",

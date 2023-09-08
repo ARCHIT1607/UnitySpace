@@ -208,6 +208,9 @@ function Dashboard() {
   };
 
   useEffect(() => {
+    if(sid==null){
+      navigate("/");
+    }
     getDashboardData()
     getEvents()
   }, [])

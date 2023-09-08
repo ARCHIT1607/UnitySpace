@@ -5,7 +5,6 @@ pipeline {
         // Update this with your GitHub Personal Access Token
         GITHUB_TOKEN = credentials('github_jenkins')
         RENDER_TOKEN = credentials('renderpwd')
-        DOCKER_IMAGE_TAG = '1.9'
     }
 
     stages {
@@ -30,7 +29,7 @@ pipeline {
             steps {
                 dir('unityspace') {
                     // Navigate to the UnitySpace folder
-                    bat 'docker build -t architdev/unityspace:1.9 .'
+                    bat "docker build -t architdev/unityspace:${params.docker_image_tag} ."
                 }
             }
         }
@@ -39,8 +38,8 @@ pipeline {
             steps {
                 script {
                    withCredentials([string(credentialsId: 'dockerhubpwd', variable: 'dockerhubpwd')]) {
-                        bat 'docker login -u architdev -p Bluestar@16'
-                        bat 'docker push architdev/unityspace:1.9'
+                        bat 'docker login -u architdev -p dockerhubpwd'
+                        bat "docker push architdev/unityspace:${params.docker_image_tag}"
                     }
                 }
             }
@@ -48,11 +47,10 @@ pipeline {
         stage('Deploy to Render') {
             steps {
                 script {
-
                     def renderToken = env.RENDER_TOKEN
                     def serviceName = 'unityspace-api'
                     bat """
-                         curl -X GET -H "Authorization: Bearer  $renderToken" "https://api.render.com/deploy/srv-cjmb6iocfp5c73b0smn0?key=6aGObVFR8xw&imgURL=docker.io/architdev/unityspace:1.9"
+                         curl -X GET -H "Authorization: Bearer  $renderToken" "https://api.render.com/deploy/srv-cjmb6iocfp5c73b0smn0?key=6aGObVFR8xw&imgURL=docker.io/architdev/unityspace:${params.docker_image_tag}"
                     """
                 }
             }

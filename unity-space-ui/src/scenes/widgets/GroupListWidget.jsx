@@ -189,6 +189,7 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
       setGroupPicture(null);
       handleClose(false);
       getGroupMsg();
+      toast("Group created successfully")
     } else {
       window.alert(
         "inappropriate content detected. Please refrain from spreading negativity"

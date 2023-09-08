@@ -276,6 +276,6 @@
     <select id="getRecommendation"
             resultType="HashMap" parameterType="String">
         SELECT id, fname, lname, course,sid, is_online_status as "onlineStatus",picture_name  from student where
-         UPPER(course) = UPPER(#{course})
+         UPPER(course) LIKE UPPER('%' || #{course} || '%')
     </select>
 </mapper>

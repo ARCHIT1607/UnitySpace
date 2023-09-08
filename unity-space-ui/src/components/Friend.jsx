@@ -128,10 +128,7 @@ const [userFriends, setUserFriends] = useState([])
     });
     console.log("patch friend data ",response);
     const data = await response.data.friend;
-    // if(profileUser===sid)
-    // {
       dispatch(setFriends({ friends: data }));
-    // }
     getFriends();
     sendNotification(sid,"Unfriended By")
   } catch (error) {

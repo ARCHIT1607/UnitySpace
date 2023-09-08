@@ -6,10 +6,12 @@ import Chat from './Chat';
 import ChatListWidget from 'scenes/widgets/ChatListWidget';
 import GroupListWidget from 'scenes/widgets/GroupListWidget';
 import GroupChat from './GroupChat';
+import { useNavigate } from 'react-router-dom';
 
 function ChatHomePage() {
   const [data, setData] = useState({ friendId: "",name:"",course:"",profilePic:"" });
     const [user, setUser] = useState(null);
+    const navigate = useNavigate();
   const { sid } = useSelector((state) => state.user);
   let currentChat = useSelector((state) => state.currentChat.currentChat);
   currentChat = typeof currentChat !== "undefined"?currentChat:data;
@@ -23,6 +25,13 @@ function ChatHomePage() {
 
   console.log("currentGroupChat in chathomepage ",currentGroupChat)
   console.log("currentGroupChat.member ",currentGroupChat!=null&&currentGroupChat.member)
+
+  useEffect(() => {
+    if(sid==null){
+      navigate("/");
+    }
+  }, [])
+  
   return (
     <Box>
       <Navbar counter={counter}/>
