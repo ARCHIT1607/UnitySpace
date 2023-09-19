@@ -156,8 +156,10 @@ console.log("user pic from home page ",userPicturePath)
         });
         const data = response.data;
         console.log("data from getPosts ",data)
+       if(!fromProfile){
         dispatch(setPosts({ posts: data }));
-        setComment("");
+       }
+       setComment("");
       } catch (error) {
         console.error("Error fetching data: ", error);
         if(error.code=="ERR_NETWORK"){

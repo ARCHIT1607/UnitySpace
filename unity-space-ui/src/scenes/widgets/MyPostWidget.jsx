@@ -38,7 +38,7 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
   const [image, setImage] = useState(null);
   const [description, setDescription] = useState("");
   const { palette } = useTheme();
-  const { sid,course } = useSelector((state) => state.user);
+  const { sid,course,pictureName } = useSelector((state) => state.user);
   const token = useSelector((state) => state.token);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const mediumMain = palette.neutral.mediumMain;
@@ -63,7 +63,7 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
         params: {
           description: description,
           userId:sid,
-          userPicturePath:userPicturePath
+          userPicturePath:pictureName
         },
         headers: {
           Authorization: "Bearer " + token.token,
@@ -132,7 +132,7 @@ const MyPostWidget = ({ picturePath , fromProfile, userPicturePath}) => {
       const result = await DetectImageExplicitContent(image);
     console.log("eden api result ",result);
     if(result[0].nsfw_likelihood>=2){
-      console.log("result[1].nsfw_likelihood>=5 ",result[0].nsfw_likelihood>=2);
+      console.log("result[1].nsfw_likelihood>=2 ",result[0].nsfw_likelihood>=2);
       return true
     }else{
       return false

@@ -22,9 +22,9 @@ const [userFriends, setUserFriends] = useState([])
   const primaryDark = palette.primary.dark;
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
-  const sameFriends = fromProfile===true?userFriends.find(({ sid }) => friendId === sid):
-  friends.find(({ sid }) => friendId === sid);
-
+  // const sameFriends = fromProfile===true?userFriends.find(({ sid }) => friendId === sid):
+  const [sameFriends, setSameFriends] = useState(false)
+  
  console.log("userIsSameAsFriend ccheck",sameFriends);
 
  const [open, setOpen] = useState(false);
@@ -83,7 +83,10 @@ const [userFriends, setUserFriends] = useState([])
       dispatch(setFriends({ friends: data }));
     }
     setUserFriends(data);
+    const hasSameSid = friends.some(friend => data.some(userFriend => userFriend.sid === friend.sid));
     console.log("userFriends ",data)
+    setSameFriends(hasSameSid);
+    console.log("sameFriends in friends",sameFriends)
   } catch (error) {
     console.error("Error fetching data: ", error);
     if(error.code=="ERR_NETWORK"){
@@ -128,7 +131,11 @@ const [userFriends, setUserFriends] = useState([])
     });
     console.log("patch friend data ",response);
     const data = await response.data.friend;
-      dispatch(setFriends({ friends: data }));
+      if(!fromProfile){
+        dispatch(setFriends({ friends: data }));
+      }else{
+        getFriends();
+      }
     getFriends();
     sendNotification(sid,"Unfriended By")
   } catch (error) {
@@ -143,7 +150,7 @@ const [userFriends, setUserFriends] = useState([])
 
   useEffect(() => {
     console.log("getUserFriends in Friend")
-    // getFriends()
+    getFriends()
   }, [])
   
   return (
@@ -186,8 +193,10 @@ const [userFriends, setUserFriends] = useState([])
           >
             { sameFriends ? (
              
-               <PersonRemoveOutlined sx={{ color: primaryDark }} onClick={() =>patchFriend(friendId)  } />
+            //  fromProfile? <PersonAddOutlined sx={{ color: primaryDark }} onClick={() =>sendFriendRequest()} />
+             <PersonRemoveOutlined sx={{ color: primaryDark }} onClick={() =>patchFriend(friendId)  } />
             ) : (
+              // fromProfile?<PersonRemoveOutlined sx={{ color: primaryDark }} onClick={() =>patchFriend(friendId)  } />:
               <PersonAddOutlined sx={{ color: primaryDark }} onClick={() =>sendFriendRequest()} />
             )}
           </IconButton>

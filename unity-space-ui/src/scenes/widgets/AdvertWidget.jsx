@@ -31,19 +31,6 @@ const AdvertWidget = () => {
   const localizer = momentLocalizer(moment);
   const dispatch = useDispatch();
 
-  const events = [
-    {
-      title: "Event 1",
-      start: new Date(2023, 6, 14, 10, 0),
-      end: new Date(2023, 6, 14, 12, 0),
-    },
-    {
-      title: "Event 2",
-      start: new Date(2023, 6, 16, 14, 0),
-      end: new Date(2023, 6, 16, 16, 0),
-    },
-  ];
-
   const getEvents = async () => {
     try {
       const response = await Axios.get(window.API_URL+"/events", {

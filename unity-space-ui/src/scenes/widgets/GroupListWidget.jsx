@@ -213,7 +213,7 @@ const GroupListWidget = ({ userId, userPicturePath }) => {
       if(image['type'].startsWith("image/")){
         const result = await DetectImageExplicitContent(image);
       console.log("eden api result ", result, result[0].nsfw_likelihood >= 5);
-      setIsHate(result[0].nsfw_likelihood >= 5)
+      setIsHate(result[0].nsfw_likelihood >= 2)
       return true; 
       }else{
         console.log("inside error");

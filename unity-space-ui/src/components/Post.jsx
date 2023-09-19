@@ -189,7 +189,7 @@ const sendNotification = async (sid,title) => {
     // const result = file.type.startsWith("image/")?await detectExplicitContent(event.target.files[0],"image"):
     if(file.type.startsWith("image/")){
       const result = await DetectImageExplicitContent(event.target.files[0]);
-      if(result[0].nsfw_likelihood>=5){
+      if(result[0].nsfw_likelihood>=2){
        setIsHate(true)
       }else{
         setPicture(event.target.files[0]);
