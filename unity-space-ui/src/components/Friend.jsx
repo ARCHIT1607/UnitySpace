@@ -22,7 +22,6 @@ const [userFriends, setUserFriends] = useState([])
   const primaryDark = palette.primary.dark;
   const main = palette.neutral.main;
   const medium = palette.neutral.medium;
-  // const sameFriends = fromProfile===true?userFriends.find(({ sid }) => friendId === sid):
   const [sameFriends, setSameFriends] = useState(false)
   
  console.log("userIsSameAsFriend ccheck",sameFriends);

@@ -46,7 +46,7 @@ console.log("onlineStatusArray ",onlineStatusArray)
     if (permission === "granted") {
       const token = await getToken(messaging, {
         vapidKey:
-          "BBCz-opcNloxx-lcHRMg5OT82peYLYgh7RGZlzHeWRhUH64GqDVh-0bwVLEKzqUQfUncsCrdjZdEpufJrdui1L0",
+          "",
       });
       console.log("firebase token ",token);
       addFirebaseToken(token);

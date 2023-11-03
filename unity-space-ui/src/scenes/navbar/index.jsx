@@ -87,7 +87,7 @@ const Navbar = ({ counter }) => {
   };
 
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "AIzaSyCBHQ2PytqvWuk1RcoWshj57oxZf12l9yM",
+    googleMapsApiKey: "",
   });
 
   const [userLocation, setUserLocation] = useState(null);
@@ -159,6 +159,7 @@ const Navbar = ({ counter }) => {
           }
         );
         console.log("deleteAccount done", response.data);
+        dispatch(setLogout());
         navigate("/");
       } catch (error) {
         console.error("Error fetching data: ", error);
